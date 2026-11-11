@@ -214,7 +214,7 @@ body[data-view="developer"] .rec{display:none}
 .tl{margin:0;padding:0;list-style:none;border-left:2px solid var(--rule);display:flex;flex-direction:column;gap:22px}
 .tl li{position:relative;display:flex;flex-wrap:wrap;gap:4px 24px;padding-left:22px}
 .tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:2px solid var(--act)}
-.tl li.now::before{background:var(--act)}
+.tl li.cur::before{background:var(--act)}
 .tl .when{flex:0 0 150px;font-family:var(--mono);font-size:14px;color:var(--ink-3);padding-top:2px}
 .tl .what{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:6px}
 .tl h3{font-size:20px;letter-spacing:-.01em}
@@ -417,13 +417,13 @@ writeMany(ops) {
         <div class="sec-body">
           <h2 id="h-ex">Experience</h2>
           <ol class="tl">
-            <li class="now"><span class="when">Oct 2026 – now</span><div class="what">
+            <li class="cur"><span class="when">Oct 2026 – now</span><div class="what">
               <h3>Building the school's systems</h3>
               <p class="org">Protected development time each week, alongside teaching</p>
               <p>I design and build the timetable platform both sites run on, used by about 100 people at the school, and the learning tracker now in development.</p>
               <div class="tags"><span>JavaScript</span><span>Node.js</span><span>Document store</span><span>Automated tests</span></div>
             </div></li>
-            <li class="now"><span class="when">May 2025 – now</span><div class="what">
+            <li class="cur"><span class="when">May 2025 – now</span><div class="what">
               <h3>Support Worker (Game Design)</h3>
               <p class="org">A creative-skills school in Berkshire</p>
               <p>I teach students Game Design, Coding in Unity, Website Design and Music Theory. I built my own tools for it: a code pipeline that makes my lesson decks, a slide kit other teachers fill in, and a Unity error explainer for students.</p>
