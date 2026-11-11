@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Rafael Ngai: Support Worker (Game Design) who builds the school's timetable platform and learning tracker. Portfolio run by a mini timetable engine.">
+<meta property="og:title" content="Rafael Ngai">
+<meta property="og:description" content="Rafael Ngai: Support Worker (Game Design) who builds the school's timetable platform and learning tracker. Portfolio run by a mini timetable engine.">
+<meta property="og:image" content="https://rafaelkoo.github.io/img/timetable.jpg">
+<meta name="theme-color" content="#111522">
+<title>Rafael Ngai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&family=Atkinson+Hyperlegible+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: the portfolio is a day on a timetable. A slim timetable bar under the header runs the page:
+   its blocks are the sections, the red line is where you are, and moving a block moves the section. */
+:root{
+  --canvas:#EEF0F3; --sheet:#FFFFFF; --sheet-2:#F7F8FA; --rule:#D7DBE1; --rule-2:#E6E9EE;
+  --ink:#14171C; --ink-2:#3C434D; --ink-3:#5F6773;
+  --bar:#111522; --bar-ink:#F2F4F8; --bar-ink-2:#A9B1C0; --bar-rule:#272D3D;
+  --now:#E5322D; --act:#3B5BFD; --act-ink:#FFFFFF; --ok:#1E8E4F; --warn:#B45309;
+  --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF;
+  --b-ink:#14171C;
+  --font:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Verdana,sans-serif;
+  --mono:'Atkinson Hyperlegible Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --canvas:#0F1218; --sheet:#171B23; --sheet-2:#1C212B; --rule:#2C3340; --rule-2:#252B36;
+  --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
+  --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
+  --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B;
+  --b-ink:#F2F4F8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --canvas:#0F1218; --sheet:#171B23; --sheet-2:#1C212B; --rule:#2C3340; --rule-2:#252B36;
+  --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
+  --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
+  --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B;
+  --b-ink:#F2F4F8; color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--canvas)}
+body{background:var(--canvas);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.55}
+a{color:var(--act);text-underline-offset:3px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--act);outline-offset:2px;border-radius:4px}
+img{max-width:100%;display:block;height:auto}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.08;letter-spacing:-.02em}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- app header (like the timetable's top bar) ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bar)}
+.app{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bar);color:var(--bar-ink);box-shadow:0 1px 0 var(--bar-rule)}
+.app .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;min-height:56px;padding-block:6px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--bar-ink);text-decoration:none;font-weight:800;font-size:17px;min-height:44px}
+.brand small{display:block;font-weight:400;font-size:13px;color:var(--bar-ink-2)}
+.chip{font-family:var(--mono);font-size:13px;color:var(--bar-ink-2);padding:3px 8px;border:1px solid var(--bar-rule);border-radius:4px}
+.app .grow{flex:1 1 auto}
+.seg{display:inline-flex;border:1px solid var(--bar-rule);border-radius:6px;overflow:hidden}
+.seg button{background:none;border:0;color:var(--bar-ink-2);min-height:40px;padding:0 14px;font-size:15px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--act);color:#FFFFFF;font-weight:700}
+.tbtn{background:none;border:1px solid var(--bar-rule);color:var(--bar-ink);border-radius:6px;min-height:40px;padding:0 12px;font-size:15px;cursor:pointer}
+.tbtn:hover,.seg button:hover{color:#FFFFFF}
+
+/* ---------- the timetable bar ---------- */
+.tt{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--apph,56px));z-index:15;background:var(--sheet);border-bottom:1px solid var(--rule);box-shadow:0 6px 18px rgba(10,14,25,.06)}
+.tt .wrap{padding-block:8px}
+.tt-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin-bottom:6px}
+.tt-top p{font-size:14px;color:var(--ink-3)}
+.tt-top .acts{display:flex;gap:6px}
+.lbtn{background:var(--sheet-2);border:1px solid var(--rule);border-radius:6px;min-height:36px;padding:0 12px;font-size:14px;cursor:pointer;color:var(--ink-2)}
+.lbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
+.strip-scroll{overflow-x:auto;scrollbar-width:thin}
+.strip{position:relative;display:grid;grid-template-columns:repeat(10,minmax(92px,1fr));min-width:920px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
+.slot{position:relative;border-left:1px solid var(--rule-2);padding:20px 4px 4px;min-height:58px}
+.slot:first-child{border-left:0}
+.slot .tm{position:absolute;top:3px;left:6px;font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+.slot.target{background:color-mix(in srgb,var(--act) 12%,transparent);outline:2px dashed var(--act);outline-offset:-3px}
+[data-todo]{display:none!important}
+.slot.empty::after{content:"Free period";position:absolute;inset:22px 6px 6px;border:1px dashed var(--rule);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink-3)}
+.blk .d3{font-size:12px;font-weight:700;margin-top:2px}
+.blk.lock[data-id="avail"]{background-image:none;border:1.5px solid var(--ok);cursor:pointer}
+.blk{display:flex;flex-direction:column;justify-content:center;width:100%;min-height:34px;padding:4px 8px;border:1px solid rgba(0,0,0,.12);border-radius:5px;background:var(--c);color:var(--b-ink);font-size:13px;font-weight:700;line-height:1.2;text-align:left;cursor:pointer;touch-action:pan-x;user-select:none;transition:transform .15s,box-shadow .15s}
+.blk:hover{box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.blk .d{display:none;font-weight:400;font-size:12px;margin-top:3px;opacity:.85}
+.blk.here{box-shadow:0 0 0 2px var(--ink)}
+.blk.sel{transform:translateY(-3px);box-shadow:0 0 0 3px var(--act),0 6px 14px rgba(0,0,0,.2)}
+.blk.lock{cursor:not-allowed;font-weight:500;background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(0,0,0,.06) 6px 12px)}
+.blk.clash{animation:clash .5s}
+.blk.moved{animation:moved .6s}
+@keyframes clash{0%,100%{transform:none}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@keyframes moved{0%{box-shadow:0 0 0 4px var(--ok)}100%{box-shadow:0 0 0 0 transparent}}
+.slot.clash-slot{background:color-mix(in srgb,var(--now) 16%,transparent)}
+.tt.open .slot{min-height:92px}
+.tt.open .blk{min-height:66px;justify-content:flex-start}
+.tt.open .blk .d{display:block}
+.now{position:absolute;top:0;bottom:0;width:2px;background:var(--now);left:0;pointer-events:none;transition:left .12s linear}
+.now::before{content:attr(data-t);position:absolute;top:2px;left:4px;font-family:var(--mono);font-size:10px;font-weight:700;color:#FFFFFF;background:var(--now);padding:0 4px;border-radius:3px;white-space:nowrap}
+.msg{min-height:22px;margin-top:6px;font-size:14px;color:var(--ink-2)}
+.msg.bad{color:var(--now);font-weight:700}
+.msg.good{color:var(--ok);font-weight:700}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;opacity:.96;box-shadow:0 18px 36px rgba(0,0,0,.28);will-change:transform}
+.blk.lifted{opacity:.3;transform:scale(.96)}
+.slot.nogo{background:color-mix(in srgb,var(--now) 14%,transparent);outline:2px dashed var(--now);outline-offset:-3px}
+.tt.moving .blk:not(.lock):not(.sel){animation:jiggle .28s ease-in-out infinite alternate}
+.tt.moving .slot:nth-child(odd) .blk{animation-delay:-.14s}
+@keyframes jiggle{from{transform:rotate(-1.2deg)}to{transform:rotate(1.2deg)}}
+.now::after{content:"";position:absolute;bottom:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 60%,transparent);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+.sec-head .t{display:inline-block;transform-origin:50% 50%}
+.sec-body > *,.lunch{transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.wait{opacity:.2;transform:translateY(32px)}
+.mess{display:inline-block;white-space:nowrap}
+.mess i{display:inline-block;font-style:normal;animation:settle .9s cubic-bezier(.3,1.4,.5,1) both;animation-delay:calc(.35s + var(--k) * 55ms)}
+@keyframes settle{0%{transform:translate(var(--x),var(--y)) rotate(var(--r));color:var(--ink-3)}100%{transform:none}}
+.hero .lede,.hero .ctas,.hero .try,.summary{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
+.hero .lede{animation-delay:.25s}.hero .ctas{animation-delay:.35s}.hero .try{animation-delay:.5s}.summary{animation-delay:.6s}
+@keyframes rise{from{opacity:.2;transform:translateY(16px)}to{opacity:1;transform:none}}
+body.dragging,body.dragging *{cursor:grabbing!important}
+
+/* ---------- page ---------- */
+.hero{padding-block:clamp(40px,6vw,72px) clamp(28px,4vw,44px)}
+.hero .k{font-family:var(--mono);font-size:14px;color:var(--ink-3)}
+.hero h1{font-size:clamp(40px,6vw,76px);font-weight:800;letter-spacing:-.04em;margin-top:12px;max-width:14em}
+.hero .lede{font-size:clamp(18px,1.7vw,21px);color:var(--ink-2);max-width:36em;margin-top:18px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border-radius:6px;font-weight:700;text-decoration:none;font-size:16px;cursor:pointer;border:1px solid transparent}
+.btn-act{background:var(--act);color:#FFFFFF}
+.btn-line{border-color:var(--rule);background:var(--sheet);color:var(--ink)}
+.try{margin-top:22px;display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-3)}
+.try b{color:var(--ink)}
+.try i{flex:0 0 auto;width:10px;height:10px;border-radius:2px;background:var(--now)}
+
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-top:28px}
+.summary div{background:var(--sheet);padding:16px 18px}
+.summary b{display:block;font-size:14px;color:var(--ink-3);font-weight:500;margin-bottom:4px}
+.summary span{font-size:16px}
+
+#flow{display:flex;flex-direction:column;gap:20px;padding-bottom:20px}
+.sec{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;scroll-margin-top:calc(var(--apph,56px) + var(--tth,110px) + 16px)}
+.sec-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:14px clamp(18px,3vw,32px);border-bottom:1px solid var(--rule-2)}
+.sw{width:14px;height:14px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.15)}
+.sec-head .t{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.sec-head .st{margin-left:auto;font-size:13px;font-weight:700;color:var(--ok)}
+.sec-head .st.wip{color:var(--warn)}
+.sec-body{padding:clamp(20px,3vw,36px);display:flex;flex-direction:column;gap:24px}
+.sec h2{font-size:clamp(28px,3.4vw,42px);font-weight:800;letter-spacing:-.03em}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:18px 32px}
+.facts h3{font-size:16px;margin-bottom:4px;letter-spacing:0}
+.facts p{color:var(--ink-2);font-size:16px}
+.shot{border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--sheet-2)}
+.cap{font-size:14px;color:var(--ink-3);margin-top:8px}
+.row{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:center}
+.row > *{min-width:0}
+.phone{flex:0 1 240px;margin:0 auto}
+.phone img{border-radius:28px;box-shadow:0 0 0 7px #151821,0 18px 40px rgba(0,0,0,.25)}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px}
+.links a.more{font-weight:700}
+.stack{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.lockbox{display:flex;gap:12px;padding:14px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);font-size:16px;color:var(--ink-2)}
+.lockbox svg{flex:0 0 20px;color:var(--ok);margin-top:3px}
+
+/* developer-only material */
+.dev{border:1px dashed var(--rule);border-radius:6px;padding:16px 18px;background:var(--sheet-2);display:flex;flex-direction:column;gap:10px}
+.dev h3{font-size:15px;letter-spacing:0;display:flex;align-items:center;gap:8px}
+.dev h3::before{content:"</>";font-family:var(--mono);font-size:12px;color:var(--act);border:1px solid var(--act);border-radius:3px;padding:0 4px}
+.dev p,.dev li{font-size:15px;color:var(--ink-2)}
+.dev ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.code{overflow-x:auto;margin:0;padding:12px 14px;background:var(--bar);color:#DCE3F0;border-radius:5px;font-family:var(--mono);font-size:13px;line-height:1.55}
+.code .c{color:#8C97AD}.code .k{color:#9DB4FF}.code .s{color:#B5E8A0}
+body[data-view="recruiter"] .dev{display:none}
+body[data-view="developer"] .rec{display:none}
+
+.lunch{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:14px clamp(18px,3vw,32px);border:1px dashed var(--rule);border-radius:6px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--ink) 4%,transparent) 10px 20px);font-size:16px;color:var(--ink-2)}
+.lunch .t{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.lunch.avail{border:1px solid color-mix(in srgb,var(--ok) 50%,transparent);background:color-mix(in srgb,var(--ok) 9%,var(--sheet));color:var(--ink)}
+
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px}
+.card{border:1px solid var(--rule-2);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--sheet-2)}
+.card h3{font-size:22px}
+.card p{font-size:16px;color:var(--ink-2)}
+.card .phone{flex:none;width:min(55%,200px)}
+.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.steps li{border:1px solid var(--rule-2);border-radius:6px;padding:16px;background:var(--sheet-2)}
+.steps b{display:block;margin-bottom:4px}
+.steps span{font-size:15px;color:var(--ink-2)}
+.small{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule-2)}
+.small li{display:flex;flex-wrap:wrap;gap:4px 24px;padding:12px 0;border-bottom:1px solid var(--rule-2);font-size:16px}
+.small b{flex:0 0 220px}
+.small span{flex:1 1 320px;min-width:0;color:var(--ink-2)}
+.about{display:flex;flex-wrap:wrap;gap:24px 40px}
+.photo{flex:0 1 220px;width:100%;max-width:220px;aspect-ratio:4/5;border:1px dashed var(--ink-3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;color:var(--ink-2);background:var(--sheet-2)}
+.about-copy{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.about-copy p{color:var(--ink-2)}
+.skills{margin:0;border-top:1px solid var(--rule-2)}
+.skills div{display:flex;flex-wrap:wrap;gap:2px 20px;padding:10px 0;border-bottom:1px solid var(--rule-2);font-size:16px}
+.skills dt{flex:0 0 140px;font-weight:700}
+.skills dd{flex:1 1 260px;margin:0;color:var(--ink-2)}
+.mailrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mail{font-family:var(--mono);font-size:17px;padding:10px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);user-select:all}
+.foot{padding-block:28px;font-size:14px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
+@media (max-width:640px){
+  .brand small,.chip,.app .grow{display:none}
+  .app .wrap{min-height:48px;padding-block:4px;gap:6px 10px;flex-wrap:nowrap}
+  .brand{font-size:16px;flex:1 1 auto}
+  .seg button{padding:0 10px;font-size:14px;min-height:38px}
+  .tbtn{min-height:38px;padding:0 10px;font-size:14px}
+  .tt .wrap{padding-block:6px}
+  .tt-top{margin-bottom:4px;justify-content:flex-end}
+  .tt-top p{display:none}
+  .tt.open .tt-top p{display:block}
+  .lbtn{min-height:34px}
+  .slot{min-height:50px;padding-top:18px}
+  .strip{grid-template-columns:repeat(10,minmax(84px,1fr));min-width:840px}
+  .msg{font-size:13px;margin-top:4px}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<header class="app" id="app">
+  <div class="wrap">
+    <a class="brand" href="#top">Rafael Ngai<small>Support Worker (Game Design) · builds the school's systems</small></a>
+    <span class="chip" id="today">Today</span>
+    <span class="grow"></span>
+    <div class="seg" role="group" aria-label="Who is reading">
+      <button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button>
+      <button type="button" data-view="developer" aria-pressed="false">Developer</button>
+    </div>
+    <button type="button" class="tbtn" id="reset">Reset</button>
+  </div>
+</header>
+
+<!-- THE TIMETABLE THAT RUNS THE PAGE -->
+<section class="tt" id="tt" aria-label="Page timetable">
+  <div class="wrap">
+    <div class="tt-top">
+      <p id="ttHint">This page is a school day on my timetable. Click a block to go there, or move one to change the page order.</p>
+      <div class="acts">
+        <button type="button" class="lbtn" id="moveMode" aria-pressed="false">Rearrange</button>
+        <button type="button" class="lbtn" id="openTT" aria-expanded="false">Expand</button>
+      </div>
+    </div>
+    <div class="strip-scroll">
+      <div class="strip" id="strip" role="list"></div>
+    </div>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero">
+      <p class="k">Berkshire, UK</p>
+      <h1>I build the tools that replace <span class="sr">the mess.</span><span class="mess" aria-hidden="true"><i style="--k:0;--x:1px;--y:-41px;--r:10deg">t</i><i style="--k:1;--x:-34px;--y:-51px;--r:28deg">h</i><i style="--k:2;--x:-28px;--y:-14px;--r:34deg">e</i> <i style="--k:4;--x:-33px;--y:4px;--r:-13deg">m</i><i style="--k:5;--x:-36px;--y:-49px;--r:15deg">e</i><i style="--k:6;--x:13px;--y:-52px;--r:-10deg">s</i><i style="--k:7;--x:-29px;--y:10px;--r:14deg">s</i><i style="--k:8;--x:-33px;--y:12px;--r:-25deg">.</i></span></h1>
+      <p class="lede">A timetable trapped in a spreadsheet. Student work scattered across folders. Progress nobody could see. I find what slows people down and build the software that fixes it, with AI writing much of the code and me deciding what it does and testing it before anyone relies on it.</p>
+      <div class="ctas">
+        <a class="btn btn-act" href="timetable-demo/">Try the real timetable ↗</a>
+        <a class="btn btn-line" href="#contact">Contact</a>
+      </div>
+      <p class="try"><i aria-hidden="true"></i><span>The bar above is a small version of my timetable engine. <b>The red line follows your scroll. Drag a block (on a phone, tap Rearrange) and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b></span></p>
+      <div class="summary rec" aria-label="30-second summary">
+        <div><b>Role</b><span>Support Worker (Game Design), building the school's systems in protected time</span></div>
+        <div><b>Shipped</b><span>A timetable platform two school sites run their day on</span></div>
+        <div><b>Building</b><span>A learning tracker for 718 real course units</span></div>
+        <div><b>Contact</b><span>rafaelkoo.uk@gmail.com</span></div>
+      </div>
+    </section>
+
+    <div id="flow">
+
+      <!-- TIMETABLE -->
+      <section class="sec" id="s-tt" style="--c:var(--b-tt)" aria-labelledby="h-tt">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Live · 2 sites</span></div>
+        <div class="sec-body">
+          <h2 id="h-tt">Timetable platform for a two-site school</h2>
+          <div class="shot"><img src="img/timetable.jpg" alt="The timetable editor for a week, with the phone view beside it showing the same day live" width="2000" height="1250" loading="lazy"></div>
+          <div class="facts">
+            <div><h3>The problem</h3><p>The timetable lived in Excel, and I hated reading it there. Finding who was where meant scrolling a spreadsheet.</p></div>
+            <div><h3>What I built</h3><p>An editor for building the week, a published read-only rota, and a front-desk board for arrivals and pick-ups, with breaks, transport and mentoring slots.</p></div>
+            <div><h3>What changed</h3><p>Two sites now run their day from it. It began as one HTML file syncing through shared JSON and is moving to a hosted website with a per-record data store.</p></div>
+          </div>
+          <div class="row">
+            <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:14px">
+              <h3 style="font-size:22px">On the phone, and on the way to every pick-up</h3>
+              <p style="color:var(--ink-2)">Staff on the move see who is where right now and tick breaks. A driver taps a journey and gets each stop with a Google Maps button.</p>
+              <div class="lockbox"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg><p>Pupils' home addresses never travel with the timetable data. The server keeps them apart, hands a run's addresses only to accounts allowed to plan that run, and logs every read.</p></div>
+            </div>
+            <div class="phone"><img src="img/phone-map.jpg" alt="Phone view of a minibus run from home to school, listing each pupil with a Map button" width="780" height="1688" loading="lazy"></div>
+          </div>
+          <div class="dev">
+            <h3>How the address rule works</h3>
+            <p>The server, not the page, decides who gets addresses. A run's addresses go only to the people on that run or an editor allowed to edit it, and the read is logged without the address itself.</p>
+<pre class="code"><span class="c">// abridged from lib/homeaddr.js</span>
+<span class="k">function</span> forBlock(me, q, who) {
+  <span class="k">const</span> s = store.get(<span class="s">'sessions'</span>, q.wk + <span class="s">'|'</span> + q.sid)?.data?.s;
+  <span class="k">const</span> onIt = staffIdOf(me) &amp;&amp; [s.staffId, ...helpersOf(s)].includes(staffIdOf(me));
+  <span class="k">const</span> ed = me.role === <span class="s">'join'</span> || perms.canEditSession(me.role, s);
+  <span class="k">if</span> (!onIt &amp;&amp; !ed) <span class="k">return</span> { status: 403 };   <span class="c">// no address leaves the server</span>
+  store.audit({ who, op: <span class="s">'homeaddr-read'</span>, n: count });  <span class="c">// who read, never what</span>
+  ...
+}</pre>
+            <ul><li>Every record carries an etag, so a save is refused if someone else changed that record first.</li><li>New work goes into a prototype copy and is tested by checklist and automated suites before it reaches the live site.</li></ul>
+          </div>
+          <div class="links"><a class="more" href="timetable-demo/">Open the live demo ↗</a><span class="stack">Vanilla JS · Node.js · per-record document store · test suites · audit log</span></div>
+        </div>
+      </section>
+
+      <!-- TRACKER -->
+      <section class="sec" id="s-tr" style="--c:var(--b-tr)" aria-labelledby="h-tr">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st wip">In progress · demo live</span></div>
+        <div class="sec-body">
+          <h2 id="h-tr">Student Tracker</h2>
+          <div class="facts">
+            <div><h3>The problem</h3><p>Evidence of what students had learned was scattered and untidy, and near-identical coursework had to be done twice for overlapping units.</p></div>
+            <div><h3>What I'm building</h3><p>One platform that links 718 real course units criterion by criterion. Students hand in work per task, staff mark per criterion, and Internal Verifiers check every passed unit.</p></div>
+            <div><h3>What will change</h3><p>Work done for one unit counts towards another, and a student who misses one criterion resubmits only that one.</p></div>
+          </div>
+          <div><div class="shot"><img src="img/tracker-path.jpg" alt="Path view of the Personal Finances unit, showing which units share criteria with it and whether each link is signed off" width="2000" height="1250" loading="lazy"></div><p class="cap">Path view: which units share criteria with Personal Finances, and which links have been signed off.</p></div>
+          <div class="dev">
+            <h3>How the rules work</h3>
+            <p>Every change is a named action. Its rule is a pure function that returns the writes it wants, and the store saves all of them or none. The page loads the same rule files only to grey out buttons.</p>
+<pre class="code"><span class="c">// abridged: every action has the same shape</span>
+register({ name: <span class="s">'markWork'</span>, role: <span class="s">'staff'</span>, run(ctx, input) {
+  <span class="k">if</span> (!teacher &amp;&amp; !mentor) <span class="k">return</span> { error: <span class="s">'Only this unit\'s teachers…'</span> };
+  <span class="k">return</span> { writes, notes: [<span class="s">'Marks saved.'</span>] };
+}});
+
+<span class="c">// lib/store.js: all of it or none of it</span>
+writeMany(ops) {
+  <span class="k">for</span> (<span class="k">const</span> op <span class="k">of</span> ops) <span class="k">if</span> (etagOf(op) !== op.ifMatch) <span class="k">return</span> { conflict: <span class="k">true</span> };
+  ops.forEach(write);
+}</pre>
+            <ul><li>129 automated tests, plain Node, nothing to install.</li><li>Each person's browser only receives the records that person may see.</li><li>Decisions are written down as numbered decision records before the code.</li></ul>
+          </div>
+          <div class="links"><a class="btn btn-act" href="tracker-demo/">Try the tracker demo ↗</a><span style="font-size:15px;color:var(--ink-3)">Made-up people, real AIM course content. Switch roles; it resets.</span></div>
+        </div>
+      </section>
+
+      <!-- FITTRACK + DUNGEON -->
+      <section class="sec" id="s-ft" style="--c:var(--b-ft)" aria-labelledby="h-ft">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Live · open source</span></div>
+        <div class="sec-body">
+          <h2 id="h-ft">FitTrack, and a game on the side</h2>
+          <div class="duo">
+            <article class="card">
+              <span class="stack">PWA · Three.js · no backend</span>
+              <h3>FitTrack</h3>
+              <p>I trained five days a week and guessed at whether I was improving. Now every set is logged against last session, every lift has a chart, and every exercise has an animated 3D demo.</p>
+              <div class="dev"><h3>Under the hood</h3><ul><li>A Three.js mannequin with two-bone IK and 94 keyframed movements across 93 exercises.</li><li>Plain ES modules, no build step; a service worker makes it work offline.</li></ul></div>
+              <div class="links"><a class="more" href="https://rafaelkoo.github.io/GymTrackingApp/" target="_blank" rel="noopener">Open the app ↗</a><a href="https://github.com/rafaelkoo/GymTrackingApp" target="_blank" rel="noopener">Code ↗</a></div>
+              <div class="phone"><img src="img/gym.jpg" alt="Barbell squat on an animated 3D model above a chart of heaviest weight over eight weeks (sample data)" width="780" height="1688" loading="lazy"></div>
+            </article>
+            <article class="card">
+              <span class="stack">TypeScript · Three.js · Supabase</span>
+              <h3>Just a Dungeon</h3>
+              <p>An idle dungeon game for phones that plays itself until you take over, with cloud saves, leaderboards and 2-player co-op.</p>
+              <div class="dev"><h3>Under the hood</h3><ul><li>A fixed 60-steps-a-second simulation kept separate from rendering.</li><li>GitHub Actions builds and deploys it on every push to main.</li></ul></div>
+              <div class="links"><a class="more" href="https://rafaelkoo.github.io/Just-a-Dungeon/" target="_blank" rel="noopener">Play ↗</a><a href="https://github.com/rafaelkoo/Just-a-Dungeon" target="_blank" rel="noopener">Code ↗</a></div>
+              <div class="phone"><img src="img/dungeon.jpg" alt="An archer fighting skeletons in a dungeon on autopilot" width="780" height="1688" loading="lazy"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- LUNCH (locked) -->
+      <div class="lunch" id="s-lunch"><span class="t" data-time></span><b>Lunch.</b><span>Locked on the timetable, like a real break. Good moment to <a href="timetable-demo/">open the timetable demo ↗</a></span></div>
+
+      <!-- TRADING -->
+      <section class="sec" id="s-pt" style="--c:var(--b-pt)" aria-labelledby="h-pt">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Runs daily</span></div>
+        <div class="sec-body">
+          <h2 id="h-pt">Paper-trading engine</h2>
+          <div class="facts">
+            <div><h3>The problem</h3><p>I had trading methods and no honest way to tell which of them worked.</p></div>
+            <div><h3>What I built</h3><p>An automated engine that runs around 20 method variants every day, each on its own paper account, with health checks, a web dashboard and scheduled summaries.</p></div>
+            <div><h3>What changed</h3><p>Every method has its own record, so I compare results instead of impressions. No real money is involved.</p></div>
+          </div>
+          <div class="dev"><h3>Under the hood</h3><ul><li>Python, scheduled jobs and a Telegram bot for summaries.</li><li>A method is only trusted after an independent audit rebuilds its results from the raw trades.</li></ul></div>
+          <p class="lunch" data-todo style="justify-content:center">[DASHBOARD SCREENSHOT + CODE LINK]</p>
+        </div>
+      </section>
+
+      <!-- HOW I WORK -->
+      <section class="sec" id="s-how" style="--c:var(--b-how)" aria-labelledby="h-how">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body">
+          <h2 id="h-how">AI writes code fast. Process makes it trustworthy.</h2>
+          <ol class="steps">
+            <li><b>1 · Interface first</b><span>Mockups and options are agreed before any feature is coded. Big pieces get a written plan.</span></li>
+            <li><b>2 · Prototype, then promote</b><span>New work lands in a prototype copy. It only reaches the live system after it passes testing.</span></li>
+            <li><b>3 · Bug-test by checklist</b><span>A written "do this, should see that" walkthrough plus automated suites run before every release.</span></li>
+            <li><b>4 · Docs in the same session</b><span>Reference, changelog and handover notes are updated with every change, including why each decision was made.</span></li>
+          </ol>
+          <div>
+            <h3 style="font-size:18px;margin-bottom:8px">Smaller things I built along the way</h3>
+            <ul class="small">
+              <li><b>Unity Error Explainer</b><span>Paste a red console error and it explains the cause and the fix in plain words, using an AI model.</span></li>
+              <li><b>Student portfolio engine</b><span>A script generates each student's portfolio site, with their own palette and opening.</span></li>
+              <li><b>Lesson deck tools</b><span>A code pipeline builds my lesson decks, and a sidebar kit lets other teachers fill in boxes instead.</span></li>
+              <li><b>Living Building</b><span>A timetable shown as a 3D building you can scrub through time.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="sec" id="s-ab" style="--c:var(--b-ab)" aria-labelledby="h-ab">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body about">
+          <div class="photo" data-todo>[YOUR PHOTO]</div>
+          <div class="about-copy">
+            <h2 id="h-ab">I like dealing with problems.</h2>
+            <p>I'm a Support Worker (Game Design) at a creative-skills school in Berkshire. Alongside supporting students in sessions and teaching Python and C# in Unity, I design and build the school's systems: the timetable platform both sites run on, and the learning tracker I'm building now. The school gives me protected time each week for that development work. I hold a BSc in Virtual and Augmented Reality (Merit, 2023).</p>
+            <p>This site is set in Atkinson Hyperlegible, a typeface designed for low-vision readers. I use it in the school's own tools too, so they stay easy to read for every student.</p>
+            <dl class="skills">
+              <div><dt>Web</dt><dd>HTML, CSS, vanilla JavaScript, TypeScript, Node.js, Three.js</dd></div>
+              <div><dt>Apps and data</dt><dd>Python, C#, Unity, progressive web apps, JSON and document stores</dd></div>
+              <div data-todo><dt>AI tooling</dt><dd>[YOUR AI TOOLS]</dd></div>
+              <div><dt>Automation</dt><dd>Google Apps Script, pptxgenjs, Telegram bots, scheduled jobs</dd></div>
+              <div><dt>Languages</dt><dd>English, Cantonese</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="sec" id="s-ct" style="--c:var(--b-ct)" aria-labelledby="h-ct">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body" id="contact">
+          <h2 id="h-ct">Got a messy problem? I'd like to hear about it.</h2>
+          <p style="color:var(--ink-2);max-width:36em">I want a developer role where the job is finding what slows people down and building the tool that fixes it. </p>
+          <div class="mailrow"><span class="mail" id="mail">rafaelkoo.uk@gmail.com</span><button type="button" class="btn btn-line" id="copyMail">Copy email</button></div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo" target="_blank" rel="noopener">GitHub ↗</a><span data-todo>LinkedIn [LINK]</span><span data-todo>CV [LINK]</span></div>
+        </div>
+      </section>
+      <div class="lunch avail" id="s-avail" style="--c:var(--b-av)"><span class="t" data-time></span><b>Available <span data-start>[START DATE]</span>.</b><span><span data-todo>[LOCATION PREFERENCE] · </span><a href="#contact">Get in touch</a></span></div>
+    </div>
+
+    <footer class="foot"><p>© 2026 Rafael Ngai</p><p>Designed and built by me, with AI. The timetable bar is a small rebuild of my timetable engine's rules.</p></footer>
+  </div>
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var EASE='cubic-bezier(.2,.8,.2,1)';
+  /* ---------- the mini timetable engine ---------- */
+  /* ===== FILL THESE IN: the 10 dates on the timetable (YYYY-MM-DD) and the date you could start a new job. =====
+     Leave a value as null and the page shows a [DATE] / [START DATE] placeholder instead. */
+  /* ===== FILL THIS IN: the date you could start a new job (YYYY-MM-DD). While it's null the page says "ask me". ===== */
+  var CONFIG={start:null};
+  function fmt(s,ph){if(!s)return ph;var d=new Date(s+'T12:00:00');if(isNaN(d))return ph;return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+  var TIMES=['Period 1','Period 2','Period 3','Lunch','Period 4','Period 5','Period 6','Period 7','Period 8','After school'];
+  var START=CONFIG.start?'from '+fmt(CONFIG.start,''):'to start: ask me';
+  document.querySelectorAll('[data-start]').forEach(function(e){e.textContent=START;});
+  var BLOCKS={
+    tt:{name:'Timetable',d:'Live at 2 sites',c:'--b-tt',sec:'s-tt'},
+    tr:{name:'Student Tracker',d:'718 units, in progress',c:'--b-tr',sec:'s-tr'},
+    lunch:{name:'Lunch',d:'Locked',c:'--b-lunch',sec:'s-lunch',lock:true},
+    avail:{name:'Available',d:'Start date',c:'--b-av',sec:'s-avail',lock:true},
+    ft:{name:'FitTrack + game',d:'Live, open source',c:'--b-ft',sec:'s-ft'},
+    pt:{name:'Trading engine',d:'Runs daily',c:'--b-pt',sec:'s-pt'},
+    how:{name:'How I work',d:'Process + small tools',c:'--b-how',sec:'s-how'},
+    ab:{name:'About',d:'Who I am',c:'--b-ab',sec:'s-ab'},
+    ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'}
+  };
+  var DEFAULT=['tt','tr','ft','lunch','pt','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v1';
+  var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
+  function valid(sl){var ids=sl.filter(Boolean).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl[3]==='lunch'&&sl[9]==='avail';}
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(saved&&Array.isArray(saved.slots)&&saved.slots.length===10&&valid(saved.slots)){S.slots=saved.slots;S.view=saved.view==='developer'?'developer':'recruiter';S.open=!!saved.open;}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+  var strip=document.getElementById('strip'),msg=document.getElementById('msg'),flow=document.getElementById('flow'),tt=document.getElementById('tt');
+  var moveMode=false,selected=null;
+  function say(t,kind){msg.textContent=t;msg.className='msg'+(kind?' '+kind:'');}
+
+  /* FLIP: remember where things were, change the DOM, then slide them from old to new places. */
+  function snap(){
+    var m={b:{},s:{}};
+    strip.querySelectorAll('.blk').forEach(function(e){m.b[e.dataset.id]=e.getBoundingClientRect();});
+    flow.querySelectorAll(':scope > *').forEach(function(e){m.s[e.id]=e.getBoundingClientRect();});
+    return m;
+  }
+  function flip(prev,override){
+    if(RM)return;
+    strip.querySelectorAll('.blk').forEach(function(e){
+      var p=(override&&override[e.dataset.id])||prev.b[e.dataset.id];if(!p)return;var n=e.getBoundingClientRect();
+      var dx=p.left-n.left,dy=p.top-n.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;
+      var big=override&&override[e.dataset.id];
+      e.animate([{transform:'translate('+dx+'px,'+dy+'px)'+(big?' rotate(-4deg) scale(1.06)':''),zIndex:3},{transform:'none',zIndex:3}],{duration:big?380:520,easing:'cubic-bezier(.3,1.35,.5,1)'});
+    });
+    flow.querySelectorAll(':scope > *').forEach(function(e){
+      var p=prev.s[e.id];if(!p)return;var n=e.getBoundingClientRect(),dy=p.top-n.top;if(Math.abs(dy)<1)return;
+      var far=Math.min(Math.abs(dy),2400)*Math.sign(dy);
+      e.animate([{transform:'translateY('+far+'px)'},{transform:'none'}],{duration:700,easing:EASE});
+    });
+  }
+
+  function render(focusId){
+    strip.innerHTML='';
+    S.slots.forEach(function(id,i){
+      var slot=document.createElement('div');slot.className='slot'+(id?'':' empty');slot.dataset.i=i;slot.setAttribute('role','listitem');
+      var tm=document.createElement('span');tm.className='tm';tm.textContent=TIMES[i];slot.appendChild(tm);
+      if(id){
+        var b=BLOCKS[id],el=document.createElement('button');
+        el.type='button';el.className='blk'+(b.lock?' lock':'')+(selected===id?' sel':'');el.dataset.id=id;
+        el.style.setProperty('--c','var('+b.c+')');
+        el.innerHTML='<span>'+b.name+'</span><span class="d">'+b.d+'</span>'+(id==='avail'?'<span class="d3">'+START+'</span>':'');
+        el.setAttribute('aria-label',b.name+', '+TIMES[i]+(b.lock?', locked':'. Enter to go there. Arrow keys move it.'));
+        slot.appendChild(el);
+      }else{slot.setAttribute('aria-label',TIMES[i]+', free period');}
+      strip.appendChild(slot);
+    });
+    var now=document.createElement('div');now.className='now';now.id='now';now.setAttribute('aria-hidden','true');strip.appendChild(now);
+    S.slots.forEach(function(id,i){if(!id)return;var sec=document.getElementById(BLOCKS[id].sec);flow.appendChild(sec);var t=sec.querySelector('[data-time]');if(t)t.textContent=TIMES[i];});
+    if(focusId){var f=strip.querySelector('[data-id="'+focusId+'"]');if(f)f.focus({preventScroll:true});}
+    updateNow(true);
+  }
+
+  function lockMsg(id){return id==='avail'?'My start date is locked to the end of the day.':'Lunch is locked. Breaks stay put, just like on the real timetable.';}
+  function idx(id){return S.slots.indexOf(id);}
+  function tryMove(id,to,fromRect){
+    var from=idx(id),b=BLOCKS[id];
+    if(to<0||to>=S.slots.length||to===from){if(fromRect)bounceBack(id,fromRect);return;}
+    if(b.lock){flash(id);say(lockMsg(id),'bad');return;}
+    var other=S.slots[to];
+    if(other&&BLOCKS[other].lock){if(fromRect)bounceBack(id,fromRect);flash(other,to);say('Clash: '+(other==='lunch'?'Lunch is locked':'the last slot is my start date, and it is locked')+'. '+b.name+' stays in '+TIMES[from]+'.','bad');return;}
+    var prev=snap(),ov={};if(fromRect)ov[id]=fromRect;
+    S.slots[to]=id;S.slots[from]=other||null;
+    save();render(id);flip(prev,ov);
+    var sec=document.getElementById(b.sec);
+    if(!RM){sec.animate([{boxShadow:'0 0 0 4px var(--c)'},{boxShadow:'0 0 0 0 transparent'}],{duration:1400,easing:'ease-out',delay:450});
+      var t=sec.querySelector('[data-time]');if(t)t.animate([{transform:'rotateX(90deg)'},{transform:'rotateX(-15deg)'},{transform:'none'}],{duration:520,delay:300,easing:'ease-out'});}
+    say(b.name+' moved to '+TIMES[to]+(other?', swapped with '+BLOCKS[other].name:'')+'. The page below slid into the new order.','good');
+  }
+  function bounceBack(id,fromRect){
+    if(RM)return;var e=strip.querySelector('[data-id="'+id+'"]');if(!e)return;var n=e.getBoundingClientRect();
+    e.animate([{transform:'translate('+(fromRect.left-n.left)+'px,'+(fromRect.top-n.top)+'px) rotate(6deg)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  }
+  function flash(id,slotI){
+    var el=strip.querySelector('[data-id="'+id+'"]');if(el){el.classList.remove('clash');void el.offsetWidth;el.classList.add('clash');}
+    var s=strip.children[slotI!=null?slotI:idx(id)];if(s){s.classList.remove('clash-slot');void s.offsetWidth;s.classList.add('clash-slot');setTimeout(function(){s.classList.remove('clash-slot');},900);}
+    var now=document.getElementById('now');if(now&&!RM)now.animate([{boxShadow:'0 0 0 0 var(--now)'},{boxShadow:'0 0 0 6px transparent'}],{duration:600,iterations:2});
+  }
+  function go(id){var sec=document.getElementById(BLOCKS[id].sec);if(sec)sec.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});}
+
+  strip.addEventListener('keydown',function(e){
+    var el=e.target.closest('.blk');if(!el)return;var id=el.dataset.id;
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();tryMove(id,idx(id)+(e.key==='ArrowLeft'?-1:1));}
+  });
+
+  /* pointer: drag with a mouse any time; with touch, use Rearrange (tap a block, then tap a slot) */
+  var drag=null;
+  strip.addEventListener('pointerdown',function(e){
+    var el=e.target.closest('.blk');if(!el||e.button>0)return;
+    if(e.pointerType!=='mouse'&&!moveMode)return;
+    drag={id:el.dataset.id,x:e.clientX,y:e.clientY,lx:e.clientX,el:el,on:false,pid:e.pointerId,rot:0};
+  });
+  addEventListener('pointermove',function(e){
+    if(!drag||e.pointerId!==drag.pid)return;
+    if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6){
+      drag.on=true;document.body.classList.add('dragging');
+      var r=drag.el.getBoundingClientRect();drag.ox=e.clientX-r.left;drag.oy=e.clientY-r.top;
+      var g=drag.el.cloneNode(true);g.className='blk ghost';g.style.width=r.width+'px';document.body.appendChild(g);drag.g=g;
+      drag.el.classList.add('lifted');
+    }
+    if(drag.on){
+      e.preventDefault();
+      var v=e.clientX-drag.lx;drag.lx=e.clientX;drag.rot+=((Math.max(-14,Math.min(14,v*1.4)))-drag.rot)*.3;
+      drag.g.style.transform='translate('+(e.clientX-drag.ox)+'px,'+(e.clientY-drag.oy)+'px) rotate('+drag.rot.toFixed(1)+'deg) scale(1.06)';
+      strip.querySelectorAll('.slot.target,.slot.nogo').forEach(function(s){s.classList.remove('target','nogo');});
+      var s=slotAt(e.clientX,e.clientY);if(s){var occ=S.slots[+s.dataset.i];s.classList.add(occ&&BLOCKS[occ].lock?'nogo':'target');}
+    }
+  },{passive:false});
+  addEventListener('pointerup',function(e){
+    if(!drag||e.pointerId!==drag.pid)return;
+    var d=drag;drag=null;document.body.classList.remove('dragging');
+    strip.querySelectorAll('.slot.target,.slot.nogo').forEach(function(s){s.classList.remove('target','nogo');});
+    if(d.el)d.el.classList.remove('lifted');
+    if(d.on){
+      var gr=d.g.getBoundingClientRect();d.g.remove();
+      var s=slotAt(e.clientX,e.clientY);
+      if(s)tryMove(d.id,+s.dataset.i,gr);else bounceBack(d.id,gr);
+      d.el.dataset.justDragged='1';setTimeout(function(){if(d.el)delete d.el.dataset.justDragged;},0);
+    }
+  });
+  function slotAt(x,y){var g=document.elementsFromPoint(x,y);for(var i=0;i<g.length;i++){var s=g[i].closest&&g[i].closest('.slot');if(s&&strip.contains(s))return s;}return null;}
+
+  strip.addEventListener('click',function(e){
+    var el=e.target.closest('.blk'),slot=e.target.closest('.slot');
+    if(el&&el.dataset.justDragged)return;
+    if(moveMode){
+      if(el&&!selected){if(BLOCKS[el.dataset.id].lock){flash(el.dataset.id);say(lockMsg(el.dataset.id)+' Pick another block.','bad');return;}selected=el.dataset.id;render(selected);say('Now tap the period you want '+BLOCKS[selected].name+' at.');return;}
+      if(selected&&slot){var s=selected;selected=null;if(+slot.dataset.i===idx(s)){render(s);say('Cancelled.');return;}var before=S.slots.join();tryMove(s,+slot.dataset.i);if(S.slots.join()===before)render();return;}
+      return;
+    }
+    if(el)go(el.dataset.id);
+  });
+
+  var mm=document.getElementById('moveMode');
+  mm.addEventListener('click',function(){moveMode=!moveMode;selected=null;mm.setAttribute('aria-pressed',moveMode);tt.classList.toggle('moving',moveMode);render();
+    say(moveMode?'Rearrange is on: tap a block, then tap the time to move it to.':'Rearrange is off. Click a block to go there.');});
+  var ob=document.getElementById('openTT');
+  function setOpen(anim){
+    var prev=anim&&!RM?snap():null;
+    tt.classList.toggle('open',S.open);ob.setAttribute('aria-expanded',S.open);ob.textContent=S.open?'Collapse':'Expand';measure();
+    if(prev)strip.querySelectorAll('.blk .d').forEach(function(d,i){if(S.open)d.animate([{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}],{duration:300,delay:i*30,easing:EASE,fill:'backwards'});});
+  }
+  ob.addEventListener('click',function(){S.open=!S.open;save();setOpen(true);});
+
+  /* ---------- the red "now" line follows your scroll ---------- */
+  function updateNow(instant){
+    var now=document.getElementById('now');if(!now)return;
+    var line=(document.getElementById('app').offsetHeight+tt.offsetHeight)+60;
+    var order=S.slots.map(function(id,i){return id?{id:id,i:i,el:document.getElementById(BLOCKS[id].sec)}:null;}).filter(Boolean);
+    var pos=0,here=null;
+    var top0=order[0].el.getBoundingClientRect().top;
+    if(top0>line){pos=Math.max(0,order[0].i-.0001);}
+    else{pos=S.slots.length;
+      for(var k=0;k<order.length;k++){var r=order[k].el.getBoundingClientRect();
+        if(r.top<=line&&r.bottom>line){pos=order[k].i+Math.min(1,Math.max(0,(line-r.top)/r.height));here=order[k].id;break;}
+        if(r.top>line){pos=order[k].i;break;}}}
+    var w=strip.scrollWidth,cols=S.slots.length;
+    if(instant)now.style.transition='none';
+    now.style.left=Math.min(w-2,Math.max(0,pos/cols*w))+'px';
+    if(instant){void now.offsetWidth;now.style.transition='';}
+    now.dataset.t=TIMES[Math.min(cols-1,Math.max(0,Math.floor(pos)))];
+    strip.querySelectorAll('.blk').forEach(function(b){b.classList.toggle('here',b.dataset.id===here);});
+    var sc=strip.parentElement;if(sc.scrollWidth>sc.clientWidth&&!drag){var x=pos/cols*w;if(x<sc.scrollLeft+20||x>sc.scrollLeft+sc.clientWidth-40)sc.scrollLeft=Math.max(0,x-sc.clientWidth/2);}
+  }
+  var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){tick=false;updateNow();});}},{passive:true});
+  addEventListener('resize',function(){measure();updateNow(true);});
+  function measure(){document.documentElement.style.setProperty('--apph',document.getElementById('app').offsetHeight+'px');document.documentElement.style.setProperty('--tth',tt.offsetHeight+'px');}
+
+  /* ---------- Recruiter / Developer view: the extra boxes unfold ---------- */
+  var segBtns=document.querySelectorAll('.seg button');
+  function setView(v,announce){
+    var was=document.body.dataset.view;S.view=v;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===v);});save();
+    var devs=[].slice.call(document.querySelectorAll('.dev')),recs=[].slice.call(document.querySelectorAll('.rec'));
+    if(!announce||RM||was===v){document.body.dataset.view=v;}
+    else if(v==='developer'){
+      fold(recs,false,function(){document.body.dataset.view=v;fold(devs,true);});
+    }else{
+      fold(devs,false,function(){document.body.dataset.view=v;fold(recs,true);});
+    }
+    if(announce)say(v==='developer'?'Developer view: code, tests and decisions are now open under each project.':'Recruiter view: the short version, with the summary at the top.','good');
+  }
+  function fold(els,open,done){
+    var vis=els.filter(function(e){return e.offsetParent!==null||open;});
+    if(!vis.length){if(done)done();return;}
+    var left=vis.length;
+    vis.forEach(function(e,i){
+      var h=e.offsetHeight||e.scrollHeight;
+      var a=e.animate(open?[{height:'0px',opacity:0,transform:'translateY(-8px)'},{height:h+'px',opacity:1,transform:'none'}]:[{height:h+'px',opacity:1},{height:'0px',opacity:0}],{duration:open?420:260,delay:open?Math.min(i,6)*50:0,easing:EASE,fill:'backwards'});
+      e.style.overflow='hidden';
+      a.onfinish=function(){e.style.overflow='';if(--left===0&&done)done();};
+    });
+  }
+  segBtns.forEach(function(b){b.addEventListener('click',function(){setView(b.dataset.view,true);});});
+
+  document.getElementById('reset').addEventListener('click',function(){
+    var prev=snap();S={slots:DEFAULT.slice(),view:S.view,open:false};moveMode=false;selected=null;mm.setAttribute('aria-pressed','false');tt.classList.remove('moving');
+    setOpen();render();flip(prev);setView('recruiter',true);save();say('Back to the original timetable.','good');});
+
+  /* ---------- copy email ---------- */
+  var cb=document.getElementById('copyMail');
+  cb.addEventListener('click',function(){
+    var done=function(){cb.textContent='Copied';setTimeout(function(){cb.textContent='Copy email';},1800);};
+    var sel=function(){var r=document.createRange();r.selectNodeContents(document.getElementById('mail'));var s=getSelection();s.removeAllRanges();s.addRange(r);cb.textContent='Selected: press Ctrl+C';};
+    try{navigator.clipboard.writeText('rafaelkoo.uk@gmail.com').then(done,sel);}catch(e){sel();}
+  });
+
+  /* ---------- start: blocks drop into their slots, the red line sweeps to where you are ---------- */
+  var d=new Date();document.getElementById('today').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  setView(S.view);setOpen();render();measure();
+  if(!RM){
+    strip.querySelectorAll('.slot').forEach(function(s,i){
+      var b=s.querySelector('.blk');
+      if(b)b.animate([{transform:'translateY(-26px) rotate('+((i%2?1:-1)*7)+'deg)',opacity:.15},{transform:'translateY(3px)',opacity:1,offset:.7},{transform:'none',opacity:1}],{duration:620,delay:150+i*70,easing:EASE,fill:'backwards'});
+    });
+    var now=document.getElementById('now');now.style.transition='none';now.style.left='0px';void now.offsetWidth;
+    setTimeout(function(){now.style.transition='left 1.1s cubic-bezier(.2,.8,.2,1)';updateNow();setTimeout(function(){now.style.transition='';},1200);},900);
+  }else updateNow(true);
+
+  /* sections below the fold rise in as they reach you (everything is readable without this) */
+  if(!RM&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.remove('wait');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.sec-body > *, .lunch').forEach(function(el){
+      if(el.getBoundingClientRect().top>innerHeight){el.classList.add('wait');io.observe(el);}
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
