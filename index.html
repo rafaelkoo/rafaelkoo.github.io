@@ -233,13 +233,26 @@ body[data-view="developer"] .rec{display:none}
 body.phone-on main .wrap,body.phone-on .tt .wrap{max-width:none;margin-right:440px;margin-left:max(16px,calc((100vw - 440px - 1160px) / 2))}
 body.phone-on .tt .wrap{margin-right:24px}
 body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
-.mnav,.toast,.tip-phone{display:none}
+.mnav,.toast,.tip-phone,.daybtn{display:none}
+.daybtn{flex:0 0 58px;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--rule);border-radius:8px;background:var(--bar);color:var(--bar-ink);font-size:11px;font-weight:700;cursor:pointer}
 .sheet[hidden],.scrim[hidden]{display:none}
 @media (max-width:700px){
-  .tt{display:none}
+  .tt{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:25;border-bottom:0;border-top:1px solid var(--rule);box-shadow:0 -8px 24px rgba(10,14,25,.12);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tt .wrap{padding-block:6px 8px}
+  .tt-top,.tt .msg{display:none}
+  .strip-row{display:flex;align-items:stretch;gap:8px}
+  .strip-row .strip-scroll{flex:1 1 auto;min-width:0;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 14px),transparent 100%)}
+  .strip-row .strip-scroll::-webkit-scrollbar{display:none}
+  .tt .strip{grid-template-columns:repeat(11,minmax(78px,1fr));min-width:858px}
+  .tt .slot{min-height:48px;padding:15px 3px 3px}
+  .tt .slot .tm{font-size:9.5px;top:2px;left:5px}
+  .tt .blk{min-height:28px;padding:3px 7px;font-size:12px}
+  .tt .blk .d,.tt .blk .d3{display:none}
+  .tt .slot.empty::after{inset:17px 4px 4px;font-size:11px}
+  .daybtn{display:flex}
   .app .seg,#reset,#phoneBtn{display:none!important}
   .tip-desk{display:none}.tip-phone{display:inline}
-  main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  main{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
   .hero{padding-block:28px 20px}
   .hero h1{font-size:clamp(36px,10.5vw,48px)}
   .hero .lede{font-size:17px}
@@ -259,13 +272,13 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
   .card{padding:16px}
   .tl .when{flex-basis:100%}
   .lunch{border-radius:14px;padding:12px 16px;font-size:15px}
-  .mnav{display:block;position:fixed;left:0;right:0;bottom:0;z-index:25;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));pointer-events:none}
+  .mnav{display:none!important;position:fixed;left:0;right:0;bottom:0;z-index:25;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));pointer-events:none}
   .pill{pointer-events:auto;width:100%;display:flex;align-items:center;gap:10px;min-height:54px;padding:0 18px;border-radius:999px;background:var(--bar);color:var(--bar-ink);border:1px solid var(--bar-rule);box-shadow:0 12px 32px rgba(10,14,25,.35);cursor:pointer;text-align:left}
   .pill .dot{flex:0 0 10px;width:10px;height:10px;border-radius:50%;background:var(--now);animation:pulse 1.8s ease-out infinite}
   .pill .pt{font-family:var(--mono);font-size:12px;color:var(--bar-ink-2);white-space:nowrap}
   .pill .pn{flex:1 1 auto;min-width:0;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pill .pc{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--bar-ink-2)}
-  .toast{display:block;position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:26;max-width:calc(100% - 32px);transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--ink);color:var(--canvas);padding:10px 14px;border-radius:10px;font-size:14px;line-height:1.35;transition:opacity .25s,transform .25s}
+  .toast{display:block;position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:26;max-width:calc(100% - 32px);transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--ink);color:var(--canvas);padding:10px 14px;border-radius:10px;font-size:14px;line-height:1.35;transition:opacity .25s,transform .25s}
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .toast.bad{background:var(--now);color:#FFFFFF}
 }
@@ -354,8 +367,12 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
         <button type="button" class="lbtn reset2" id="reset2">Reset</button>
       </div>
     </div>
-    <div class="strip-scroll">
-      <div class="strip" id="strip" role="list"></div>
+    <div class="strip-row">
+      <div class="strip-scroll">
+        <div class="strip" id="strip" role="list"></div>
+      </div>
+      <button type="button" class="daybtn" id="dayBtn" aria-haspopup="dialog" aria-controls="sheet" aria-label="My day: rearrange, switch view or reset">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg><span>My day</span></button>
     </div>
     <p class="msg" id="msg" role="status" aria-live="polite"></p>
   </div>
@@ -386,7 +403,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
         <a class="btn btn-act" href="timetable-demo/">Try the real timetable ↗</a>
         <a class="btn btn-line" href="#contact">Contact</a>
       </div>
-      <p class="try"><i aria-hidden="true"></i><span>This page runs on a small version of my timetable engine. <b class="tip-desk">The red line follows your scroll. Drag a block and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b><b class="tip-phone">The bar at the bottom follows your scroll. Tap it to see my day, jump around, or rearrange the page. Lunch is locked.</b></span></p>
+      <p class="try"><i aria-hidden="true"></i><span>This page runs on a small version of my timetable engine. <b class="tip-desk">The red line follows your scroll. Drag a block and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b><b class="tip-phone">The timetable at the bottom is the menu: the red line follows your scroll and tapping a block jumps there. Tap My day to rearrange the page. Lunch is locked.</b></span></p>
       <div class="summary rec" aria-label="30-second summary">
         <div><b>Role</b><span>Support Worker (Game Design), building the school's systems in protected time</span></div>
         <div><b>Shipped</b><span>A timetable platform two school sites run their day on, used by about 100 people</span></div>
@@ -789,7 +806,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   /* ---------- the red "now" line follows your scroll ---------- */
   function updateNow(instant){
     var now=document.getElementById('now');if(!now)return;
-    var line=(document.getElementById('app').offsetHeight+tt.offsetHeight)+60;
+    var line=(document.getElementById('app').offsetHeight+(isPhone()?0:tt.offsetHeight))+60;
     var order=S.slots.map(function(id,i){return id?{id:id,i:i,el:document.getElementById(BLOCKS[id].sec)}:null;}).filter(Boolean);
     var pos=0,here=null;
     var top0=order[0].el.getBoundingClientRect().top;
@@ -812,7 +829,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   }
   var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){tick=false;updateNow();});}},{passive:true});
   addEventListener('resize',function(){measure();updateNow(true);});
-  function measure(){document.documentElement.style.setProperty('--apph',document.getElementById('app').offsetHeight+'px');document.documentElement.style.setProperty('--tth',tt.offsetHeight+'px');}
+  function measure(){document.documentElement.style.setProperty('--apph',document.getElementById('app').offsetHeight+'px');document.documentElement.style.setProperty('--tth',(isPhone()?0:tt.offsetHeight)+'px');}
 
   /* ---------- Recruiter / Developer view: the extra boxes unfold ---------- */
   var segBtns=document.querySelectorAll('.seg button,.seg2 button');
@@ -931,6 +948,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     sheet.animate([{transform:'none'},{transform:'translateY(100%)'}],{duration:240,easing:'ease-in'}).onfinish=fin;scrim.animate([{opacity:1},{opacity:0}],{duration:240});
   }
   pill.addEventListener('click',openSheet);
+  document.getElementById('dayBtn').addEventListener('click',openSheet);
   document.getElementById('sheetClose').addEventListener('click',function(){closeSheet();});
   scrim.addEventListener('click',function(){closeSheet();});
   addEventListener('keydown',function(e){if(e.key==='Escape'&&!sheet.hidden)closeSheet();});
