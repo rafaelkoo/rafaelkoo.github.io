@@ -233,6 +233,71 @@ body[data-view="developer"] .rec{display:none}
 body.phone-on main .wrap,body.phone-on .tt .wrap{max-width:none;margin-right:440px;margin-left:max(16px,calc((100vw - 440px - 1160px) / 2))}
 body.phone-on .tt .wrap{margin-right:24px}
 body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
+.mnav,.toast,.tip-phone{display:none}
+.sheet[hidden],.scrim[hidden]{display:none}
+@media (max-width:700px){
+  .tt{display:none}
+  .app .seg,#reset,#phoneBtn{display:none!important}
+  .tip-desk{display:none}.tip-phone{display:inline}
+  main{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  .hero{padding-block:28px 20px}
+  .hero h1{font-size:clamp(36px,10.5vw,48px)}
+  .hero .lede{font-size:17px}
+  .hero .ctas .btn{flex:1 1 auto;justify-content:center}
+  .summary{grid-template-columns:1fr 1fr}
+  .summary div{padding:12px 14px}
+  .summary span{font-size:15px}
+  #flow{gap:14px}
+  .sec{border-radius:14px}
+  .sec-head{padding:12px 16px}
+  .sec-body{padding:18px 16px 22px;gap:18px}
+  .sec h2{font-size:28px}
+  .shot{margin-inline:-16px;border-radius:0;border-inline:0}
+  .facts{gap:14px}
+  .phone{flex-basis:200px;max-width:220px}
+  .duo{gap:14px}
+  .card{padding:16px}
+  .tl .when{flex-basis:100%}
+  .lunch{border-radius:14px;padding:12px 16px;font-size:15px}
+  .mnav{display:block;position:fixed;left:0;right:0;bottom:0;z-index:25;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));pointer-events:none}
+  .pill{pointer-events:auto;width:100%;display:flex;align-items:center;gap:10px;min-height:54px;padding:0 18px;border-radius:999px;background:var(--bar);color:var(--bar-ink);border:1px solid var(--bar-rule);box-shadow:0 12px 32px rgba(10,14,25,.35);cursor:pointer;text-align:left}
+  .pill .dot{flex:0 0 10px;width:10px;height:10px;border-radius:50%;background:var(--now);animation:pulse 1.8s ease-out infinite}
+  .pill .pt{font-family:var(--mono);font-size:12px;color:var(--bar-ink-2);white-space:nowrap}
+  .pill .pn{flex:1 1 auto;min-width:0;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pill .pc{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--bar-ink-2)}
+  .toast{display:block;position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));z-index:26;max-width:calc(100% - 32px);transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--ink);color:var(--canvas);padding:10px 14px;border-radius:10px;font-size:14px;line-height:1.35;transition:opacity .25s,transform .25s}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.bad{background:var(--now);color:#FFFFFF}
+}
+.scrim{position:fixed;inset:0;z-index:39;background:rgba(8,10,16,.5)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:88vh;max-height:88svh;overflow:auto;overscroll-behavior:contain;background:var(--sheet);color:var(--ink);border-radius:20px 20px 0 0;padding:6px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -12px 40px rgba(10,14,25,.3)}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--rule);margin:4px auto 10px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sheet-head h2{font-size:22px}
+.x{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--sheet-2);color:var(--ink);cursor:pointer}
+.sheet-hint{font-size:14px;color:var(--ink-3);margin:6px 0 12px}
+.seg2{display:flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.seg2 button{flex:1;min-height:44px;border:0;background:var(--sheet-2);color:var(--ink-2);font-size:15px;cursor:pointer}
+.seg2 button[aria-pressed="true"]{background:var(--act);color:#FFFFFF;font-weight:700}
+.day{margin:0;padding:0;list-style:none;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.day li+li{border-top:1px solid var(--rule-2)}
+.drow2{display:grid;grid-template-columns:92px 12px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:54px;padding:8px 14px;border:0;background:var(--sheet);color:var(--ink);text-align:left;cursor:pointer}
+.drow2 .tm2{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.drow2 .sw2{width:12px;height:30px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.12)}
+.drow2 .nm2{font-weight:700;font-size:16px;line-height:1.2}
+.drow2 .nm2 small{display:block;font-weight:400;font-size:13px;color:var(--ink-3)}
+.drow2 .bd{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--now);color:#FFFFFF}
+.drow2 .bd.lk{background:var(--sheet-2);color:var(--ink-3);border:1px solid var(--rule)}
+.drow2.here{background:color-mix(in srgb,var(--now) 7%,var(--sheet))}
+.drow2.free .nm2{font-weight:400;color:var(--ink-3)}
+.drow2.free .sw2{background:none;border:1px dashed var(--rule)}
+.drow2.locked .sw2{background-image:repeating-linear-gradient(135deg,transparent 0 3px,rgba(0,0,0,.12) 3px 6px)}
+.drow2.sel{background:color-mix(in srgb,var(--act) 12%,var(--sheet));box-shadow:inset 3px 0 0 var(--act)}
+.sheet.moving .drow2:not(.locked) .sw2{animation:jiggle .28s ease-in-out infinite alternate}
+.sheet-msg{min-height:20px;margin:10px 2px;font-size:14px;color:var(--ink-2)}
+.sheet-msg.bad{color:var(--now);font-weight:700}.sheet-msg.good{color:var(--ok);font-weight:700}
+.sheet-acts{display:flex;gap:8px}
+.sheet-acts .lbtn{flex:1;min-height:44px;font-size:15px}
 @media (max-width:640px){
   .brand small,.chip,.app .grow{display:none}
   .app .wrap{min-height:48px;padding-block:4px;gap:6px 10px;flex-wrap:nowrap}
@@ -296,6 +361,20 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
   </div>
 </section>
 
+<div class="mnav" id="mnav"><button type="button" class="pill" id="pill" aria-haspopup="dialog" aria-controls="sheet"><i class="dot" aria-hidden="true"></i><span class="pt" id="pillTime">Registration</span><span class="pn" id="pillName">Timetable</span><span class="pc">My day <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"></path></svg></span></button></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+<p class="sr" id="live2" role="status" aria-live="polite"></p>
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="grab" aria-hidden="true"></div>
+  <div class="sheet-head"><h2 id="sheetTitle">My school day</h2><button type="button" class="x" id="sheetClose" aria-label="Close">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+  <p class="sheet-hint" id="sheetHint">This page runs on my timetable. Tap a period to go there.</p>
+  <div class="seg2" role="group" aria-label="Who is reading"><button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button><button type="button" data-view="developer" aria-pressed="false">Developer</button></div>
+  <ol class="day" id="day"></ol>
+  <p class="sheet-msg" id="sheetMsg" role="status" aria-live="polite"></p>
+  <div class="sheet-acts"><button type="button" class="lbtn" id="mMove" aria-pressed="false">Rearrange</button><button type="button" class="lbtn" id="mReset">Reset</button></div>
+</section>
 <aside class="phonewrap" id="phoneWrap" hidden aria-label="Phone view of this page"><div class="phonebody"><iframe id="phoneFrame" title="This portfolio at phone size" loading="lazy"></iframe></div><p class="phonecap">Phone view · same page, live. Move a block on either side.</p></aside>
 <main id="top"><span id="main" tabindex="-1"></span>
   <div class="wrap">
@@ -307,7 +386,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
         <a class="btn btn-act" href="timetable-demo/">Try the real timetable ↗</a>
         <a class="btn btn-line" href="#contact">Contact</a>
       </div>
-      <p class="try"><i aria-hidden="true"></i><span>The bar above is a small version of my timetable engine. <b>The red line follows your scroll. Drag a block (on a phone, tap Rearrange) and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b></span></p>
+      <p class="try"><i aria-hidden="true"></i><span>This page runs on a small version of my timetable engine. <b class="tip-desk">The red line follows your scroll. Drag a block and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b><b class="tip-phone">The bar at the bottom follows your scroll. Tap it to see my day, jump around, or rearrange the page. Lunch is locked.</b></span></p>
       <div class="summary rec" aria-label="30-second summary">
         <div><b>Role</b><span>Support Worker (Game Design), building the school's systems in protected time</span></div>
         <div><b>Shipped</b><span>A timetable platform two school sites run their day on, used by about 100 people</span></div>
@@ -414,21 +493,6 @@ writeMany(ops) {
 
       <!-- LUNCH (locked) -->
       <div class="lunch" id="s-lunch"><span class="t" data-time></span><b>Lunch.</b><span>Locked on the timetable, like a real break. Good moment to <a href="timetable-demo/">open the timetable demo ↗</a></span></div>
-
-      <!-- TRADING -->
-      <section class="sec" id="s-pt" style="--c:var(--b-pt)" aria-labelledby="h-pt">
-        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Runs daily</span></div>
-        <div class="sec-body">
-          <h2 id="h-pt">Paper-trading engine</h2>
-          <div class="facts">
-            <div><h3>The problem</h3><p>I had trading methods and no honest way to tell which of them worked.</p></div>
-            <div><h3>What I built</h3><p>An automated engine that runs around 20 method variants every day, each on its own paper account, with health checks, a web dashboard and scheduled summaries.</p></div>
-            <div><h3>What changed</h3><p>Every method has its own record, so I compare results instead of impressions. No real money is involved.</p></div>
-          </div>
-          <div class="dev"><h3>Under the hood</h3><ul><li>Python, scheduled jobs and a Telegram bot for summaries.</li><li>A method is only trusted after an independent audit rebuilds its results from the raw trades.</li></ul></div>
-          <p class="lunch" data-todo style="justify-content:center">[DASHBOARD SCREENSHOT + CODE LINK]</p>
-        </div>
-      </section>
 
       <!-- EXPERIENCE -->
       <section class="sec" id="s-ex" style="--c:var(--b-ex)" aria-labelledby="h-ex">
@@ -555,15 +619,14 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     lunch:{name:'Lunch',d:'Locked',c:'--b-lunch',sec:'s-lunch',lock:true},
     avail:{name:'Available',d:'Start date',c:'--b-av',sec:'s-avail',lock:true},
     ft:{name:'FitTrack + game',d:'Live, open source',c:'--b-ft',sec:'s-ft'},
-    pt:{name:'Trading engine',d:'Runs daily',c:'--b-pt',sec:'s-pt'},
     how:{name:'How I work',d:'Process + small tools',c:'--b-how',sec:'s-how'},
     ab:{name:'About',d:'Who I am',c:'--b-ab',sec:'s-ab'},
     ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'},
     ex:{name:'Experience',d:'Since May 2025',c:'--b-ex',sec:'s-ex'},
     hire:{name:'Interview with you',d:'Booked by you',c:'--b-hi',sec:'s-hire'}
   };
-  var DEFAULT=['tt','tr','ft','pt','lunch','ex','how','ab','ct',null,'avail'];
-  var KEY='rn-portfolio-v2';
+  var DEFAULT=['tt','tr','ft',null,'lunch','ex','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v3';
   var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
   function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[4]==='lunch'&&sl[10]==='avail';}
   try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
@@ -572,13 +635,22 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
 
   var strip=document.getElementById('strip'),msg=document.getElementById('msg'),flow=document.getElementById('flow'),tt=document.getElementById('tt');
   var moveMode=false,selected=null;
-  function say(t,kind){msg.textContent=t;msg.className='msg'+(kind?' '+kind:'');}
+  var PH=matchMedia('(max-width: 700px)');
+  function isPhone(){return PH.matches;}
+  var toastT;
+  function say(t,kind){msg.textContent=t;msg.className='msg'+(kind?' '+kind:'');
+    var sm=document.getElementById('sheetMsg');if(sm){sm.textContent=t;sm.className='sheet-msg'+(kind?' '+kind:'');}
+    var to=document.getElementById('toast');
+    if(to&&isPhone()&&document.getElementById('sheet').hidden){to.textContent=t;to.className='toast show'+(kind==='bad'?' bad':'');clearTimeout(toastT);toastT=setTimeout(function(){to.className='toast'+(kind==='bad'?' bad':'');},2800);}
+    var live=document.getElementById('live2');if(live){live.textContent='';setTimeout(function(){live.textContent=t;},20);}
+  }
 
   /* FLIP: remember where things were, change the DOM, then slide them from old to new places. */
   function snap(){
     var m={b:{},s:{}};
     strip.querySelectorAll('.blk').forEach(function(e){m.b[e.dataset.id]=e.getBoundingClientRect();});
     flow.querySelectorAll(':scope > *').forEach(function(e){m.s[e.id]=e.getBoundingClientRect();});
+    m.r={};document.querySelectorAll('#day .drow2').forEach(function(e){m.r[e.dataset.k]=e.getBoundingClientRect();});
     return m;
   }
   function flip(prev,override){
@@ -593,6 +665,10 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
       var p=prev.s[e.id];if(!p)return;var n=e.getBoundingClientRect(),dy=p.top-n.top;if(Math.abs(dy)<1)return;
       var far=Math.min(Math.abs(dy),2400)*Math.sign(dy);
       e.animate([{transform:'translateY('+far+'px)'},{transform:'none'}],{duration:700,easing:EASE});
+    });
+    document.querySelectorAll('#day .drow2').forEach(function(e){
+      var p=prev.r&&prev.r[e.dataset.k];if(!p)return;var dy=p.top-e.getBoundingClientRect().top;if(Math.abs(dy)<1)return;
+      e.animate([{transform:'translateY('+dy+'px)',zIndex:2},{transform:'none',zIndex:2}],{duration:460,easing:'cubic-bezier(.3,1.3,.5,1)'});
     });
   }
 
@@ -614,7 +690,8 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     var now=document.createElement('div');now.className='now';now.id='now';now.setAttribute('aria-hidden','true');strip.appendChild(now);
     S.slots.forEach(function(id,i){if(!id)return;var sec=document.getElementById(BLOCKS[id].sec);flow.appendChild(sec);var t=sec.querySelector('[data-time]');if(t)t.textContent=TIMES[i];});
     var hs=document.getElementById('s-hire'),hi=idx('hire');hs.hidden=hi<0;if(hi>=0)hs.querySelector('[data-hire-time]').textContent=TIMES[hi];
-    if(focusId){var f=strip.querySelector('[data-id="'+focusId+'"]');if(f)f.focus({preventScroll:true});}
+    renderDay();
+    if(focusId){var f=isPhone()?document.querySelector('#day [data-k="'+focusId+'"]'):strip.querySelector('[data-id="'+focusId+'"]');if(f&&(!isPhone()||!document.getElementById('sheet').hidden))f.focus({preventScroll:true});}
     updateNow(true);
   }
 
@@ -727,6 +804,10 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     if(instant){void now.offsetWidth;now.style.transition='';}
     now.dataset.t=TIMES[Math.min(cols-1,Math.max(0,Math.floor(pos)))];
     strip.querySelectorAll('.blk').forEach(function(b){b.classList.toggle('here',b.dataset.id===here);});
+    var ti=Math.min(cols-1,Math.max(0,Math.floor(pos)));
+    document.getElementById('pillTime').textContent=TIMES[ti];
+    document.getElementById('pillName').textContent=here?BLOCKS[here].name:(pos<=0?'Intro':'End of the day');
+    document.querySelectorAll('#day .drow2').forEach(function(r){var on=r.dataset.k===here;r.classList.toggle('here',on);var bd=r.querySelector('.bd.nw');if(on&&!bd){bd=document.createElement('span');bd.className='bd nw';bd.textContent='Now';r.appendChild(bd);}else if(!on&&bd)bd.remove();});
     var sc=strip.parentElement;if(sc.scrollWidth>sc.clientWidth&&!drag){var x=pos/cols*w;if(x<sc.scrollLeft+20||x>sc.scrollLeft+sc.clientWidth-40)sc.scrollLeft=Math.max(0,x-sc.clientWidth/2);}
   }
   var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){tick=false;updateNow();});}},{passive:true});
@@ -734,7 +815,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   function measure(){document.documentElement.style.setProperty('--apph',document.getElementById('app').offsetHeight+'px');document.documentElement.style.setProperty('--tth',tt.offsetHeight+'px');}
 
   /* ---------- Recruiter / Developer view: the extra boxes unfold ---------- */
-  var segBtns=document.querySelectorAll('.seg button');
+  var segBtns=document.querySelectorAll('.seg button,.seg2 button');
   function setView(v,announce){
     var was=document.body.dataset.view;S.view=v;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===v);});save();
     var devs=[].slice.call(document.querySelectorAll('.dev')),recs=[].slice.call(document.querySelectorAll('.rec'));
@@ -782,7 +863,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
       say('My day is full: you filled the free period. Move something out of it, or just email me at rafaelkoo.uk@gmail.com.','bad');return;}
     var prev=snap(),from=hb.getBoundingClientRect();
     S.slots[free]='hire';save();render('hire');flip(prev,{hire:{left:from.left,top:from.top}});
-    setTimeout(function(){confetti(strip.querySelector('[data-id="hire"]'));},RM?0:380);
+    setTimeout(function(){confetti(isPhone()?document.getElementById('pill'):strip.querySelector('[data-id="hire"]'));},RM?0:380);
     say('Booked: an interview with me in '+TIMES[free]+'. Your message is ready below.','good');
     setTimeout(function(){go('hire');},RM?0:900);
   });
@@ -821,6 +902,59 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     if(n.view!==S.view){S.view=n.view==='developer'?'developer':'recruiter';document.body.dataset.view=S.view;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===S.view);});}
     say('Updated from the other view.','good');
   });
+
+  /* ---------- phone: the day as a list in a bottom sheet ---------- */
+  var sheet=document.getElementById('sheet'),scrim=document.getElementById('scrim'),pill=document.getElementById('pill'),dayEl=document.getElementById('day');
+  var mMove=document.getElementById('mMove');
+  function renderDay(){
+    dayEl.innerHTML='';
+    S.slots.forEach(function(id,i){
+      var li=document.createElement('li'),b=document.createElement('button');b.type='button';b.dataset.i=i;
+      if(id){var B=BLOCKS[id];b.className='drow2'+(B.lock?' locked':'')+(selected===id?' sel':'');b.dataset.k=id;b.style.setProperty('--c','var('+B.c+')');
+        b.innerHTML='<span class="tm2">'+TIMES[i]+'</span><span class="sw2"></span><span class="nm2">'+B.name+'<small>'+(id==='avail'?START:B.d)+'</small></span>'+(B.lock?'<span class="bd lk">Locked</span>':'');
+        b.setAttribute('aria-label',TIMES[i]+': '+B.name+(B.lock?', locked':''));}
+      else{b.className='drow2 free';b.dataset.k='free'+i;b.innerHTML='<span class="tm2">'+TIMES[i]+'</span><span class="sw2"></span><span class="nm2">Free period</span>';b.setAttribute('aria-label',TIMES[i]+': free period');}
+      li.appendChild(b);dayEl.appendChild(li);
+    });
+  }
+  var lastFocus=null;
+  function openSheet(){
+    lastFocus=document.activeElement;renderDay();updateNow(true);
+    sheet.hidden=false;scrim.hidden=false;document.documentElement.style.overflow='hidden';
+    if(!RM){sheet.animate([{transform:'translateY(100%)'},{transform:'none'}],{duration:340,easing:'cubic-bezier(.2,.8,.2,1)'});scrim.animate([{opacity:0},{opacity:1}],{duration:240});}
+    document.getElementById('sheetClose').focus();
+  }
+  function closeSheet(then){
+    if(sheet.hidden){if(then)then();return;}
+    var fin=function(){sheet.hidden=true;scrim.hidden=true;document.documentElement.style.overflow='';if(then)then();else if(lastFocus)lastFocus.focus({preventScroll:true});};
+    if(RM)return fin();
+    sheet.animate([{transform:'none'},{transform:'translateY(100%)'}],{duration:240,easing:'ease-in'}).onfinish=fin;scrim.animate([{opacity:1},{opacity:0}],{duration:240});
+  }
+  pill.addEventListener('click',openSheet);
+  document.getElementById('sheetClose').addEventListener('click',function(){closeSheet();});
+  scrim.addEventListener('click',function(){closeSheet();});
+  addEventListener('keydown',function(e){if(e.key==='Escape'&&!sheet.hidden)closeSheet();});
+  // swipe the sheet down to close
+  var sy=null;sheet.addEventListener('touchstart',function(e){if(sheet.scrollTop<=0)sy=e.touches[0].clientY;},{passive:true});
+  sheet.addEventListener('touchmove',function(e){if(sy==null)return;var d=e.touches[0].clientY-sy;if(d>0)sheet.style.transform='translateY('+d+'px)';},{passive:true});
+  sheet.addEventListener('touchend',function(e){if(sy==null)return;var d=e.changedTouches[0].clientY-sy;sy=null;sheet.style.transform='';if(d>90)closeSheet();});
+  dayEl.addEventListener('click',function(e){
+    var r=e.target.closest('.drow2');if(!r)return;var i=+r.dataset.i,id=S.slots[i];
+    if(moveMode){
+      if(!selected){if(!id){say('That period is free. Tap a block first, then this period.');return;}
+        if(BLOCKS[id].lock){say(lockMsg(id)+' Pick another one.','bad');if(!RM)r.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:260});return;}
+        selected=id;renderDay();updateNow(true);say('Now tap the period you want '+BLOCKS[id].name+' in.');return;}
+      var s=selected;selected=null;if(i===idx(s)){renderDay();updateNow(true);say('Cancelled.');return;}
+      var before=S.slots.join();tryMove(s,i);if(S.slots.join()===before){renderDay();updateNow(true);}return;
+    }
+    if(!id){closeSheet(function(){say('Free period: nothing here yet. Try Hire me to book it.');});return;}
+    closeSheet(function(){go(id);});
+  });
+  mMove.addEventListener('click',function(){moveMode=!moveMode;selected=null;mMove.setAttribute('aria-pressed',moveMode);mm.setAttribute('aria-pressed',moveMode);sheet.classList.toggle('moving',moveMode);tt.classList.toggle('moving',moveMode);render();
+    document.getElementById('sheetHint').textContent=moveMode?'Rearrange is on: tap a block, then the period to move it to. Lunch and my start date are locked.':'This page runs on my timetable. Tap a period to go there.';
+    say(moveMode?'Rearrange is on.':'Rearrange is off.');});
+  document.getElementById('mReset').addEventListener('click',function(){document.getElementById('reset').click();mMove.setAttribute('aria-pressed','false');sheet.classList.remove('moving');document.getElementById('sheetHint').textContent='This page runs on my timetable. Tap a period to go there.';});
+  PH.addEventListener?PH.addEventListener('change',function(){if(!isPhone())closeSheet();measure();updateNow(true);}):0;
 
   /* ---------- copy email ---------- */
   var cb=document.getElementById('copyMail');
