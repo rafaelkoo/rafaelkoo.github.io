@@ -22,7 +22,7 @@
   --canvas:#EEF0F3; --sheet:#FFFFFF; --sheet-2:#F7F8FA; --rule:#D7DBE1; --rule-2:#E6E9EE;
   --ink:#14171C; --ink-2:#3C434D; --ink-3:#5F6773;
   --bar:#111522; --bar-ink:#F2F4F8; --bar-ink-2:#A9B1C0; --bar-rule:#272D3D;
-  --now:#E5322D; --act:#3B5BFD; --act-ink:#FFFFFF; --ok:#1E8E4F; --warn:#B45309;
+  --now:#E5322D; --act:#3B5BFD; --act-ink:#FFFFFF; --ok:#16703E; --warn:#B45309;
   --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF; --b-ex:#DCE3EE; --b-hi:#FFD24A;
   --b-ink:#14171C;
   --font:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Verdana,sans-serif;
@@ -180,6 +180,7 @@ body[data-view="developer"] .rec{display:none}
 
 .lunch{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:14px clamp(18px,3vw,32px);border:1px dashed var(--rule);border-radius:6px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--ink) 4%,transparent) 10px 20px);font-size:16px;color:var(--ink-2)}
 .lunch .t{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.lunch.avail a{color:var(--ok);font-weight:700}
 .lunch.avail{border:1px solid color-mix(in srgb,var(--ok) 50%,transparent);background:color-mix(in srgb,var(--ok) 9%,var(--sheet));color:var(--ink)}
 
 .duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px}
@@ -225,6 +226,22 @@ body[data-view="developer"] .rec{display:none}
 .tags span{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:4px;background:var(--sheet-2);border:1px solid var(--rule-2);color:var(--ink-2)}
 .hiremsg{width:100%;min-height:160px;resize:vertical;font:inherit;font-size:16px;line-height:1.5;padding:12px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);color:var(--ink)}
 .bit{position:fixed;z-index:60;width:9px;height:9px;border-radius:2px;pointer-events:none}
+.wdlive{border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--sheet)}
+.wdtop{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:10px 16px;background:var(--sheet-2);border-bottom:1px solid var(--rule-2);font-size:14px;color:var(--ink-3)}
+.wdtop b{color:var(--ink)}
+.wdlist{margin:0;padding:0;list-style:none}
+.wdlist li{display:grid;grid-template-columns:14px minmax(0,1fr) 84px 64px 70px;align-items:center;gap:6px 14px;padding:10px 16px;border-top:1px solid var(--rule-2);font-size:15px}
+.wdlist li:first-child{border-top:0}
+.wdlist .dot2{width:10px;height:10px;border-radius:50%}
+.wdlist .ok .dot2{background:var(--ok)}.wdlist .warn .dot2{background:var(--warn)}.wdlist .down .dot2{background:var(--now)}
+.wdlist .nm3{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wdlist .nm3 small{display:block;font-weight:400;font-size:13px;color:var(--ink-3);white-space:normal}
+.wdlist .sc{font-family:var(--mono);font-size:14px;text-align:right}
+.wdlist .ld{font-family:var(--mono);font-size:13px;color:var(--ink-3);text-align:right}
+.wdlist svg{width:84px;height:24px;display:block}
+.wdlist svg polyline{fill:none;stroke:var(--act);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.wdempty{padding:14px 16px;font-size:15px;color:var(--ink-2)}
+@media (max-width:560px){.wdlist li{grid-template-columns:12px minmax(0,1fr) 56px;}.wdlist svg,.wdlist .ld{display:none}}
 .tbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
 .phonewrap{position:fixed;z-index:12;right:max(24px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + var(--apph,56px) + var(--tth,110px) + 16px);bottom:16px;width:392px;display:flex;flex-direction:column;align-items:center;gap:8px}
 .phonebody{flex:1 1 auto;width:392px;max-height:820px;border-radius:44px;background:#0B0D12;padding:12px;box-shadow:0 0 0 1px #2A3040,0 24px 60px rgba(10,14,25,.35)}
@@ -508,6 +525,36 @@ writeMany(ops) {
         </div>
       </section>
 
+      <!-- WEBSITE WATCHDOG -->
+      <section class="sec" id="s-wd" style="--c:var(--b-pt)" aria-labelledby="h-wd">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Runs every morning</span></div>
+        <div class="sec-body">
+          <h2 id="h-wd">Website watchdog</h2>
+          <div class="facts">
+            <div><h3>The problem</h3><p>I run several sites on my own, and nobody tells me when one breaks. A broken link or a layout that scrolls sideways on phones could sit there for weeks.</p></div>
+            <div><h3>What I built</h3><p>Every morning it opens each site in a real browser at desktop and phone size, checks speed, errors, links and accessibility, keeps a history, and opens a GitHub issue when something gets worse.</p></div>
+            <div><h3>What changed</h3><p>On its first run it found three real problems: low-contrast labels on this page and the tracker demo, which I fixed, and zoom turned off in my game, which is deliberate.</p></div>
+          </div>
+          <div class="wdlive" id="wdLive" aria-live="polite">
+            <div class="wdtop"><b>Latest check</b><span id="wdWhen">Loading the live results…</span></div>
+            <ul class="wdlist" id="wdList"></ul>
+          </div>
+          <div class="dev">
+            <h3>How it decides</h3>
+<pre class="code"><span class="c">// abridged from watchdog.mjs: 100 is perfect</span>
+s -= Math.min(30, 10 * v.jsErrors.length);                       <span class="c">// page errors</span>
+s -= Math.min(40, axe.reduce((a, x) =&gt; a + IMPACT[x.impact], 0)); <span class="c">// critical 8, serious 4</span>
+s -= v.overflowPx &gt; 1 ? 10 : 0;                                   <span class="c">// scrolls sideways on a phone</span>
+s -= Math.min(20, 5 * brokenLinks.length);
+
+<span class="c">// an alert only for what is new or worse, so it never nags about known issues</span>
+<span class="k">if</span> (score &lt;= prev.score - 10) problems.push(<span class="s">`Score dropped from ${prev.score}`</span>);</pre>
+            <ul><li>Runs on GitHub Actions at 06:17 every day, free, with no passwords to manage.</li><li>The issue closes itself when the next check is clean.</li><li>Accepted exceptions are written down with the reason, not silently ignored.</li></ul>
+          </div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener">Code on GitHub ↗</a><a href="https://github.com/rafaelkoo/site-watchdog/issues" target="_blank" rel="noopener">Current alerts ↗</a><span class="stack">Node.js · Playwright · axe-core · GitHub Actions</span></div>
+        </div>
+      </section>
+
       <!-- LUNCH (locked) -->
       <div class="lunch" id="s-lunch"><span class="t" data-time></span><b>Lunch.</b><span>Locked on the timetable, like a real break. Good moment to <a href="timetable-demo/">open the timetable demo ↗</a></span></div>
 
@@ -640,10 +687,11 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     ab:{name:'About',d:'Who I am',c:'--b-ab',sec:'s-ab'},
     ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'},
     ex:{name:'Experience',d:'Since May 2025',c:'--b-ex',sec:'s-ex'},
+    wd:{name:'Website watchdog',d:'Checks my sites daily',c:'--b-pt',sec:'s-wd'},
     hire:{name:'Interview with you',d:'Booked by you',c:'--b-hi',sec:'s-hire'}
   };
-  var DEFAULT=['tt','tr','ft',null,'lunch','ex','how','ab','ct',null,'avail'];
-  var KEY='rn-portfolio-v3';
+  var DEFAULT=['tt','tr','ft','wd','lunch','ex','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v4';
   var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
   function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[4]==='lunch'&&sl[10]==='avail';}
   try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
@@ -973,6 +1021,28 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     say(moveMode?'Rearrange is on.':'Rearrange is off.');});
   document.getElementById('mReset').addEventListener('click',function(){document.getElementById('reset').click();mMove.setAttribute('aria-pressed','false');sheet.classList.remove('moving');document.getElementById('sheetHint').textContent='This page runs on my timetable. Tap a period to go there.';});
   PH.addEventListener?PH.addEventListener('change',function(){if(!isPhone())closeSheet();measure();updateNow(true);}):0;
+
+  /* ---------- Website watchdog: live results read from the watchdog's own repo ---------- */
+  (function(){
+    var BASE='https://raw.githubusercontent.com/rafaelkoo/site-watchdog/main/data/';
+    var list=document.getElementById('wdList'),when=document.getElementById('wdWhen');
+    function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+    function empty(t){list.innerHTML='<li class="wdempty" style="display:block">'+t+' <a href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener">See it on GitHub ↗</a></li>';}
+    function spark(scores){if(scores.length<2)return '';var w=84,h=24,mn=Math.min.apply(0,scores.concat([60])),mx=100;
+      var pts=scores.map(function(s,i){return (i/(scores.length-1)*(w-2)+1).toFixed(1)+','+(h-2-(s-mn)/(mx-mn||1)*(h-4)).toFixed(1);}).join(' ');
+      return '<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Score over the last '+scores.length+' checks"><polyline points="'+pts+'"></polyline></svg>';}
+    Promise.all([fetch(BASE+'latest.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}),
+                 fetch(BASE+'history.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})])
+    .then(function(res){
+      var latest=res[0],hist=res[1]||[];if(!latest||!latest.sites)throw 0;
+      var d=new Date(latest.checkedAt);when.textContent=d.toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      list.innerHTML=latest.sites.map(function(s){
+        var scores=hist.map(function(run){var x=run.sites.filter(function(y){return y.url===s.url;})[0];return x?x.score:null;}).filter(function(v){return v!=null;}).slice(-30);
+        var label=s.state==='ok'?'All good':s.state==='down'?'Down':s.problems.length+' to look at';
+        return '<li class="'+esc(s.state)+'"><span class="dot2" aria-hidden="true"></span><span class="nm3">'+esc(s.name)+'<small>'+esc(label)+'</small></span>'+spark(scores)+'<span class="sc">'+s.score+'/100</span><span class="ld">'+(s.desktop&&s.desktop.loadMs?s.desktop.loadMs+' ms':'–')+'</span></li>';
+      }).join('');
+    }).catch(function(){when.textContent='Not available here';empty('The live results show once the first daily check has run.');});
+  })();
 
   /* ---------- copy email ---------- */
   var cb=document.getElementById('copyMail');
