@@ -23,7 +23,7 @@
   --ink:#14171C; --ink-2:#3C434D; --ink-3:#5F6773;
   --bar:#111522; --bar-ink:#F2F4F8; --bar-ink-2:#A9B1C0; --bar-rule:#272D3D;
   --now:#E5322D; --act:#3B5BFD; --act-ink:#FFFFFF; --ok:#1E8E4F; --warn:#B45309;
-  --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF;
+  --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF; --b-ex:#DCE3EE; --b-hi:#FFD24A;
   --b-ink:#14171C;
   --font:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Verdana,sans-serif;
   --mono:'Atkinson Hyperlegible Mono',ui-monospace,Menlo,monospace;
@@ -33,14 +33,14 @@
   --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
   --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
   --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
-  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00;
   --b-ink:#F2F4F8; color-scheme:dark}}
 :root[data-theme="dark"]{
   --canvas:#0F1218; --sheet:#171B23; --sheet-2:#1C212B; --rule:#2C3340; --rule-2:#252B36;
   --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
   --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
   --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
-  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00;
   --b-ink:#F2F4F8; color-scheme:dark}
 *{box-sizing:border-box}
 html{background:var(--canvas)}
@@ -77,7 +77,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .lbtn{background:var(--sheet-2);border:1px solid var(--rule);border-radius:6px;min-height:36px;padding:0 12px;font-size:14px;cursor:pointer;color:var(--ink-2)}
 .lbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
 .strip-scroll{overflow-x:auto;scrollbar-width:thin}
-.strip{position:relative;display:grid;grid-template-columns:repeat(10,minmax(92px,1fr));min-width:920px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
+.strip{position:relative;display:grid;grid-template-columns:repeat(11,minmax(92px,1fr));min-width:1012px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
 .slot{position:relative;border-left:1px solid var(--rule-2);padding:20px 4px 4px;min-height:58px}
 .slot:first-child{border-left:0}
 .slot .tm{position:absolute;top:3px;left:6px;font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
@@ -205,19 +205,39 @@ body[data-view="developer"] .rec{display:none}
 .mailrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .mail{font-family:var(--mono);font-size:17px;padding:10px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);user-select:all}
 .foot{padding-block:28px;font-size:14px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
+.skip{position:absolute;left:12px;top:-60px;z-index:40;background:var(--act);color:#FFFFFF;padding:10px 16px;border-radius:6px;font-weight:700;text-decoration:none;transition:top .15s}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + 8px)}
+.hirebtn{background:var(--b-hi);color:#14171C;border:0;border-radius:6px;min-height:40px;padding:0 16px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 0 0 0 rgba(255,210,74,.6);animation:beckon 2.6s ease-out 3s 3}
+.hirebtn:hover{filter:brightness(1.05)}
+@keyframes beckon{0%{box-shadow:0 0 0 0 rgba(255,210,74,.65)}70%{box-shadow:0 0 0 12px rgba(255,210,74,0)}100%{box-shadow:0 0 0 0 rgba(255,210,74,0)}}
+.blk[data-id="hire"]{border:1.5px solid #14171C;color:#14171C}
+.tl{margin:0;padding:0;list-style:none;border-left:2px solid var(--rule);display:flex;flex-direction:column;gap:22px}
+.tl li{position:relative;display:flex;flex-wrap:wrap;gap:4px 24px;padding-left:22px}
+.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:2px solid var(--act)}
+.tl li.now::before{background:var(--act)}
+.tl .when{flex:0 0 150px;font-family:var(--mono);font-size:14px;color:var(--ink-3);padding-top:2px}
+.tl .what{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.tl h3{font-size:20px;letter-spacing:-.01em}
+.tl .org{font-size:15px;color:var(--ink-3)}
+.tl .what p{font-size:16px;color:var(--ink-2)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:4px;background:var(--sheet-2);border:1px solid var(--rule-2);color:var(--ink-2)}
+.hiremsg{width:100%;min-height:160px;resize:vertical;font:inherit;font-size:16px;line-height:1.5;padding:12px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);color:var(--ink)}
+.bit{position:fixed;z-index:60;width:9px;height:9px;border-radius:2px;pointer-events:none}
 @media (max-width:640px){
   .brand small,.chip,.app .grow{display:none}
   .app .wrap{min-height:48px;padding-block:4px;gap:6px 10px;flex-wrap:nowrap}
   .brand{font-size:16px;flex:1 1 auto}
   .seg button{padding:0 10px;font-size:14px;min-height:38px}
   .tbtn{min-height:38px;padding:0 10px;font-size:14px}
+  .hirebtn{min-height:38px;padding:0 12px;font-size:14px}
   .tt .wrap{padding-block:6px}
   .tt-top{margin-bottom:4px;justify-content:flex-end}
   .tt-top p{display:none}
   .tt.open .tt-top p{display:block}
   .lbtn{min-height:34px}
   .slot{min-height:50px;padding-top:18px}
-  .strip{grid-template-columns:repeat(10,minmax(84px,1fr));min-width:840px}
+  .strip{grid-template-columns:repeat(11,minmax(84px,1fr));min-width:924px}
   .msg{font-size:13px;margin-top:4px}
 }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
@@ -226,6 +246,7 @@ body[data-view="developer"] .rec{display:none}
 </head>
 <body>
 
+<a class="skip" href="#main">Skip to content</a>
 <header class="app" id="app">
   <div class="wrap">
     <a class="brand" href="#top">Rafael Ngai<small>Support Worker (Game Design) · builds the school's systems</small></a>
@@ -235,6 +256,7 @@ body[data-view="developer"] .rec{display:none}
       <button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button>
       <button type="button" data-view="developer" aria-pressed="false">Developer</button>
     </div>
+    <button type="button" class="hirebtn" id="hireBtn">Hire me</button>
     <button type="button" class="tbtn" id="reset">Reset</button>
   </div>
 </header>
@@ -256,7 +278,7 @@ body[data-view="developer"] .rec{display:none}
   </div>
 </section>
 
-<main id="top">
+<main id="top"><span id="main" tabindex="-1"></span>
   <div class="wrap">
     <section class="hero">
       <p class="k">Berkshire, UK</p>
@@ -269,7 +291,7 @@ body[data-view="developer"] .rec{display:none}
       <p class="try"><i aria-hidden="true"></i><span>The bar above is a small version of my timetable engine. <b>The red line follows your scroll. Drag a block (on a phone, tap Rearrange) and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b></span></p>
       <div class="summary rec" aria-label="30-second summary">
         <div><b>Role</b><span>Support Worker (Game Design), building the school's systems in protected time</span></div>
-        <div><b>Shipped</b><span>A timetable platform two school sites run their day on</span></div>
+        <div><b>Shipped</b><span>A timetable platform two school sites run their day on, used by about 100 people</span></div>
         <div><b>Building</b><span>A learning tracker for 718 real course units</span></div>
         <div><b>Contact</b><span>rafaelkoo.uk@gmail.com</span></div>
       </div>
@@ -279,14 +301,14 @@ body[data-view="developer"] .rec{display:none}
 
       <!-- TIMETABLE -->
       <section class="sec" id="s-tt" style="--c:var(--b-tt)" aria-labelledby="h-tt">
-        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Live · 2 sites</span></div>
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Live · 2 sites · ~100 people</span></div>
         <div class="sec-body">
           <h2 id="h-tt">Timetable platform for a two-site school</h2>
           <div class="shot"><img src="img/timetable.jpg" alt="The timetable editor for a week, with the phone view beside it showing the same day live" width="2000" height="1250" loading="lazy"></div>
           <div class="facts">
             <div><h3>The problem</h3><p>The timetable lived in Excel, and I hated reading it there. Finding who was where meant scrolling a spreadsheet.</p></div>
             <div><h3>What I built</h3><p>An editor for building the week, a published read-only rota, and a front-desk board for arrivals and pick-ups, with breaks, transport and mentoring slots.</p></div>
-            <div><h3>What changed</h3><p>Two sites now run their day from it. It began as one HTML file syncing through shared JSON and is moving to a hosted website with a per-record data store.</p></div>
+            <div><h3>What changed</h3><p>Two sites now run their day from it, and about 100 people at the school use it. It began as one HTML file syncing through shared JSON and is moving to a hosted website with a per-record data store.</p></div>
           </div>
           <div class="row">
             <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:14px">
@@ -389,6 +411,51 @@ writeMany(ops) {
         </div>
       </section>
 
+      <!-- EXPERIENCE -->
+      <section class="sec" id="s-ex" style="--c:var(--b-ex)" aria-labelledby="h-ex">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body">
+          <h2 id="h-ex">Experience</h2>
+          <ol class="tl">
+            <li class="now"><span class="when">Oct 2026 – now</span><div class="what">
+              <h3>Building the school's systems</h3>
+              <p class="org">Protected development time each week, alongside teaching</p>
+              <p>I design and build the timetable platform both sites run on, used by about 100 people at the school, and the learning tracker now in development.</p>
+              <div class="tags"><span>JavaScript</span><span>Node.js</span><span>Document store</span><span>Automated tests</span></div>
+            </div></li>
+            <li class="now"><span class="when">May 2025 – now</span><div class="what">
+              <h3>Support Worker (Game Design)</h3>
+              <p class="org">A creative-skills school in Berkshire</p>
+              <p>I teach students Game Design, Coding in Unity, Website Design and Music Theory. I built my own tools for it: a code pipeline that makes my lesson decks, a slide kit other teachers fill in, and a Unity error explainer for students.</p>
+              <div class="tags"><span>Unity</span><span>C#</span><span>Web design</span><span>Node.js</span><span>Music theory</span></div>
+            </div></li>
+            <li data-todo><span class="when">[DATES]</span><div class="what"><h3>[EARLIER ROLE]</h3><p>[WHAT YOU DID]</p></div></li>
+            <li><span class="when">2023</span><div class="what">
+              <h3>BSc Virtual and Augmented Reality, Merit</h3>
+              <p class="org" data-todo>[UNIVERSITY]</p>
+              <div class="tags"><span>Unity</span><span>C#</span><span>3D</span></div>
+            </div></li>
+          </ol>
+          <p data-todo>Full CV: [CV LINK]</p>
+        </div>
+      </section>
+
+      <!-- HIRE (added by the visitor) -->
+      <section class="sec" id="s-hire" style="--c:var(--b-hi)" aria-labelledby="h-hire" hidden>
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Booked</span></div>
+        <div class="sec-body">
+          <h2 id="h-hire">Interview booked. Thank you!</h2>
+          <p style="color:var(--ink-2)">You put an interview with me in <b data-hire-time></b>. Here's a message ready to send to <b>rafaelkoo.uk@gmail.com</b>. Change anything you like.</p>
+          <label for="hireMsg" class="sr">Message to Rafael</label>
+          <textarea id="hireMsg" class="hiremsg">Hi Rafael,
+
+I saw your portfolio and I'd like to talk to you about a developer role at [your company]. Are you free for a call?
+
+[Your name]</textarea>
+          <div class="mailrow"><button type="button" class="btn btn-act" id="copyHire">Copy message</button><button type="button" class="btn btn-line" id="cancelHire">Cancel interview</button></div>
+        </div>
+      </section>
+
       <!-- HOW I WORK -->
       <section class="sec" id="s-how" style="--c:var(--b-how)" aria-labelledby="h-how">
         <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
@@ -419,7 +486,7 @@ writeMany(ops) {
           <div class="photo" data-todo>[YOUR PHOTO]</div>
           <div class="about-copy">
             <h2 id="h-ab">I like dealing with problems.</h2>
-            <p>I'm a Support Worker (Game Design) at a creative-skills school in Berkshire. Alongside supporting students in sessions and teaching Python and C# in Unity, I design and build the school's systems: the timetable platform both sites run on, and the learning tracker I'm building now. The school gives me protected time each week for that development work. I hold a BSc in Virtual and Augmented Reality (Merit, 2023).</p>
+            <p>I'm a Support Worker (Game Design) at a creative-skills school in Berkshire. Alongside supporting students and teaching Game Design, Coding in Unity, Website Design and Music Theory, I design and build the school's systems: the timetable platform both sites run on, and the learning tracker I'm building now. The school gives me protected time each week for that development work. I hold a BSc in Virtual and Augmented Reality (Merit, 2023).</p>
             <p>This site is set in Atkinson Hyperlegible, a typeface designed for low-vision readers. I use it in the school's own tools too, so they stay easy to read for every student.</p>
             <dl class="skills">
               <div><dt>Web</dt><dd>HTML, CSS, vanilla JavaScript, TypeScript, Node.js, Three.js</dd></div>
@@ -460,7 +527,7 @@ writeMany(ops) {
   /* ===== FILL THIS IN: the date you could start a new job (YYYY-MM-DD). While it's null the page says "ask me". ===== */
   var CONFIG={start:null};
   function fmt(s,ph){if(!s)return ph;var d=new Date(s+'T12:00:00');if(isNaN(d))return ph;return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
-  var TIMES=['Period 1','Period 2','Period 3','Lunch','Period 4','Period 5','Period 6','Period 7','Period 8','After school'];
+  var TIMES=['Registration','Period 1','Period 2','Period 3','Lunch','Period 4','Period 5','Period 6','Period 7','Period 8','After school'];
   var START=CONFIG.start?'from '+fmt(CONFIG.start,''):'to start: ask me';
   document.querySelectorAll('[data-start]').forEach(function(e){e.textContent=START;});
   var BLOCKS={
@@ -472,14 +539,16 @@ writeMany(ops) {
     pt:{name:'Trading engine',d:'Runs daily',c:'--b-pt',sec:'s-pt'},
     how:{name:'How I work',d:'Process + small tools',c:'--b-how',sec:'s-how'},
     ab:{name:'About',d:'Who I am',c:'--b-ab',sec:'s-ab'},
-    ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'}
+    ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'},
+    ex:{name:'Experience',d:'Since May 2025',c:'--b-ex',sec:'s-ex'},
+    hire:{name:'Interview with you',d:'Booked by you',c:'--b-hi',sec:'s-hire'}
   };
-  var DEFAULT=['tt','tr','ft','lunch','pt','how','ab','ct',null,'avail'];
-  var KEY='rn-portfolio-v1';
+  var DEFAULT=['tt','tr','ft','pt','lunch','ex','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v2';
   var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
-  function valid(sl){var ids=sl.filter(Boolean).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl[3]==='lunch'&&sl[9]==='avail';}
+  function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[4]==='lunch'&&sl[10]==='avail';}
   try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(saved&&Array.isArray(saved.slots)&&saved.slots.length===10&&valid(saved.slots)){S.slots=saved.slots;S.view=saved.view==='developer'?'developer':'recruiter';S.open=!!saved.open;}}catch(e){}
+    if(saved&&Array.isArray(saved.slots)&&saved.slots.length===11&&valid(saved.slots)){S.slots=saved.slots;S.view=saved.view==='developer'?'developer':'recruiter';S.open=!!saved.open;}}catch(e){}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 
   var strip=document.getElementById('strip'),msg=document.getElementById('msg'),flow=document.getElementById('flow'),tt=document.getElementById('tt');
@@ -525,6 +594,7 @@ writeMany(ops) {
     });
     var now=document.createElement('div');now.className='now';now.id='now';now.setAttribute('aria-hidden','true');strip.appendChild(now);
     S.slots.forEach(function(id,i){if(!id)return;var sec=document.getElementById(BLOCKS[id].sec);flow.appendChild(sec);var t=sec.querySelector('[data-time]');if(t)t.textContent=TIMES[i];});
+    var hs=document.getElementById('s-hire'),hi=idx('hire');hs.hidden=hi<0;if(hi>=0)hs.querySelector('[data-hire-time]').textContent=TIMES[hi];
     if(focusId){var f=strip.querySelector('[data-id="'+focusId+'"]');if(f)f.focus({preventScroll:true});}
     updateNow(true);
   }
@@ -673,6 +743,39 @@ writeMany(ops) {
   document.getElementById('reset').addEventListener('click',function(){
     var prev=snap();S={slots:DEFAULT.slice(),view:S.view,open:false};moveMode=false;selected=null;mm.setAttribute('aria-pressed','false');tt.classList.remove('moving');
     setOpen();render();flip(prev);setView('recruiter',true);save();say('Back to the original timetable.','good');});
+
+  /* ---------- Hire me: the engine books an interview into my free period ---------- */
+  var hb=document.getElementById('hireBtn');
+  function confetti(el){
+    if(RM||!el)return;var r=el.getBoundingClientRect(),cs=getComputedStyle(document.documentElement);
+    var cols=['--b-tt','--b-tr','--b-ft','--b-pt','--b-how','--b-hi','--now'].map(function(v){return cs.getPropertyValue(v).trim();});
+    for(var i=0;i<18;i++){var b=document.createElement('span');b.className='bit';b.style.background=cols[i%cols.length];
+      b.style.left=(r.left+r.width/2)+'px';b.style.top=(r.top+r.height/2)+'px';document.body.appendChild(b);
+      var a=Math.random()*Math.PI*2,d=40+Math.random()*70;
+      b.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:'translate('+(Math.cos(a)*d)+'px,'+(Math.sin(a)*d+30)+'px) rotate('+(Math.random()*540-270)+'deg)',opacity:0}],{duration:900+Math.random()*400,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=function(){this.effect.target.remove();};}
+  }
+  hb.addEventListener('click',function(){
+    var cur=idx('hire');
+    if(cur>=0){go('hire');say('You already booked me for '+TIMES[cur]+'. The message is ready below.','good');return;}
+    var free=S.slots.indexOf(null);
+    if(free<0){if(!RM)strip.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:300,iterations:2});
+      say('My day is full: you filled the free period. Move something out of it, or just email me at rafaelkoo.uk@gmail.com.','bad');return;}
+    var prev=snap(),from=hb.getBoundingClientRect();
+    S.slots[free]='hire';save();render('hire');flip(prev,{hire:{left:from.left,top:from.top}});
+    setTimeout(function(){confetti(strip.querySelector('[data-id="hire"]'));},RM?0:380);
+    say('Booked: an interview with me in '+TIMES[free]+'. Your message is ready below.','good');
+    setTimeout(function(){go('hire');},RM?0:900);
+  });
+  document.getElementById('cancelHire').addEventListener('click',function(){
+    var i=idx('hire');if(i<0)return;var prev=snap();S.slots[i]=null;save();render();flip(prev);
+    say('Interview cancelled. The free period is free again.');hb.focus();
+  });
+  document.getElementById('copyHire').addEventListener('click',function(){
+    var b=this,ta=document.getElementById('hireMsg');
+    var done=function(){b.textContent='Copied: paste it into an email';setTimeout(function(){b.textContent='Copy message';},2200);};
+    var sel=function(){ta.focus();ta.select();b.textContent='Selected: press Ctrl+C';};
+    try{navigator.clipboard.writeText(ta.value).then(done,sel);}catch(e){sel();}
+  });
 
   /* ---------- copy email ---------- */
   var cb=document.getElementById('copyMail');
