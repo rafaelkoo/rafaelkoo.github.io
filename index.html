@@ -75,6 +75,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .tt-top p{font-size:14px;color:var(--ink-3)}
 .tt-top .acts{display:flex;gap:6px}
 .lbtn{background:var(--sheet-2);border:1px solid var(--rule);border-radius:6px;min-height:36px;padding:0 12px;font-size:14px;cursor:pointer;color:var(--ink-2)}
+.reset2{display:none}
 .lbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
 .strip-scroll{overflow-x:auto;scrollbar-width:thin}
 .strip{position:relative;display:grid;grid-template-columns:repeat(11,minmax(92px,1fr));min-width:1012px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
@@ -207,7 +208,7 @@ body[data-view="developer"] .rec{display:none}
 .foot{padding-block:28px;font-size:14px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
 .skip{position:absolute;left:12px;top:-60px;z-index:40;background:var(--act);color:#FFFFFF;padding:10px 16px;border-radius:6px;font-weight:700;text-decoration:none;transition:top .15s}
 .skip:focus{top:calc(env(safe-area-inset-top,0px) + 8px)}
-.hirebtn{background:var(--b-hi);color:#14171C;border:0;border-radius:6px;min-height:40px;padding:0 16px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 0 0 0 rgba(255,210,74,.6);animation:beckon 2.6s ease-out 3s 3}
+.hirebtn{white-space:nowrap;background:var(--b-hi);color:#14171C;border:0;border-radius:6px;min-height:40px;padding:0 16px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 0 0 0 rgba(255,210,74,.6);animation:beckon 2.6s ease-out 3s 3}
 .hirebtn:hover{filter:brightness(1.05)}
 @keyframes beckon{0%{box-shadow:0 0 0 0 rgba(255,210,74,.65)}70%{box-shadow:0 0 0 12px rgba(255,210,74,0)}100%{box-shadow:0 0 0 0 rgba(255,210,74,0)}}
 .blk[data-id="hire"]{border:1.5px solid #14171C;color:#14171C}
@@ -224,6 +225,14 @@ body[data-view="developer"] .rec{display:none}
 .tags span{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:4px;background:var(--sheet-2);border:1px solid var(--rule-2);color:var(--ink-2)}
 .hiremsg{width:100%;min-height:160px;resize:vertical;font:inherit;font-size:16px;line-height:1.5;padding:12px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);color:var(--ink)}
 .bit{position:fixed;z-index:60;width:9px;height:9px;border-radius:2px;pointer-events:none}
+.tbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
+.phonewrap{position:fixed;z-index:12;right:max(24px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + var(--apph,56px) + var(--tth,110px) + 16px);bottom:16px;width:392px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.phonebody{flex:1 1 auto;width:392px;max-height:820px;border-radius:44px;background:#0B0D12;padding:12px;box-shadow:0 0 0 1px #2A3040,0 24px 60px rgba(10,14,25,.35)}
+.phonebody iframe{width:100%;height:100%;border:0;border-radius:33px;background:var(--canvas);display:block}
+.phonecap{font-size:13px;color:var(--ink-3);text-align:center}
+body.phone-on main .wrap,body.phone-on .tt .wrap{max-width:none;margin-right:440px;margin-left:max(16px,calc((100vw - 440px - 1160px) / 2))}
+body.phone-on .tt .wrap{margin-right:24px}
+body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
 @media (max-width:640px){
   .brand small,.chip,.app .grow{display:none}
   .app .wrap{min-height:48px;padding-block:4px;gap:6px 10px;flex-wrap:nowrap}
@@ -231,6 +240,13 @@ body[data-view="developer"] .rec{display:none}
   .seg button{padding:0 10px;font-size:14px;min-height:38px}
   .tbtn{min-height:38px;padding:0 10px;font-size:14px}
   .hirebtn{min-height:38px;padding:0 12px;font-size:14px}
+}
+@media (max-width:480px){
+  #reset{display:none}
+  .reset2{display:inline-block}
+  .brand{font-size:15px;white-space:nowrap}
+  .seg button{padding:0 8px;font-size:13px}
+  .hirebtn{padding:0 10px}
   .tt .wrap{padding-block:6px}
   .tt-top{margin-bottom:4px;justify-content:flex-end}
   .tt-top p{display:none}
@@ -256,6 +272,7 @@ body[data-view="developer"] .rec{display:none}
       <button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button>
       <button type="button" data-view="developer" aria-pressed="false">Developer</button>
     </div>
+    <button type="button" class="tbtn" id="phoneBtn" aria-pressed="false" hidden>Phone view</button>
     <button type="button" class="hirebtn" id="hireBtn">Hire me</button>
     <button type="button" class="tbtn" id="reset">Reset</button>
   </div>
@@ -269,6 +286,7 @@ body[data-view="developer"] .rec{display:none}
       <div class="acts">
         <button type="button" class="lbtn" id="moveMode" aria-pressed="false">Rearrange</button>
         <button type="button" class="lbtn" id="openTT" aria-expanded="false">Expand</button>
+        <button type="button" class="lbtn reset2" id="reset2">Reset</button>
       </div>
     </div>
     <div class="strip-scroll">
@@ -278,6 +296,7 @@ body[data-view="developer"] .rec{display:none}
   </div>
 </section>
 
+<aside class="phonewrap" id="phoneWrap" hidden aria-label="Phone view of this page"><div class="phonebody"><iframe id="phoneFrame" title="This portfolio at phone size" loading="lazy"></iframe></div><p class="phonecap">Phone view · same page, live. Move a block on either side.</p></aside>
 <main id="top"><span id="main" tabindex="-1"></span>
   <div class="wrap">
     <section class="hero">
@@ -740,6 +759,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   }
   segBtns.forEach(function(b){b.addEventListener('click',function(){setView(b.dataset.view,true);});});
 
+  document.getElementById('reset2').addEventListener('click',function(){document.getElementById('reset').click();});
   document.getElementById('reset').addEventListener('click',function(){
     var prev=snap();S={slots:DEFAULT.slice(),view:S.view,open:false};moveMode=false;selected=null;mm.setAttribute('aria-pressed','false');tt.classList.remove('moving');
     setOpen();render();flip(prev);setView('recruiter',true);save();say('Back to the original timetable.','good');});
@@ -775,6 +795,31 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     var done=function(){b.textContent='Copied: paste it into an email';setTimeout(function(){b.textContent='Copy message';},2200);};
     var sel=function(){ta.focus();ta.select();b.textContent='Selected: press Ctrl+C';};
     try{navigator.clipboard.writeText(ta.value).then(done,sel);}catch(e){sel();}
+  });
+
+  /* ---------- Phone view: the same page at phone size, kept in step through shared storage ---------- */
+  var EMBED=/[?&]embed=1/.test(location.search);
+  if(EMBED)document.body.classList.add('embed');
+  var pb=document.getElementById('phoneBtn'),pw=document.getElementById('phoneWrap'),pf=document.getElementById('phoneFrame');
+  var wide=matchMedia('(min-width: 1120px)');
+  function phoneAvail(){pb.hidden=EMBED||!wide.matches||!/(^|\.)github\.io$|^localhost$/.test(location.hostname);if(pb.hidden&&document.body.classList.contains('phone-on'))setPhone(false);}
+  function setPhone(on){
+    document.body.classList.toggle('phone-on',on);pw.hidden=!on;pb.setAttribute('aria-pressed',on);pb.textContent=on?'Close phone':'Phone view';
+    if(on&&!pf.src){pf.src=location.pathname+'?embed=1';}
+    if(on&&!RM)pw.animate([{transform:'translateX(120%) rotate(6deg)',opacity:.3},{transform:'none',opacity:1}],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)'});
+    measure();updateNow(true);
+    say(on?'Phone view is on. It is the same page at phone size: move a block here or there and both update.':'Phone view closed.');
+  }
+  pb.addEventListener('click',function(){setPhone(!document.body.classList.contains('phone-on'));});
+  wide.addEventListener?wide.addEventListener('change',phoneAvail):wide.addListener(phoneAvail);
+  phoneAvail();
+  addEventListener('storage',function(e){
+    if(e.key!==KEY||!e.newValue)return;
+    try{var n=JSON.parse(e.newValue);}catch(err){return;}
+    if(!n||!Array.isArray(n.slots)||n.slots.length!==11||!valid(n.slots))return;
+    var prev=snap();S.slots=n.slots;S.open=!!n.open;render();flip(prev);setOpen();
+    if(n.view!==S.view){S.view=n.view==='developer'?'developer':'recruiter';document.body.dataset.view=S.view;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===S.view);});}
+    say('Updated from the other view.','good');
   });
 
   /* ---------- copy email ---------- */
