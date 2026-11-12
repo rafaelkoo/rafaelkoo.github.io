@@ -200,7 +200,7 @@ body[data-view="developer"] .rec{display:none}
 .recl{margin:0;padding-left:20px;color:var(--ink-2);font-size:16px;display:flex;flex-direction:column;gap:4px}
 @media (max-width:860px){.shots{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
 .steps li{border:1px solid var(--rule-2);border-radius:6px;padding:16px;background:var(--sheet-2)}
 .steps b{display:block;margin-bottom:4px}
 .steps span{font-size:15px;color:var(--ink-2)}
@@ -474,7 +474,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
           <div class="facts">
             <div><h3>The problem</h3><p>The timetable lived in Excel, and I hated reading it there. Finding who was where meant scrolling a spreadsheet.</p></div>
             <div><h3>What I built</h3><p>An editor for building the week, a published read-only rota, and a front-desk board for arrivals and pick-ups, with breaks, transport and mentoring slots.</p></div>
-            <div><h3>What changed</h3><p>Two sites now run their day from it, and about 100 people at the school use it. It began as one HTML file syncing through shared JSON and is moving to a hosted website with a per-record data store.</p></div>
+            <div><h3>What changed</h3><p>Two sites now run their day from it, and about 100 people at the school use it. In October alone, 10 staff made over 31,000 changes in it, across about 570 timetabled sessions a week for roughly 170 students and 50 staff.</p></div>
           </div>
           <div class="row">
             <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:14px">
@@ -509,7 +509,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
           <h2 id="h-tr">Student Tracker</h2>
           <div class="facts">
             <div><h3>The problem</h3><p>Evidence of what students had learned was scattered and untidy, and near-identical coursework had to be done twice for overlapping units.</p></div>
-            <div><h3>What I'm building</h3><p>One platform that links 718 real course units criterion by criterion. Students hand in work per task, staff mark per criterion, and Internal Verifiers check every passed unit.</p></div>
+            <div><h3>What I'm building</h3><p>One platform that links 718 real course units (3,068 criteria across 21 qualifications) criterion by criterion. Students hand in work per task, staff mark per criterion, and Internal Verifiers check every passed unit.</p></div>
             <div><h3>What will change</h3><p>Work done for one unit counts towards another, and a student who misses one criterion resubmits only that one.</p></div>
           </div>
           <div><div class="shot"><img src="img/tracker-path.jpg" alt="Path view of the Personal Finances unit, showing which units share criteria with it and whether each link is signed off" width="2000" height="1250" loading="lazy"></div><p class="cap">Path view: which units share criteria with Personal Finances, and which links have been signed off.</p></div>
@@ -678,11 +678,14 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
         <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
         <div class="sec-body">
           <h2 id="h-how">AI writes code fast. Process makes it trustworthy.</h2>
+          <p style="color:var(--ink-2);max-width:40em">AI writes most of the code. I decide what gets built, how it should look and work, and whether it is right before anyone else sees it.</p>
           <ol class="steps">
-            <li><b>1 · Interface first</b><span>Mockups and options are agreed before any feature is coded. Big pieces get a written plan.</span></li>
-            <li><b>2 · Prototype, then promote</b><span>New work lands in a prototype copy. It only reaches the live system after it passes testing.</span></li>
-            <li><b>3 · Bug-test by checklist</b><span>A written "do this, should see that" walkthrough plus automated suites run before every release.</span></li>
-            <li><b>4 · Docs in the same session</b><span>Reference, changelog and handover notes are updated with every change, including why each decision was made.</span></li>
+            <li><b>1 · Plan the whole project</b><span>What it is for, who will use it and what "done" looks like, before any code.</span></li>
+            <li><b>2 · Write the document first</b><span>A written plan, a glossary and numbered decision records. The tracker has 12 of them behind its rules.</span></li>
+            <li><b>3 · Pick the right skills</b><span>I set the AI up with the skills the job needs: design rules, accessibility, testing, code review, and my own skills for the school's rules.</span></li>
+            <li><b>4 · Decide how to present it</b><span>Mockups with 2–4 options are agreed before a feature is built.</span></li>
+            <li><b>5 · Build with AI, in a prototype</b><span>New work lands in a prototype copy and only reaches the live system after it passes testing.</span></li>
+            <li><b>6 · Check it, then ship</b><span>Automated tests (129 in the tracker) and a "do this, should see that" checklist run before every release. Docs and handover notes are updated in the same session.</span></li>
           </ol>
           <div>
             <h3 style="font-size:18px;margin-bottom:8px">Smaller things I built along the way</h3>
@@ -754,7 +757,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     lunch:{name:'Lunch',d:'Locked',c:'--b-lunch',sec:'s-lunch',lock:true},
     avail:{name:'Available',d:'Start date',c:'--b-av',sec:'s-avail',lock:true},
     ft:{name:'FitTrack + game',d:'Live, open source',c:'--b-ft',sec:'s-ft'},
-    how:{name:'How I work',d:'Process + small tools',c:'--b-how',sec:'s-how'},
+    how:{name:'How I build',d:'My AI process',c:'--b-how',sec:'s-how'},
     ab:{name:'About',d:'Who I am',c:'--b-ab',sec:'s-ab'},
     ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'},
     ex:{name:'Experience',d:'Since May 2025',c:'--b-ex',sec:'s-ex'},
