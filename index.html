@@ -197,8 +197,9 @@ body[data-view="developer"] .rec{display:none}
 .shots img{border-radius:22px;box-shadow:0 0 0 6px #151821,0 14px 30px rgba(0,0,0,.22)}
 .shots figcaption{font-size:14px;color:var(--ink-3);text-align:center}
 .shotnote{font-size:13px;color:var(--ink-3)}
-.quote{margin:0;border-left:4px solid var(--c);background:var(--sheet-2);border-radius:0 6px 6px 0;padding:18px 22px;display:flex;flex-direction:column;gap:10px;max-width:46em}
-.quote p{font-size:19px;line-height:1.5;color:var(--ink)}
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.quote{margin:0;border-left:4px solid var(--c);background:var(--sheet-2);border-radius:0 6px 6px 0;padding:18px 22px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.quote p{font-size:18px;line-height:1.5;color:var(--ink)}
 .quote footer{font-size:15px;color:var(--ink-3)}
 .quote footer b{color:var(--ink-2)}
 .recl{margin:0;padding-left:20px;color:var(--ink-2);font-size:16px;display:flex;flex-direction:column;gap:4px}
@@ -480,10 +481,16 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
             <div><h3>What I built</h3><p>An editor for building the week, a published read-only rota, and a front-desk board for arrivals and pick-ups, with breaks, transport and mentoring slots.</p></div>
             <div><h3>What changed</h3><p>Two sites now run their day from it, and about 100 people at the school use it. In October alone, 10 staff made over 31,000 changes in it, across about 570 timetabled sessions a week for roughly 170 students and 50 staff.</p></div>
           </div>
+          <div class="quotes">
           <blockquote class="quote">
             <p>“Raf’s rota system has saved us twice over. It saved the company a large bill for a ready-made system, in a crowded market where none of them fitted all our needs. And it removed the manual admin: instead of editing spreadsheets and numbers, we now pull reports and use them to improve how staff work.”</p>
             <footer>A colleague at the school</footer>
           </blockquote>
+          <blockquote class="quote">
+            <p>“Working alongside Raf while he built the rota system was a joy. He was open to all feedback and requests, and his communication was excellent throughout. He built it with its users in mind, and it has improved my own productivity.”</p>
+            <footer>A member of staff who uses the system</footer>
+          </blockquote>
+          </div>
           <div class="row">
             <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:14px">
               <h3 style="font-size:22px">On the phone, and on the way to every pick-up</h3>
