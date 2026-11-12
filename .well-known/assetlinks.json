@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.rafaelkoo.gorb",
+      "sha256_cert_fingerprints": [
+        "7F:AE:5D:D4:B4:32:E7:04:E2:D6:51:50:FC:66:46:64:7F:01:F4:20:18:97:73:1F:DE:7D:9C:3C:C4:E9:8F:66"
+      ]
+    }
+  }
+]
