@@ -595,7 +595,7 @@ s -= Math.min(20, 5 * brokenLinks.length);
         <div class="sec-body">
           <h2 id="h-gb">GorB: FitTrack grew into a group app</h2>
           <div class="facts">
-            <div><h3>The problem</h3><p>FitTrack lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
+            <div><h3>The problem</h3><p>FitTrack, my earlier gym app, lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
             <div><h3>What I built</h3><p>A group app. You check in with a live camera photo, your group sees it, and a monthly table shows who has been. It has workouts, personal bests, rankings for each exercise, a group chat and push notifications, in English and 繁中.</p></div>
             <div><h3>What changed</h3><p>FitTrack's features came across in six stages, with an import for my old data, so nothing I had logged was lost. FitTrack itself stays as the one-person version.</p></div>
           </div>
@@ -762,8 +762,8 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     gb:{name:'GorB',d:'Group gym app',c:'--b-gb',sec:'s-gb'},
     hire:{name:'Interview with you',d:'Booked by you',c:'--b-hi',sec:'s-hire'}
   };
-  var DEFAULT=['tt','tr','ft','wd','gb','lunch','ex','how','ab','ct',null,'avail'];
-  var KEY='rn-portfolio-v5';
+  var DEFAULT=['tt','tr','wd','gb','ft','lunch','ex','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v6';
   var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
   function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[LUNCH]==='lunch'&&sl[LAST]==='avail';}
   try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
