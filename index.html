@@ -23,7 +23,7 @@
   --ink:#14171C; --ink-2:#3C434D; --ink-3:#5F6773;
   --bar:#111522; --bar-ink:#F2F4F8; --bar-ink-2:#A9B1C0; --bar-rule:#272D3D;
   --now:#E5322D; --act:#3B5BFD; --act-ink:#FFFFFF; --ok:#16703E; --warn:#B45309;
-  --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF; --b-ex:#DCE3EE; --b-hi:#FFD24A;
+  --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF; --b-ex:#DCE3EE; --b-hi:#FFD24A; --b-gb:#FFC4B8;
   --b-ink:#14171C;
   --font:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Verdana,sans-serif;
   --mono:'Atkinson Hyperlegible Mono',ui-monospace,Menlo,monospace;
@@ -33,14 +33,14 @@
   --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
   --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
   --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
-  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00; --b-gb:#6E2F28;
   --b-ink:#F2F4F8; color-scheme:dark}}
 :root[data-theme="dark"]{
   --canvas:#0F1218; --sheet:#171B23; --sheet-2:#1C212B; --rule:#2C3340; --rule-2:#252B36;
   --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
   --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
   --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
-  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00; --b-gb:#6E2F28;
   --b-ink:#F2F4F8; color-scheme:dark}
 *{box-sizing:border-box}
 html{background:var(--canvas)}
@@ -82,7 +82,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .reset2{display:none}
 .lbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
 .strip-scroll{overflow-x:auto;scrollbar-width:thin}
-.strip{position:relative;display:grid;grid-template-columns:repeat(11,minmax(92px,1fr));min-width:1012px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
+.strip{position:relative;display:grid;grid-template-columns:repeat(12,minmax(84px,1fr));min-width:1008px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
 .slot{position:relative;border-left:1px solid var(--rule-2);padding:20px 4px 4px;min-height:58px}
 .slot:first-child{border-left:0}
 .slot .tm{position:absolute;top:3px;left:6px;font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
@@ -192,6 +192,14 @@ body[data-view="developer"] .rec{display:none}
 .card h3{font-size:22px}
 .card p{font-size:16px;color:var(--ink-2)}
 .card .phone{flex:none;width:min(55%,200px)}
+.shots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin:4px 0}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:10px;align-items:center}
+.shots img{border-radius:22px;box-shadow:0 0 0 6px #151821,0 14px 30px rgba(0,0,0,.22)}
+.shots figcaption{font-size:14px;color:var(--ink-3);text-align:center}
+.shotnote{font-size:13px;color:var(--ink-3)}
+.recl{margin:0;padding-left:20px;color:var(--ink-2);font-size:16px;display:flex;flex-direction:column;gap:4px}
+@media (max-width:860px){.shots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 .steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
 .steps li{border:1px solid var(--rule-2);border-radius:6px;padding:16px;background:var(--sheet-2)}
 .steps b{display:block;margin-bottom:4px}
@@ -286,7 +294,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
   .strip-row{display:flex;align-items:stretch;gap:8px}
   .strip-row .strip-scroll{flex:1 1 auto;min-width:0;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 14px),transparent 100%)}
   .strip-row .strip-scroll::-webkit-scrollbar{display:none}
-  .tt .strip{grid-template-columns:repeat(11,minmax(78px,1fr));min-width:858px}
+  .tt .strip{grid-template-columns:repeat(12,minmax(72px,1fr));min-width:864px}
   .tt .slot{min-height:48px;padding:15px 3px 3px}
   .tt .slot .tm{font-size:9.5px;top:2px;left:5px}
   .tt .blk{min-height:28px;padding:3px 7px;font-size:12px}
@@ -374,7 +382,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
   .tt.open .tt-top p{display:block}
   .lbtn{min-height:34px}
   .slot{min-height:50px;padding-top:18px}
-  .strip{grid-template-columns:repeat(11,minmax(84px,1fr));min-width:924px}
+  .strip{grid-template-columns:repeat(12,minmax(78px,1fr));min-width:936px}
   .msg{font-size:13px;margin-top:4px}
 }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
@@ -581,6 +589,42 @@ s -= Math.min(20, 5 * brokenLinks.length);
         </div>
       </section>
 
+      <!-- GORB -->
+      <section class="sec" id="s-gb" style="--c:var(--b-gb)" aria-labelledby="h-gb">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Built in 2 days</span></div>
+        <div class="sec-body">
+          <h2 id="h-gb">GorB: FitTrack grew into a group app</h2>
+          <div class="facts">
+            <div><h3>The problem</h3><p>FitTrack lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
+            <div><h3>What I built</h3><p>A group app. You check in with a live camera photo, your group sees it, and a monthly table shows who has been. It has workouts, personal bests, rankings for each exercise, a group chat and push notifications, in English and 繁中.</p></div>
+            <div><h3>What changed</h3><p>FitTrack's features came across in six stages, with an import for my old data, so nothing I had logged was lost. FitTrack itself stays as the one-person version.</p></div>
+          </div>
+          <div class="shots">
+            <figure><img src="img/gorb-feed.jpg" alt="Group feed: a check-in photo of a dumbbell rack with the note Push day" width="780" height="1688" loading="lazy"><figcaption>Check-ins</figcaption></figure>
+            <figure><img src="img/gorb-ranks.jpg" alt="Rankings: gym days this month for five friends, with medals for the top three" width="780" height="1688" loading="lazy"><figcaption>Rankings</figcaption></figure>
+            <figure><img src="img/gorb-chat.jpg" alt="Group chat planning a 7am session, with a rename shown as a grey line" width="780" height="1688" loading="lazy"><figcaption>Group chat</figcaption></figure>
+            <figure><img src="img/gorb-progress.jpg" alt="Progress: level and points this week, muscle groups trained and personal bests" width="780" height="1688" loading="lazy"><figcaption>Progress</figcaption></figure>
+          </div>
+          <p class="shotnote">Screenshots use made-up people and photos. The real app is for my friends, so it needs a sign-in.</p>
+          <div class="rec"><ul class="recl"><li>The privacy rules live in the database, not the app: groupmates only, on all 17 tables.</li><li>Photos lose their GPS data before upload and are deleted after 7 days.</li><li>Database changes deploy themselves from GitHub.</li></ul></div>
+          <div class="dev">
+            <h3>Privacy is enforced by the database</h3>
+<pre class="code"><span class="c">-- abridged from supabase/migrations: every table has row-level security on</span>
+<span class="k">create policy</span> <span class="s">"see groupmates checkins"</span> <span class="k">on</span> checkins <span class="k">for select</span>
+  <span class="k">using</span> (shares_group(user_id));
+
+<span class="c">-- the server stamps who and when, so a phone can't backdate or post as someone else</span>
+new.user_id    := auth.uid();
+new.created_at := now();
+<span class="k">if</span> split_part(new.photo_path, <span class="s">'/'</span>, 1) &lt;&gt; auth.uid()::text <span class="k">then</span>
+  <span class="k">raise exception</span> <span class="s">'photo must be in your own folder'</span>;
+<span class="k">end if</span>;</pre>
+            <ul><li>Photos are drawn onto a canvas and re-encoded on the phone, which drops all EXIF data (GPS, phone model).</li><li>A daily job deletes photos after 7 days but keeps the check-in, so rankings don't change.</li><li>Every push that touches the database runs GitHub Actions, which applies new migrations and deploys the notification functions. Migrations are written to be safe to run twice.</li></ul>
+          </div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo/GorB" target="_blank" rel="noopener">Code on GitHub ↗</a><span class="stack">Supabase (Postgres, Auth, Storage, Edge Functions) · Web Push · Three.js · PWA</span></div>
+        </div>
+      </section>
+
       <!-- LUNCH (locked) -->
       <div class="lunch" id="s-lunch"><span class="t" data-time></span><b>Lunch.</b><span>Locked on the timetable, like a real break. Good moment to <a href="timetable-demo/">open the timetable demo ↗</a></span></div>
 
@@ -700,7 +744,8 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   /* ===== FILL THIS IN: the date you could start a new job (YYYY-MM-DD). While it's null the page says "ask me". ===== */
   var CONFIG={start:null};
   function fmt(s,ph){if(!s)return ph;var d=new Date(s+'T12:00:00');if(isNaN(d))return ph;return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
-  var TIMES=['Registration','Period 1','Period 2','Period 3','Lunch','Period 4','Period 5','Period 6','Period 7','Period 8','After school'];
+  var TIMES=['Registration','Period 1','Period 2','Period 3','Period 4','Lunch','Period 5','Period 6','Period 7','Period 8','Period 9','After school'];
+  var LUNCH=5,LAST=TIMES.length-1;
   var START=CONFIG.start?'from '+fmt(CONFIG.start,''):'to start: ask me';
   document.querySelectorAll('[data-start]').forEach(function(e){e.textContent=START;});
   var BLOCKS={
@@ -714,14 +759,15 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'},
     ex:{name:'Experience',d:'Since May 2025',c:'--b-ex',sec:'s-ex'},
     wd:{name:'Website watchdog',d:'Checks my sites daily',c:'--b-pt',sec:'s-wd'},
+    gb:{name:'GorB',d:'Group gym app',c:'--b-gb',sec:'s-gb'},
     hire:{name:'Interview with you',d:'Booked by you',c:'--b-hi',sec:'s-hire'}
   };
-  var DEFAULT=['tt','tr','ft','wd','lunch','ex','how','ab','ct',null,'avail'];
-  var KEY='rn-portfolio-v4';
+  var DEFAULT=['tt','tr','ft','wd','gb','lunch','ex','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v5';
   var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
-  function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[4]==='lunch'&&sl[10]==='avail';}
+  function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[LUNCH]==='lunch'&&sl[LAST]==='avail';}
   try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(saved&&Array.isArray(saved.slots)&&saved.slots.length===11&&valid(saved.slots)){S.slots=saved.slots;S.view=saved.view==='developer'?'developer':'recruiter';S.open=!!saved.open;}}catch(e){}
+    if(saved&&Array.isArray(saved.slots)&&saved.slots.length===TIMES.length&&valid(saved.slots)){S.slots=saved.slots;S.view=saved.view==='developer'?'developer':'recruiter';S.open=!!saved.open;}}catch(e){}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 
   var strip=document.getElementById('strip'),msg=document.getElementById('msg'),flow=document.getElementById('flow'),tt=document.getElementById('tt');
@@ -991,7 +1037,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   addEventListener('storage',function(e){
     if(e.key!==KEY||!e.newValue)return;
     try{var n=JSON.parse(e.newValue);}catch(err){return;}
-    if(!n||!Array.isArray(n.slots)||n.slots.length!==11||!valid(n.slots))return;
+    if(!n||!Array.isArray(n.slots)||n.slots.length!==TIMES.length||!valid(n.slots))return;
     var prev=snap();S.slots=n.slots;S.open=!!n.open;render();flip(prev);setOpen();
     if(n.view!==S.view){S.view=n.view==='developer'?'developer':'recruiter';document.body.dataset.view=S.view;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===S.view);b.parentNode.dataset.on=S.view;});}
     say('Updated from the other view.','good');
