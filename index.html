@@ -22,6 +22,7 @@
 <style>.accordion-inner .dev-h{margin:4px 0 6px;font-size:.95rem}.accordion-inner pre.code{overflow-x:auto;margin:0 0 14px;padding:12px 14px;background:#1b2130;color:#DCE3F0;border-radius:8px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.55}.code .c{color:#8C97AD}.code .k{color:#9DB4FF}.code .s{color:#B5E8A0}.spk-wrap{display:inline-flex;align-items:center;gap:8px;margin-left:auto;margin-right:10px}.spk{width:84px;height:24px;display:block}.spk polyline{fill:none;stroke:var(--accent-primary);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}.spk-score{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--text-secondary)}@media (max-width:420px){.spk{width:56px}}</style>
 <link rel="stylesheet" href="tt-widget.css">
 <style>.process-step h3{margin:0 0 6px;font-size:1rem}.timeline-item h3{margin:4px 0 2px;font-size:1.08rem}.skill-group h4{margin:0 0 4px;font-size:.84rem;color:var(--text-secondary)}.site-footer code{color:var(--text-primary)}.meta-muted code,.pane-head span,.mini-card figcaption,.media-slot figcaption{color:var(--text-secondary)}.pill-time{opacity:1!important;color:var(--text-secondary)}.day-pill.is-active .pill-time{color:inherit}</style>
+<style>::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}html.theme-fading,html.theme-fading *,html.theme-fading *::before{transition:background-color .4s ease,color .4s ease,border-color .4s ease,fill .4s ease!important}.two-col-grid{align-items:start}.classic-link{margin:8px 0 0}.classic-link a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:3px}</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -229,8 +230,7 @@
         <div class="testimonials-grid">
           <blockquote class="testimonial">
             &ldquo;Raf&rsquo;s rota system has saved us twice over. It saved the company a large bill for a ready-made system, in a crowded market where none of them fitted all our needs. And it removed the manual admin: instead of editing spreadsheets and numbers, we now pull reports and use them to improve how staff work.&rdquo;
-            <footer>&mdash; Jacob<p class="classic-link"><a href="classic/">Prefer the original? Try the interactive school-day version &rarr;</a></p>
-</footer>
+            <footer>&mdash; Jacob</footer>
           </blockquote>
           <blockquote class="testimonial">
             &ldquo;Working alongside Raf while he built the rota system was a joy. He was open to all feedback and requests, and his communication was excellent throughout. He built it with its users in mind, and it has improved my own productivity.&rdquo;
@@ -464,7 +464,8 @@
 
   <footer class="site-footer container">
     <p>&copy; 2026 Rafael Ngai &middot; <code>Atkinson Hyperlegible</code></p>
-  </footer>
+  <p class="classic-link"><a href="classic/">Prefer the original? Try the interactive school-day version &rarr;</a></p>
+</footer>
 
   <!-- Non-shifting floating mode indicator & toast -->
   <div class="mode-pill" id="tech-banner" hidden aria-live="polite">
@@ -477,5 +478,6 @@
 <script type="module" src="wd-extra.js"></script>
 <script src="tt-widget.js"></script>
 <script>(function(){var d=document.getElementById('day-bar');if(!d)return;var f=function(){d.inert=d.getAttribute('aria-hidden')==='true'||d.classList.contains('is-hidden');};f();new MutationObserver(f).observe(d,{attributes:true,attributeFilter:['aria-hidden','class']});})();</script>
+<script src="theme-fx.js"></script>
 </body>
 </html>
