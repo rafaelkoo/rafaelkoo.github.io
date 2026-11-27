@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="tt-widget.css">
 <style>.process-step h3{margin:0 0 6px;font-size:1rem}.timeline-item h3{margin:4px 0 2px;font-size:1.08rem}.skill-group h4{margin:0 0 4px;font-size:.84rem;color:var(--text-secondary)}.site-footer code{color:var(--text-primary)}.meta-muted code,.pane-head span,.mini-card figcaption,.media-slot figcaption{color:var(--text-secondary)}.pill-time{opacity:1!important;color:var(--text-secondary)}.day-pill.is-active .pill-time{color:inherit}</style>
 <style>::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}::view-transition-old(root){z-index:1}::view-transition-new(root){z-index:2}html.theme-fading,html.theme-fading *,html.theme-fading *::before{transition:background-color .4s ease,color .4s ease,border-color .4s ease,fill .4s ease!important}.two-col-grid{align-items:start}.classic-link{margin:8px 0 0}.classic-link a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:3px}</style>
+<style>.ba{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}.ba-col{border-radius:12px;padding:16px 18px;min-width:0}.ba-before{background:var(--bg-elevated);border:1px dashed var(--border-strong)}.ba-after{background:var(--bg-surface);border:1px solid var(--accent-emerald)}.ba-h{margin:0;font-size:.95rem}.ba-after .ba-h{color:var(--accent-emerald)}.ba-sub{margin:2px 0 12px;font-size:.84rem;color:var(--text-secondary)}.ba-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}.ba-list li{display:grid;gap:2px}.ba-list b{font-size:.9rem}.ba-list span{font-size:.84rem;color:var(--text-secondary)}.ba-before .ba-list b::before{content:"\2715  ";color:var(--text-secondary)}.ba-after .ba-list b::before{content:"\2713  ";color:var(--accent-emerald)}.ba-arrow{align-self:center;font-size:1.4rem;color:var(--text-secondary)}@media (max-width:720px){.ba{grid-template-columns:1fr}.ba-arrow{justify-self:center;transform:rotate(90deg)}}</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -192,39 +193,11 @@
         <!-- Flat Interactive Split-Compare (confirmed wording only) -->
         <div class="flat-viz" aria-label="Interactive before and after timetable comparison">
           <div class="flat-viz-head">
-            <h4>Drag to compare: Old Excel sheet vs Web timetable</h4>
-            <span class="meta-muted">Arrow keys or drag divider &middot; Addresses stay server-side via <code>lib/homeaddr.js</code></span>
+            <h4>Before and after: Excel sheet vs web timetable</h4>
+            <span class="meta-muted">Addresses stay server-side via <code>lib/homeaddr.js</code></span>
           </div>
 
-          <div class="split-stage" id="split-stage" style="--split: 50%">
-            <div class="split-pane split-pane--after" aria-label="After: Web timetable platform">
-              <div class="pane-head pane-head--after">
-                <strong>After &middot; Web Timetable Platform</strong>
-                <span>2 sites &middot; ~100 people &middot; ~570 sessions/week</span>
-              </div>
-              <div class="mock-grid">
-                <div class="mock-cell mock-cell--ok"><strong>Live Editor &amp; Rota</strong><span>10 staff &middot; 31,000+ Oct edits</span></div>
-                <div class="mock-cell mock-cell--ok"><strong>Reports &amp; Desk Board</strong><span>Pull reports, no manual admin</span></div>
-                <div class="mock-cell mock-cell--ok"><strong><code>lib/homeaddr.js</code></strong><span>Home addresses kept server-side</span></div>
-              </div>
-            </div>
-
-            <div class="split-pane split-pane--before" aria-label="Before: Old Excel spreadsheet">
-              <div class="pane-head pane-head--before">
-                <strong>Before &middot; Old Excel Sheet</strong>
-                <span>Harder as student numbers grew</span>
-              </div>
-              <div class="mock-grid">
-                <div class="mock-cell mock-cell--warn"><strong>Took Too Much Time</strong><span>Editing spreadsheets and numbers by hand</span></div>
-                <div class="mock-cell mock-cell--warn"><strong>Student Timetables</strong><span>A pain to manage as numbers grew</span></div>
-                <div class="mock-cell mock-cell--warn"><strong>Manual Admin</strong><span>Harder to pull reports across sites</span></div>
-              </div>
-            </div>
-
-            <button type="button" class="split-handle" id="split-handle" role="slider" aria-label="Compare before and after" aria-valuemin="8" aria-valuemax="92" aria-valuenow="50">
-              <span class="split-grip" aria-hidden="true">&harr;</span>
-            </button>
-          </div>
+          <div class="ba"><div class="ba-col ba-before"><h5 class="ba-h">Before &middot; Old Excel Sheet</h5><p class="ba-sub">Harder as student numbers grew</p><ul class="ba-list"><li><b>Took Too Much Time</b><span>Editing spreadsheets and numbers by hand</span></li><li><b>Student Timetables</b><span>A pain to manage as numbers grew</span></li><li><b>Manual Admin</b><span>Harder to pull reports across sites</span></li></ul></div><span class="ba-arrow" aria-hidden="true">&rarr;</span><div class="ba-col ba-after"><h5 class="ba-h">After &middot; Web Timetable Platform</h5><p class="ba-sub">2 sites &middot; ~100 people &middot; ~570 sessions/week</p><ul class="ba-list"><li><b>Live Editor &amp; Rota</b><span>10 staff &middot; 31,000+ Oct edits</span></li><li><b>Reports &amp; Desk Board</b><span>Pull reports, no manual admin</span></li><li><b><code>lib/homeaddr.js</code></b><span>Home addresses kept server-side</span></li></ul></div></div>
         </div>
 
         <div class="testimonials-grid">
