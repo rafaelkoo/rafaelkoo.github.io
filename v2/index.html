@@ -233,15 +233,7 @@
             <div class="accordion-inner">
             <h4 class="dev-h">How the address rule works</h4>
             <p>The server, not the page, decides who gets addresses. A run's addresses go only to the people on that run or an editor allowed to edit it, and the read is logged without the address itself.</p>
-<pre class="code"><span class="c">// abridged from lib/homeaddr.js</span>
-<span class="k">function</span> forBlock(me, q, who) {
-  <span class="k">const</span> s = store.get(<span class="s">'sessions'</span>, q.wk + <span class="s">'|'</span> + q.sid)?.data?.s;
-  <span class="k">const</span> onIt = staffIdOf(me) &amp;&amp; [s.staffId, ...helpersOf(s)].includes(staffIdOf(me));
-  <span class="k">const</span> ed = me.role === <span class="s">'join'</span> || perms.canEditSession(me.role, s);
-  <span class="k">if</span> (!onIt &amp;&amp; !ed) <span class="k">return</span> { status: 403 };   <span class="c">// no address leaves the server</span>
-  store.audit({ who, op: <span class="s">'homeaddr-read'</span>, n: count });  <span class="c">// who read, never what</span>
-  ...
-}</pre>
+
               <p>Built with Vanilla JS and Node.js. <code>lib/homeaddr.js</code> keeps pupil home addresses server-side rather than sending them to general rota views.</p>
               <div class="tech-tags">
                 <span>Vanilla JS</span><span>Node.js</span><span>lib/homeaddr.js</span><span>Test suites</span>
@@ -285,17 +277,7 @@
             <div class="accordion-inner">
             <h4 class="dev-h">How the rules work</h4>
             <p>Every change is a named action. Its rule is a pure function that returns the writes it wants, and the store saves all of them or none. The page loads the same rule files only to grey out buttons.</p>
-<pre class="code"><span class="c">// abridged: every action has the same shape</span>
-register({ name: <span class="s">'markWork'</span>, role: <span class="s">'staff'</span>, run(ctx, input) {
-  <span class="k">if</span> (!teacher &amp;&amp; !mentor) <span class="k">return</span> { error: <span class="s">'Only this unit\'s teachers…'</span> };
-  <span class="k">return</span> { writes, notes: [<span class="s">'Marks saved.'</span>] };
-}});
 
-<span class="c">// lib/store.js: all of it or none of it</span>
-writeMany(ops) {
-  <span class="k">for</span> (<span class="k">const</span> op <span class="k">of</span> ops) <span class="k">if</span> (etagOf(op) !== op.ifMatch) <span class="k">return</span> { conflict: <span class="k">true</span> };
-  ops.forEach(write);
-}</pre>
               <p>Covers 718 real AIM course units and 3,068 criteria across 21 qualifications, guarded by 129 passing automated tests.</p>
               <div class="tech-tags">
                 <span>718 AIM Units</span><span>3,068 Criteria</span><span>21 Qualifications</span><span>129 Passing Tests</span>
@@ -327,16 +309,7 @@ writeMany(ops) {
             <li class="status-loading">Loading live check from <code>site-watchdog/data/latest.json</code>&hellip;</li>
           </ul>
 
-          <div class="accordion"><button type="button" class="accordion-trigger" aria-expanded="false"><span>How it works (code)</span><span class="accordion-icon" aria-hidden="true">+</span></button><div class="accordion-panel" aria-hidden="true" inert><div class="accordion-inner">
-            <h4 class="dev-h">How it decides</h4>
-<pre class="code"><span class="c">// abridged from watchdog.mjs: 100 is perfect</span>
-s -= Math.min(30, 10 * v.jsErrors.length);                       <span class="c">// page errors</span>
-s -= Math.min(40, axe.reduce((a, x) =&gt; a + IMPACT[x.impact], 0)); <span class="c">// critical 8, serious 4</span>
-s -= v.overflowPx &gt; 1 ? 10 : 0;                                   <span class="c">// scrolls sideways on a phone</span>
-s -= Math.min(20, 5 * brokenLinks.length);
-
-<span class="c">// an alert only for what is new or worse, so it never nags about known issues</span>
-<span class="k">if</span> (score &lt;= prev.score - 10) problems.push(<span class="s">`Score dropped from ${prev.score}`</span>);</pre></div></div></div><div class="case-footer">
+          <div class="case-footer">
             <a href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Code on GitHub &nearr;</a>
             <a href="https://github.com/rafaelkoo/site-watchdog/issues" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Alerts &nearr;</a>
           </div>
@@ -358,17 +331,6 @@ s -= Math.min(20, 5 * brokenLinks.length);
             </button>
             <div class="accordion-panel" aria-hidden="true" inert>
               <div class="accordion-inner">
-            <h4 class="dev-h">The server decides, not the phone</h4>
-<pre class="code"><span class="c">-- abridged from supabase/migrations: the app can only ASK to buy something</span>
-<span class="k">create function</span> shop_buy(p_item text, p_qty int) <span class="k">returns</span> jsonb
-<span class="k">language</span> plpgsql <span class="k">security definer</span> <span class="k">as</span> $$
-<span class="k">begin</span>
-  <span class="k">if</span> auth.uid() <span class="k">is null then raise exception</span> <span class="s">'Not signed in'</span>; <span class="k">end if</span>;
-  <span class="k">if</span> p_qty &lt; 1 <span class="k">or</span> p_qty &gt; 20 <span class="k">then raise exception</span> <span class="s">'Can’t buy that'</span>; <span class="k">end if</span>;
-  <span class="c">-- coins are checked and taken in the same step, so a double tap can't spend twice</span>
-  <span class="k">if not</span> spend_coins(auth.uid(), price * p_qty) <span class="k">then raise exception</span> <span class="s">'Not enough coins'</span>; <span class="k">end if</span>;
-  <span class="k">insert into</span> user_items ... <span class="k">on conflict do update set</span> qty = qty + p_qty;
-<span class="k">end</span> $$;</pre>
                 <p>v0.76, 114 commits, 60 migrations, 37 tables with row-level security, 129 server functions, and 5 Edge Functions on Supabase.</p>
               </div>
             </div>
