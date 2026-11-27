@@ -90,7 +90,23 @@
     revealEls.forEach((el) => el.classList.add('is-visible'));
   }
 
-  // 2. School-Day Scroll-Spy with sliding pill indicator
+  // 2. Slim day-bar visibility (appears only after #draggable-timetable-slot scrolls out of view)
+  const dayBar = document.getElementById('day-bar');
+  const timetableSlot = document.getElementById('draggable-timetable-slot');
+  if (dayBar && timetableSlot && 'IntersectionObserver' in window) {
+    dayBar.classList.add('is-hidden');
+    const slotObserver = new IntersectionObserver(
+      (entries) => {
+        const inView = entries[0].isIntersecting;
+        dayBar.classList.toggle('is-hidden', inView);
+        dayBar.setAttribute('aria-hidden', String(inView));
+      },
+      { threshold: 0 }
+    );
+    slotObserver.observe(timetableSlot);
+  }
+
+  // 2b. School-Day Scroll-Spy with sliding pill indicator (highlights both when Watchdog & GorB are side by side)
   const dayPillsWrap = document.querySelector('.day-pills');
   const dayPills = Array.from(document.querySelectorAll('.day-pill'));
   const trackedSections = dayPills
@@ -105,26 +121,36 @@
     dayPillsWrap.prepend(dayIndicator);
   }
 
-  function moveDayIndicator(pill) {
-    if (!dayIndicator || !pill) return;
+  function moveDayIndicator(activePills) {
+    if (!dayIndicator || !activePills.length) return;
+    const first = activePills[0];
+    const last = activePills[activePills.length - 1];
+    const left = first.offsetLeft;
+    const width = (last.offsetLeft + last.offsetWidth) - left;
     dayIndicator.style.opacity = '1';
-    dayIndicator.style.width = `${pill.offsetWidth}px`;
-    dayIndicator.style.transform = `translateX(${pill.offsetLeft}px)`;
+    dayIndicator.style.width = `${width}px`;
+    dayIndicator.style.transform = `translateX(${left}px)`;
   }
 
-  function setActivePill(sectionId) {
-    let activePill = null;
-    for (const pill of dayPills) {
-      const active = pill.dataset.section === sectionId;
-      pill.classList.toggle('is-active', active);
-      if (active) activePill = pill;
+  const visibleIds = new Set();
+  function syncActivePills() {
+    let activePills = dayPills.filter((p) => visibleIds.has(p.dataset.section));
+    if (!activePills.length) {
+      activePills = dayPills.filter((p) => p.classList.contains('is-active'));
     }
-    if (activePill) {
-      moveDayIndicator(activePill);
+    if (!activePills.length && dayPills.length) {
+      activePills = [dayPills[0]];
+    }
+
+    dayPills.forEach((pill) => pill.classList.toggle('is-active', activePills.includes(pill)));
+
+    if (activePills.length) {
+      moveDayIndicator(activePills);
       const bar = document.querySelector('.day-bar-inner');
-      if (bar) {
+      const lead = activePills[0];
+      if (bar && lead) {
         bar.scrollTo({
-          left: activePill.offsetLeft - bar.clientWidth / 2 + activePill.offsetWidth / 2,
+          left: lead.offsetLeft - bar.clientWidth / 2 + lead.offsetWidth / 2,
           behavior: prefersReducedMotion ? 'auto' : 'smooth'
         });
       }
@@ -133,10 +159,10 @@
 
   if (dayPills.length) {
     const initialActive = dayPills.find((p) => p.classList.contains('is-active')) || dayPills[0];
-    requestAnimationFrame(() => moveDayIndicator(initialActive));
+    requestAnimationFrame(() => moveDayIndicator([initialActive]));
     window.addEventListener('resize', () => {
-      const current = dayPills.find((p) => p.classList.contains('is-active'));
-      if (current) moveDayIndicator(current);
+      const current = dayPills.filter((p) => p.classList.contains('is-active'));
+      if (current.length) moveDayIndicator(current);
     });
   }
 
@@ -144,10 +170,12 @@
     const spyObserver = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) setActivePill(entry.target.id);
+          if (entry.isIntersecting) visibleIds.add(entry.target.id);
+          else visibleIds.delete(entry.target.id);
         }
+        syncActivePills();
       },
-      { rootMargin: '-35% 0px -55% 0px', threshold: 0 }
+      { rootMargin: '-25% 0px -45% 0px', threshold: 0 }
     );
     trackedSections.forEach((sec) => spyObserver.observe(sec));
   }
@@ -247,7 +275,7 @@
         );
 
         const status = document.createElement('span');
-        status.className = 'status-ok';
+        status.className = isHealthy ? 'status-ok' : 'status-warn';
         const ms = typeof d.loadMs === 'number' ? `${Math.round(d.loadMs)} ms` : 'Checked';
         status.textContent = isHealthy ? `All good · ${ms}` : 'Needs a look';
         li.append(name, status);
