@@ -18,7 +18,7 @@
 <style>
 /* Layout: the portfolio is a day on a timetable. A slim timetable bar under the header runs the page:
    its blocks are the sections, the red line is where you are, and moving a block moves the section. */
-:root{
+:root{--ease:cubic-bezier(.22,1,.36,1);interpolate-size:allow-keywords;
   --canvas:#EEF0F3; --sheet:#FFFFFF; --sheet-2:#F7F8FA; --rule:#D7DBE1; --rule-2:#E6E9EE;
   --ink:#14171C; --ink-2:#3C434D; --ink-3:#5F6773;
   --bar:#111522; --bar-ink:#F2F4F8; --bar-ink-2:#A9B1C0; --bar-rule:#272D3D;
@@ -67,7 +67,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .seg button{background:none;border:0;color:var(--bar-ink-2);min-height:40px;padding:0 14px;font-size:15px;cursor:pointer}
 .seg button{position:relative;z-index:1;transition:color .25s}
 .seg button[aria-pressed="true"]{color:#FFFFFF;font-weight:700}
-.ind{position:absolute;top:0;bottom:0;left:0;width:50%;background:var(--act);transition:transform .38s cubic-bezier(.2,.8,.2,1)}
+.ind{position:absolute;top:0;bottom:0;left:0;width:50%;background:var(--act);transition:transform .38s var(--ease)}
 [data-on="developer"]>.ind{transform:translateX(100%)}
 .tbtn{background:none;border:1px solid var(--bar-rule);color:var(--bar-ink);border-radius:6px;min-height:40px;padding:0 12px;font-size:15px;cursor:pointer}
 .tbtn:hover,.seg button:hover{color:#FFFFFF}
@@ -119,14 +119,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .now::after{content:"";position:absolute;bottom:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 60%,transparent);animation:pulse 1.8s ease-out infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
 .sec-head .t{display:inline-block;transform-origin:50% 50%}
-.sec-body > *,.lunch{transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.sec-body > *,.lunch{transition:opacity .45s var(--ease),transform .5s var(--ease)}
 .wait{opacity:.2;transform:translateY(32px)}
 .mess{display:inline-block;white-space:nowrap}
-.mess i{display:inline-block;font-style:normal;animation:settle .9s cubic-bezier(.3,1.4,.5,1) both;animation-delay:calc(.35s + var(--k) * 55ms)}
-@keyframes settle{0%{transform:translate(var(--x),var(--y)) rotate(var(--r));color:var(--ink-3)}100%{transform:none}}
-.hero .lede,.hero .ctas,.hero .try,.summary{animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
-.hero .lede{animation-delay:.25s}.hero .ctas{animation-delay:.35s}.hero .try{animation-delay:.5s}.summary{animation-delay:.6s}
-@keyframes rise{from{opacity:.2;transform:translateY(16px)}to{opacity:1;transform:none}}
+.mess i{display:inline-block;font-style:normal;animation:settle .36s var(--ease) both;animation-delay:calc(.03s + var(--k) * 18ms)}
+@keyframes settle{0%{transform:translate(calc(var(--x)*.5),calc(var(--y)*.5));color:var(--ink-3)}100%{transform:none}}
+.hero .lede,.hero .ctas,.hero .try,.summary{animation:rise .4s var(--ease) both}.hero .lede{animation-delay:.04s}.hero .ctas{animation-delay:.08s}.hero .try{animation-delay:.12s}.summary{animation-delay:.16s}
+
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 body.dragging,body.dragging *{cursor:grabbing!important}
 
 /* ---------- page ---------- */
@@ -218,7 +218,7 @@ body[data-view="developer"] .rec{display:none}
 .fold[open]>summary::before{content:"\2013"}
 .fold>summary:hover{color:var(--act)}
 .fold>summary:focus-visible{outline:3px solid var(--act);outline-offset:2px;border-radius:10px}
-.fold>*:not(summary){margin:0 16px 16px}
+.fold>*:not(summary){margin:0 16px 16px}.fold::details-content{block-size:0;overflow:hidden;transition:block-size .32s var(--ease),content-visibility .32s allow-discrete}.fold[open]::details-content{block-size:auto}.fold>summary::before{transition:transform .32s var(--ease)}.fold[open]>summary::before{transform:rotate(180deg)}
 .duo .card .phone{width:min(45%,160px)}
 
 .art{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:4px 0}
@@ -292,7 +292,7 @@ body[data-view="developer"] .rec{display:none}
 .wdempty{padding:14px 16px;font-size:15px;color:var(--ink-2)}
 .btn.copied{background:var(--ok);border-color:var(--ok);color:#FFFFFF;justify-content:center}
 .btn .tick{width:18px;height:18px;flex:none}
-.btn .tick path{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s .05s cubic-bezier(.2,.8,.2,1) forwards}
+.btn .tick path{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s .05s var(--ease) forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
 .hirebtn.booked{background:var(--ok);color:#FFFFFF;animation:none;display:inline-flex;align-items:center;gap:4px;padding:0 12px}
 .hirebtn .tick{width:14px;height:14px}
@@ -301,7 +301,7 @@ body[data-view="developer"] .rec{display:none}
 .wdlist .ring svg{width:38px;height:38px;transform:rotate(-90deg);display:block}
 .wdlist .ring circle{fill:none;stroke-width:4}
 .wdlist .ring .bg{stroke:var(--rule-2)}
-.wdlist .ring .fg{stroke:var(--ok);stroke-linecap:round;transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1)}
+.wdlist .ring .fg{stroke:var(--ok);stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease)}
 .wdlist .warn .ring .fg{stroke:var(--warn)}.wdlist .down .ring .fg{stroke:var(--now)}
 .wdlist .ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700}
 .wdlist .skel{display:block;height:12px;border-radius:4px;background:linear-gradient(90deg,var(--rule-2) 25%,var(--sheet-2) 50%,var(--rule-2) 75%);background-size:300% 100%;animation:shimmer 1.4s linear infinite}
@@ -644,7 +644,7 @@ s -= Math.min(20, 5 * brokenLinks.length);
 
       <!-- GORB -->
       <section class="sec half" id="s-gb" style="--c:var(--b-gb)" aria-labelledby="h-gb">
-        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">111 updates in 17 days</span></div>
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">114 updates in 17 days</span></div>
         <div class="sec-body">
           <h2 id="h-gb">GorB: a gym app that turns training into a co-op game</h2>
           <p class="lead">A group gym app where real training powers a co-op pixel game, with every battle and coin decided by the server.</p>
@@ -652,7 +652,7 @@ s -= Math.min(20, 5 * brokenLinks.length);
           <div class="facts">
             <div><h3>The problem</h3><p>FitTrack, my earlier gym app, lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
             <div><h3>What I built</h3><p>A group app where real training powers a game. You check in with a photo and log workouts with weight suggestions that follow your goal. Your training sets your pixel character's stats. Your group trains in a shared pixel gym, battles "excuse monsters" like the Couch Monster, and takes on a weekly co-op boss.</p></div>
-            <div><h3>What changed</h3><p>It grew from a check-in app into a game in 17 days: 111 updates, now version 0.76. FitTrack's features came across with an import for my old data, and FitTrack itself stays as the one-person version.</p></div>
+            <div><h3>What changed</h3><p>It grew from a check-in app into a game in 17 days: 114 updates, now version 0.76. FitTrack's features came across with an import for my old data, and FitTrack itself stays as the one-person version.</p></div>
           </div>
           </details>
           <div class="art">
@@ -1059,7 +1059,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     for(var i=0;i<18;i++){var b=document.createElement('span');b.className='bit';b.style.background=cols[i%cols.length];
       b.style.left=(r.left+r.width/2)+'px';b.style.top=(r.top+r.height/2)+'px';document.body.appendChild(b);
       var a=Math.random()*Math.PI*2,d=40+Math.random()*70;
-      b.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:'translate('+(Math.cos(a)*d)+'px,'+(Math.sin(a)*d+30)+'px) rotate('+(Math.random()*540-270)+'deg)',opacity:0}],{duration:900+Math.random()*400,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=function(){this.effect.target.remove();};}
+      b.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:'translate('+(Math.cos(a)*d)+'px,'+(Math.sin(a)*d+30)+'px) rotate('+(Math.random()*540-270)+'deg)',opacity:0}],{duration:900+Math.random()*400,easing:'cubic-bezier(.22,1,.36,1)'}).onfinish=function(){this.effect.target.remove();};}
   }
   hb.addEventListener('click',function(){
     var cur=idx('hire');
@@ -1093,7 +1093,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   function setPhone(on){
     document.body.classList.toggle('phone-on',on);pw.hidden=!on;pb.setAttribute('aria-pressed',on);pb.textContent=on?'Close phone':'Phone view';
     if(on&&!pf.src){pf.src=location.pathname+'?embed=1';}
-    if(on&&!RM)pw.animate([{transform:'translateX(120%) rotate(6deg)',opacity:.3},{transform:'none',opacity:1}],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)'});
+    if(on&&!RM)pw.animate([{transform:'translateX(120%) rotate(6deg)',opacity:.3},{transform:'none',opacity:1}],{duration:520,easing:'cubic-bezier(.22,1,.36,1)'});
     measure();updateNow(true);
     say(on?'Phone view is on. It is the same page at phone size: move a block here or there and both update.':'Phone view closed.');
   }
@@ -1127,7 +1127,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   function openSheet(){
     lastFocus=document.activeElement;renderDay();updateNow(true);
     sheet.hidden=false;scrim.hidden=false;document.documentElement.style.overflow='hidden';
-    if(!RM){sheet.animate([{transform:'translateY(100%)'},{transform:'none'}],{duration:340,easing:'cubic-bezier(.2,.8,.2,1)'});scrim.animate([{opacity:0},{opacity:1}],{duration:240});}
+    if(!RM){sheet.animate([{transform:'translateY(100%)'},{transform:'none'}],{duration:340,easing:'cubic-bezier(.22,1,.36,1)'});scrim.animate([{opacity:0},{opacity:1}],{duration:240});}
     document.getElementById('sheetClose').focus();
   }
   function closeSheet(then){
