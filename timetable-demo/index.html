@@ -3036,7 +3036,7 @@ body.mentor-abyss #mob .m-big.dp-brk .dp-row{font-size:14px}
 
 <div id="dockTabs" style="display:none"></div>
 
-<div id="main">
+<div id="main" role="main">
   <div id="reloadBar" role="status"></div>
   <div id="archBanner"><span id="archMsg"></span><button class="mini" id="archBtn" onclick="toggleWeekLock()">Unlock to correct</button></div>
   <div id="warnBar"><div class="wtitle" id="warnTitle"></div><ul id="warnList"></ul></div>
@@ -46857,5 +46857,5 @@ if (!IS_PUBLISHED) {
 })();
 
 if (document.body.classList.contains("mentor-storm")) window.hxBoot();</script>
-</body>
+<script id="a11yLandmarks">(function(){var L={park:'Parked sessions',toast:'Notifications',mob:'Phone timetable',dockTabs:'Panels',panel:'Details panel',sessEd:'Session editor',puBoard:'Pick-up board',floatRoot:'Floating tools',demoPhoneCap:'Phone preview',overlay:'Overlay'};function f(){for(var id in L){var e=document.getElementById(id);if(e&&!e.hasAttribute('role')){e.setAttribute('role','region');e.setAttribute('aria-label',L[id]);}}}f();new MutationObserver(f).observe(document.body,{childList:true});})();</script></body>
 </html>

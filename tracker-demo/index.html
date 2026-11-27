@@ -3734,7 +3734,7 @@ module.exports = core;
   var TRY = [['demo-s01', 'Student', 'Wren'], ['demo-st-sam', 'Staff', 'Remy'], ['demo-st-iv1', 'Internal Verifier', 'Ivy'], ['demo-st-dev', 'Developer', 'Dev']];
   function strip() {
     if (document.getElementById('demoStrip')) return;
-    var d = document.createElement('div'); d.id = 'demoStrip'; d.setAttribute('role', 'note');
+    var d = document.createElement('div'); d.id = 'demoStrip'; d.setAttribute('role', 'region'); d.setAttribute('aria-label', 'About this demo');
     var cur = ls.get('lrn-person');
     d.innerHTML = '<span class="dsT"><b>DEMO</b> · made-up people · real AIM course content</span><span class="dsB">Try as: ' +
       TRY.map(function (t) { return '<button type="button" data-as="' + t[0] + '"' + (cur === t[0] ? ' aria-pressed="true"' : '') + '>' + t[1] + ' <small>' + t[2] + '</small></button>'; }).join('') +
@@ -3755,7 +3755,7 @@ module.exports = core;
 </script>
 
 <a class="skip" href="#main">Skip to content</a>
-<div id="signin" class="signin" hidden>
+<div role="region" aria-label="Student Tracker demo" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap"><h1>Student Tracker demo</h1></div><div id="signin" class="signin" hidden>
   <div class="card">
     <h1>Learning <span>Harbour Works</span></h1>
     <div id="setup" hidden>
