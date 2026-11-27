@@ -1,11 +1,9 @@
-import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
-
 (() => {
   'use strict';
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 1. Scroll Progress Bar + Light/Dark Theme Toggle
+  // 0. Scroll Progress Bar + Light/Dark Theme Toggle
   const progressBar = document.getElementById('scroll-progress');
   let progressRaf = 0;
   function updateScrollProgress() {
@@ -38,20 +36,23 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
       document.documentElement.setAttribute('data-theme', next);
       try { localStorage.setItem('rafael-theme', next); } catch {}
       syncThemeButtons();
+      window.dispatchEvent(new CustomEvent('rafael-theme-change'));
     });
   });
 
-  // 2. Draggable Split-Compare Slider
+  // 0b. Draggable Split-Compare Slider (inspired by student portfolio D)
   const splitStage = document.getElementById('split-stage');
   const splitHandle = document.getElementById('split-handle');
   if (splitStage && splitHandle) {
     let splitPct = 50;
     let dragging = false;
+
     function setSplit(pct) {
       splitPct = Math.max(8, Math.min(92, Math.round(pct)));
       splitStage.style.setProperty('--split', `${splitPct}%`);
       splitHandle.setAttribute('aria-valuenow', String(splitPct));
     }
+
     splitHandle.addEventListener('pointerdown', (e) => {
       dragging = true;
       splitHandle.setPointerCapture(e.pointerId);
@@ -70,7 +71,7 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
     });
   }
 
-  // 3. Safe Scroll Reveal
+  // 1. Safe Scroll Reveal (.js class is added in <head>)
   const revealEls = document.querySelectorAll('.reveal');
   if (!prefersReducedMotion && 'IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver(
@@ -89,7 +90,7 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
     revealEls.forEach((el) => el.classList.add('is-visible'));
   }
 
-  // 4. School-Day Scroll-Spy with sliding pill indicator
+  // 2. School-Day Scroll-Spy with sliding pill indicator
   const dayPillsWrap = document.querySelector('.day-pills');
   const dayPills = Array.from(document.querySelectorAll('.day-pill'));
   const trackedSections = dayPills
@@ -151,7 +152,7 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
     trackedSections.forEach((sec) => spyObserver.observe(sec));
   }
 
-  // 5. Accordions with inert + Recruiter/Developer Mode
+  // 3. Accordions with inert + Recruiter/Developer Mode (non-shifting floating pill)
   const accordions = Array.from(document.querySelectorAll('.accordion'));
   const modeGroups = Array.from(document.querySelectorAll('.segmented-control'));
   const techBanner = document.getElementById('tech-banner');
@@ -191,12 +192,37 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
     btn.addEventListener('click', () => setReadingMode(btn.dataset.mode));
   });
 
-  // 6. Watchdog: Live JSON from site-watchdog
+  // 4. Illustrative Tracker Graph (Safari-safe stroke-dashoffset re-trigger)
+  const workExamples = {
+    ex1: ['Unit A \u00b7 Shared criterion', 'Unit B \u00b7 Shared criterion', 'Unit C \u00b7 Shared criterion'],
+    ex2: ['Unit D \u00b7 Shared criterion', 'Unit E \u00b7 Shared criterion', 'Unit F \u00b7 Shared criterion']
+  };
+
+  document.querySelectorAll('.graph-node').forEach((node) => {
+    node.addEventListener('click', () => {
+      const labels = workExamples[node.dataset.work];
+      if (!labels) return;
+      document.querySelectorAll('.graph-node').forEach((n) => n.classList.toggle('is-active', n === node));
+
+      document.querySelectorAll('.g-line').forEach((path) => {
+        path.classList.remove('is-animating');
+        void path.getBoundingClientRect();
+        if (!prefersReducedMotion) path.classList.add('is-animating');
+      });
+
+      labels.forEach((text, idx) => {
+        const target = document.getElementById(`target-${idx + 1}`);
+        if (target) target.querySelector('strong').textContent = text;
+      });
+    });
+  });
+
+  // 5. Watchdog: Fetch live JSON from site-watchdog (checks desktop.up && phone.up & empty error arrays)
   const watchdogList = document.getElementById('watchdog-list');
   async function loadWatchdog() {
     if (!watchdogList) return;
     try {
-      const res = await fetch('https://raw.githubusercontent.com/rafaelkoo/site-watchdog/main/data/latest.json', { cache: 'no-store' });
+      const res = await fetch('https://raw.githubusercontent.com/rafaelkoo/site-watchdog/main/data/latest.json');
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       const sites = Array.isArray(data.sites) ? data.sites : [];
@@ -221,19 +247,19 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
         );
 
         const status = document.createElement('span');
-        status.className = isHealthy ? 'status-ok' : 'status-warn';
+        status.className = 'status-ok';
         const ms = typeof d.loadMs === 'number' ? `${Math.round(d.loadMs)} ms` : 'Checked';
         status.textContent = isHealthy ? `All good · ${ms}` : 'Needs a look';
         li.append(name, status);
         watchdogList.append(li);
       });
     } catch {
-      watchdogList.innerHTML = '<li class="status-loading">Could not load live results from <code>site-watchdog/data/latest.json</code>.</li>';
+      watchdogList.innerHTML = '<li class="status-loading">TODO: connect live <code>site-watchdog/data/latest.json</code> (no hard-coded numbers).</li>';
     }
   }
   loadWatchdog();
 
-  // 7. Mobile Drawer (focus management)
+  // 6. Mobile Drawer (moves focus in/out cleanly)
   const mobileBtn = document.querySelector('.mobile-menu-btn');
   const drawer = document.getElementById('mobile-drawer');
   const drawerCloseBtn = document.getElementById('drawer-close-btn');
@@ -242,14 +268,17 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
     drawer.hidden = !open;
     mobileBtn.setAttribute('aria-expanded', String(open));
     document.body.style.overflow = open ? 'hidden' : '';
-    if (open) drawerCloseBtn?.focus();
-    else mobileBtn.focus();
+    if (open) {
+      drawerCloseBtn?.focus();
+    } else {
+      mobileBtn.focus();
+    }
   }
   mobileBtn?.addEventListener('click', () => toggleDrawer(true));
   document.querySelectorAll('[data-close-drawer]').forEach((el) => el.addEventListener('click', () => toggleDrawer(false)));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && drawer && !drawer.hidden) toggleDrawer(false); });
 
-  // 8. Copy Email + Toast
+  // 7. Copy Email + Toast
   const toastEl = document.getElementById('toast');
   let toastTimer = null;
   function showToast(msg) {
@@ -274,65 +303,70 @@ import { drawGym, defaultAvatar, cleanAvatar, W, H } from '../js/pixel.js';
     });
   });
 
-  // 9. Real GorB Pixel Gym (using ../js/pixel.js drawGym)
-  const fig = document.getElementById('gorb-gym-fig');
-  const img = fig?.querySelector('img');
-  if (img) {
-    const STATIONS = ['rack', 'bench', 'tread', 'dbs', 'ohp', 'climb', 'pullup', 'bike', 'rower', 'cable', 'machine', 'mat'];
-    const av = (id) => cleanAvatar(defaultAvatar(id), id);
-    const people = [
-      { id: 'kai', name: 'Kai', station: 'rack' },
-      { id: 'mina', name: 'Mina', station: 'bench' },
-      { id: 'raf', name: 'Rafael', station: 'climb', me: true },
-      { id: 'theo', name: 'Theo', station: 'tread' },
-      { id: 'jo', name: 'Jo', station: 'rest' }
-    ].map((p) => ({ ...p, avatar: av(p.id), inGym: p.station !== 'rest' }));
+  // 8. GorB Canvas Placeholder (paused when off-screen via IntersectionObserver)
+  const canvas = document.getElementById('gym-canvas');
+  if (canvas && canvas.getContext) {
+    const ctx = canvas.getContext('2d');
+    const avatars = [
+      { name: 'Member A', x: 90, y: 80, tx: 90, ty: 80, color: '#1d4ed8' },
+      { name: 'Member B', x: 210, y: 80, tx: 210, ty: 80, color: '#047857' },
+      { name: 'Member C', x: 330, y: 80, tx: 330, ty: 80, color: '#7c3aed' }
+    ];
+    let activeIdx = 0;
+    let rafId = null;
+    let isCanvasVisible = false;
 
-    const SCALE = 4;
-    const cv = document.createElement('canvas');
-    cv.width = W * SCALE;
-    cv.height = H * SCALE;
-    cv.setAttribute('role', 'img');
-    cv.setAttribute('aria-label', `${img.alt}. Live: tap a person to move them.`);
-    cv.style.cssText = 'width:100%;height:auto;display:block;border-radius:12px;cursor:pointer;background:#1b1712';
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const av = avatars[activeIdx];
+      av.tx = Math.max(28, Math.min(canvas.width - 28, (e.clientX - rect.left) * (canvas.width / rect.width)));
+      av.ty = Math.max(40, Math.min(canvas.height - 20, (e.clientY - rect.top) * (canvas.height / rect.height)));
+      activeIdx = (activeIdx + 1) % avatars.length;
+    });
 
-    let boxes = [], lastFrame = -1, running = false, raf = 0, timer = 0;
-    const paint = (t) => { boxes = drawGym(cv, people, t, SCALE, 'REST'); };
-    const move = (p) => {
-      const free = STATIONS.filter((s) => s !== p.station && !people.some((q) => q !== p && q.station === s));
-      const next = Math.random() < 0.15 ? 'rest' : free[Math.floor(Math.random() * free.length)];
-      p.station = next; p.inGym = next !== 'rest';
-      lastFrame = -1;
-    };
-    const loop = (now) => {
-      const f = Math.floor(now / 450);
-      if (f !== lastFrame) { lastFrame = f; paint(now); }
-      if (running) raf = requestAnimationFrame(loop);
-    };
-    const start = () => {
-      if (running || prefersReducedMotion) return;
-      running = true; raf = requestAnimationFrame(loop);
-      timer = setInterval(() => move(people[Math.floor(Math.random() * people.length)]), 3500);
-    };
-    const stop = () => { running = false; cancelAnimationFrame(raf); clearInterval(timer); };
+    function drawFrame() {
+      const isDark = getEffectiveTheme() === 'dark';
+      ctx.fillStyle = isDark ? '#182232' : '#f1f5f9';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    try {
-      paint(0);
-      img.replaceWith(cv);
-    } catch { /* fallback to img/gorb-gym.png */ }
+      avatars.forEach((av) => {
+        av.x += (av.tx - av.x) * (prefersReducedMotion ? 1 : 0.14);
+        av.y += (av.ty - av.y) * (prefersReducedMotion ? 1 : 0.14);
+        const px = Math.round(av.x);
+        const py = Math.round(av.y);
+        ctx.fillStyle = av.color;
+        ctx.fillRect(px - 8, py - 14, 16, 16);
+        ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a';
+        ctx.font = '11px "Atkinson Hyperlegible", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(av.name, px, py - 22);
+      });
 
-    cv.addEventListener('click', (e) => {
-      const r = cv.getBoundingClientRect(), k = cv.width / r.width;
-      const x = (e.clientX - r.left) * k, y = (e.clientY - r.top) * k;
-      const hit = boxes.find((b) => x >= b.x0 && x <= b.x1 && y >= b.y0 && y <= b.y1);
-      move(hit ? hit.p : people[Math.floor(Math.random() * people.length)]);
-      if (prefersReducedMotion) paint(0);
+      if (isCanvasVisible) {
+        rafId = requestAnimationFrame(drawFrame);
+      } else {
+        rafId = null;
+      }
+    }
+
+    window.addEventListener('rafael-theme-change', () => {
+      if (!rafId) drawFrame();
     });
 
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver((es) => es.forEach((en) => (en.isIntersecting ? start() : stop())), { threshold: 0.2 }).observe(cv);
+      const canvasObserver = new IntersectionObserver((entries) => {
+        isCanvasVisible = entries[0].isIntersecting;
+        if (isCanvasVisible && rafId === null) {
+          drawFrame();
+        } else if (!isCanvasVisible && rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      });
+      canvasObserver.observe(canvas);
     } else {
-      start();
+      isCanvasVisible = true;
+      drawFrame();
     }
   }
 })();

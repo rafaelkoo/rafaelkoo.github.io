@@ -2,7 +2,7 @@
 // Tap someone to send them to another station. Runs only while it is on screen; one still frame with reduced motion.
 import { drawGym, defaultAvatar, cleanAvatar, W, H } from './pixel.js';
 
-const fig = document.querySelector('#s-gb .art figure.wide');
+const fig = document.querySelector('#s-gb .art figure.wide, figure[data-gorb-gym]');
 const img = fig && fig.querySelector('img');
 if (img) {
   const STATIONS = ['rack', 'bench', 'tread', 'dbs', 'ohp', 'climb', 'pullup', 'bike', 'rower', 'cable', 'machine', 'mat'];

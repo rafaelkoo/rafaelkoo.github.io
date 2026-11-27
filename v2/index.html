@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rafael Ngai — Software Developer (v2)</title>
+  <title>Rafael Ngai — Software Developer (v2 preview)</title>
   <script>
     document.documentElement.classList.add('js');
     try { var t = localStorage.getItem('rafael-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
   </script>
-  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+<meta name="robots" content="noindex">
+<link rel="icon" href="../favicon.svg">
+<style>.media-frame img{border-radius:inherit}.media-frame:has(img){border:1px solid var(--border-subtle);padding:0;background:none}.pixel-gym-box canvas{max-width:100%}</style>
+<style>.accordion-inner .dev-h{margin:4px 0 6px;font-size:.95rem}.accordion-inner pre.code{overflow-x:auto;margin:0 0 14px;padding:12px 14px;background:#1b2130;color:#DCE3F0;border-radius:8px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.55}.code .c{color:#8C97AD}.code .k{color:#9DB4FF}.code .s{color:#B5E8A0}.spk-wrap{display:inline-flex;align-items:center;gap:8px;margin-left:auto;margin-right:10px}.spk{width:84px;height:24px;display:block}.spk polyline{fill:none;stroke:var(--accent-primary);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}.spk-score{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--text-secondary)}@media (max-width:420px){.spk{width:56px}}</style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Solid Header (no glass-blur) + 2px Scroll Progress -->
   <header class="site-header" id="top">
     <span class="scroll-progress" id="scroll-progress" aria-hidden="true"></span>
     <div class="container header-inner">
@@ -50,6 +54,7 @@
       </button>
     </div>
 
+    <!-- Compact School-Day Scroll-Spy Bar -->
     <div class="day-bar" aria-label="Portfolio sections">
       <div class="container day-bar-inner">
         <span class="day-bar-label">School day</span>
@@ -67,6 +72,7 @@
     </div>
   </header>
 
+  <!-- Mobile Drawer -->
   <div class="mobile-drawer" id="mobile-drawer" hidden>
     <div class="mobile-drawer-backdrop" data-close-drawer></div>
     <div class="mobile-drawer-panel" role="dialog" aria-modal="true" aria-label="Navigation">
@@ -102,20 +108,29 @@
   </div>
 
   <main id="main">
+    <!-- Hero (solid text, no gradient headline) -->
     <section class="hero container">
       <div class="hero-content">
         <p class="hero-location hero-stagger">Software developer &middot; Berkshire, UK</p>
-        <h1 class="hero-title hero-stagger">I build the tools that replace the mess.</h1>
+
+        <h1 class="hero-title hero-stagger">
+          I build the tools that replace the mess.
+        </h1>
+
         <p class="hero-subtitle hero-stagger">
           A timetable trapped in a spreadsheet. Student work scattered across folders. Progress nobody could see. I find what slows people down and build the software that fixes it.
         </p>
+
         <div class="hero-cta-row hero-stagger">
-          <a href="../timetable-demo/" class="btn btn-primary">Try the real timetable <span class="arrow-nowrap">&nearr;</span></a>
+          <a href="../timetable-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+            Try the real timetable <span class="arrow-nowrap">&nearr;</span>
+          </a>
           <button type="button" class="btn btn-secondary copy-email-btn" data-email="rafaelkoo.uk@gmail.com">Copy email</button>
           <a href="#contact" class="btn btn-ghost">Contact</a>
         </div>
       </div>
 
+      <!-- 4-Stat Metrics Strip -->
       <div class="metrics-strip hero-stagger" aria-label="Key impact metrics">
         <div class="metric-card">
           <span class="metric-value">~100 people</span>
@@ -136,12 +151,13 @@
       </div>
     </section>
 
+    <!-- Flagship Case Studies -->
     <section class="section container" id="work">
       <div class="section-intro reveal">
         <h2>Selected systems</h2>
       </div>
 
-      <!-- Flagship 1: Timetable -->
+      <!-- Flagship 1: Timetable (Flat layout, no cards inside cards) -->
       <article class="case-card reveal" id="timetable">
         <div class="case-header">
           <div class="case-meta">
@@ -155,10 +171,11 @@
         </div>
 
         <figure class="media-slot">
-          <img class="media-img" src="../img/timetable.jpg" alt="Week timetable editor alongside live phone view" loading="lazy" />
+          <div class="media-frame" aria-label="Image slot for Timetable screenshot"><img src="../img/timetable.jpg" alt="The timetable editor for a week, with the phone view beside it showing the same day live" width="2000" height="1250" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block"></div>
           <figcaption>Desktop week timetable editor alongside live phone view.</figcaption>
         </figure>
 
+        <!-- Flat Interactive Split-Compare (confirmed wording only) -->
         <div class="flat-viz" aria-label="Interactive before and after timetable comparison">
           <div class="flat-viz-head">
             <h4>Drag to compare: Old Excel sheet vs Web timetable</h4>
@@ -185,8 +202,8 @@
               </div>
               <div class="mock-grid">
                 <div class="mock-cell mock-cell--warn"><strong>Spreadsheets by Hand</strong><span>Editing spreadsheets and numbers</span></div>
-                <div class="mock-cell mock-cell--warn"><strong>Manual Admin</strong><span>No automated reports</span></div>
-                <div class="mock-cell mock-cell--warn"><strong>No Server Separation</strong><span>Static file shared across staff</span></div>
+                <div class="mock-cell mock-cell--warn"><strong>Manual Admin</strong><span>Time spent maintaining sheets</span></div>
+                <div class="mock-cell mock-cell--warn"><strong>TODO</strong><span>Add other confirmed Excel issues</span></div>
               </div>
             </div>
 
@@ -209,16 +226,23 @@
 
         <div class="accordion">
           <button type="button" class="accordion-trigger" aria-expanded="false">
-            <span>On the phone, and how pupils&rsquo; addresses stay private</span>
+            <span>Technical notes</span>
             <span class="accordion-icon" aria-hidden="true">+</span>
           </button>
           <div class="accordion-panel" aria-hidden="true" inert>
             <div class="accordion-inner">
+            <h4 class="dev-h">How the address rule works</h4>
+            <p>The server, not the page, decides who gets addresses. A run's addresses go only to the people on that run or an editor allowed to edit it, and the read is logged without the address itself.</p>
+<pre class="code"><span class="c">// abridged from lib/homeaddr.js</span>
+<span class="k">function</span> forBlock(me, q, who) {
+  <span class="k">const</span> s = store.get(<span class="s">'sessions'</span>, q.wk + <span class="s">'|'</span> + q.sid)?.data?.s;
+  <span class="k">const</span> onIt = staffIdOf(me) &amp;&amp; [s.staffId, ...helpersOf(s)].includes(staffIdOf(me));
+  <span class="k">const</span> ed = me.role === <span class="s">'join'</span> || perms.canEditSession(me.role, s);
+  <span class="k">if</span> (!onIt &amp;&amp; !ed) <span class="k">return</span> { status: 403 };   <span class="c">// no address leaves the server</span>
+  store.audit({ who, op: <span class="s">'homeaddr-read'</span>, n: count });  <span class="c">// who read, never what</span>
+  ...
+}</pre>
               <p>Built with Vanilla JS and Node.js. <code>lib/homeaddr.js</code> keeps pupil home addresses server-side rather than sending them to general rota views.</p>
-              <figure class="media-slot">
-                <img class="media-img" src="../img/phone-map.jpg" alt="Phone view of a minibus run from home to school" loading="lazy" />
-                <figcaption>Phone view of a minibus run listing pupils with a Map button.</figcaption>
-              </figure>
               <div class="tech-tags">
                 <span>Vanilla JS</span><span>Node.js</span><span>lib/homeaddr.js</span><span>Test suites</span>
               </div>
@@ -227,12 +251,14 @@
         </div>
 
         <div class="case-footer">
-          <a href="../timetable-demo/" class="btn btn-secondary btn-sm">Open the live demo <span class="arrow-nowrap">&nearr;</span></a>
+          <a href="../timetable-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            Open the live demo <span class="arrow-nowrap">&nearr;</span>
+          </a>
           <span class="stack-inline">Vanilla JS &middot; Node.js</span>
         </div>
       </article>
 
-      <!-- Flagship 2: Student Tracker -->
+      <!-- Flagship 2: Student Tracker (Flat illustrative graph, zero invented AIM unit numbers) -->
       <article class="case-card reveal" id="tracker">
         <div class="case-header">
           <div class="case-meta">
@@ -246,7 +272,7 @@
         </div>
 
         <figure class="media-slot">
-          <img class="media-img" src="../img/tracker-path.jpg" alt="Student Tracker path view showing shared-criteria links across AIM units" loading="lazy" />
+          <div class="media-frame" aria-label="Image slot for Student Tracker screenshot"><img src="../img/tracker-path.jpg" alt="Path view of the Personal Finances unit, showing which units share criteria with it and whether each link is signed off" width="2000" height="1250" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block"></div>
           <figcaption>Path view showing shared-criteria links and sign-off status across AIM units.</figcaption>
         </figure>
 
@@ -257,6 +283,19 @@
           </button>
           <div class="accordion-panel" aria-hidden="true" inert>
             <div class="accordion-inner">
+            <h4 class="dev-h">How the rules work</h4>
+            <p>Every change is a named action. Its rule is a pure function that returns the writes it wants, and the store saves all of them or none. The page loads the same rule files only to grey out buttons.</p>
+<pre class="code"><span class="c">// abridged: every action has the same shape</span>
+register({ name: <span class="s">'markWork'</span>, role: <span class="s">'staff'</span>, run(ctx, input) {
+  <span class="k">if</span> (!teacher &amp;&amp; !mentor) <span class="k">return</span> { error: <span class="s">'Only this unit\'s teachers…'</span> };
+  <span class="k">return</span> { writes, notes: [<span class="s">'Marks saved.'</span>] };
+}});
+
+<span class="c">// lib/store.js: all of it or none of it</span>
+writeMany(ops) {
+  <span class="k">for</span> (<span class="k">const</span> op <span class="k">of</span> ops) <span class="k">if</span> (etagOf(op) !== op.ifMatch) <span class="k">return</span> { conflict: <span class="k">true</span> };
+  ops.forEach(write);
+}</pre>
               <p>Covers 718 real AIM course units and 3,068 criteria across 21 qualifications, guarded by 129 passing automated tests.</p>
               <div class="tech-tags">
                 <span>718 AIM Units</span><span>3,068 Criteria</span><span>21 Qualifications</span><span>129 Passing Tests</span>
@@ -266,12 +305,14 @@
         </div>
 
         <div class="case-footer">
-          <a href="../tracker-demo/" class="btn btn-secondary btn-sm">Try the tracker demo <span class="arrow-nowrap">&nearr;</span></a>
+          <a href="../tracker-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+            Try the tracker demo <span class="arrow-nowrap">&nearr;</span>
+          </a>
           <span class="stack-inline">Made-up people, real AIM course content</span>
         </div>
       </article>
 
-      <!-- Secondary Grid: Watchdog + GorB -->
+      <!-- Secondary Grid: Watchdog (Reads live JSON or shows TODO/no invented numbers) + GorB -->
       <div class="two-col-grid">
         <article class="case-card case-card--compact reveal" id="watchdog">
           <div class="case-meta">
@@ -280,11 +321,22 @@
           <h3>Website watchdog</h3>
           <p>Checks 5 sites every morning with Playwright, <code>axe-core</code>, and GitHub Actions.</p>
 
+          
+
           <ul class="status-list" id="watchdog-list" aria-label="Monitored sites">
             <li class="status-loading">Loading live check from <code>site-watchdog/data/latest.json</code>&hellip;</li>
           </ul>
 
-          <div class="case-footer">
+          <div class="accordion"><button type="button" class="accordion-trigger" aria-expanded="false"><span>How it works (code)</span><span class="accordion-icon" aria-hidden="true">+</span></button><div class="accordion-panel" aria-hidden="true" inert><div class="accordion-inner">
+            <h4 class="dev-h">How it decides</h4>
+<pre class="code"><span class="c">// abridged from watchdog.mjs: 100 is perfect</span>
+s -= Math.min(30, 10 * v.jsErrors.length);                       <span class="c">// page errors</span>
+s -= Math.min(40, axe.reduce((a, x) =&gt; a + IMPACT[x.impact], 0)); <span class="c">// critical 8, serious 4</span>
+s -= v.overflowPx &gt; 1 ? 10 : 0;                                   <span class="c">// scrolls sideways on a phone</span>
+s -= Math.min(20, 5 * brokenLinks.length);
+
+<span class="c">// an alert only for what is new or worse, so it never nags about known issues</span>
+<span class="k">if</span> (score &lt;= prev.score - 10) problems.push(<span class="s">`Score dropped from ${prev.score}`</span>);</pre></div></div></div><div class="case-footer">
             <a href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Code on GitHub &nearr;</a>
             <a href="https://github.com/rafaelkoo/site-watchdog/issues" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Alerts &nearr;</a>
           </div>
@@ -297,23 +349,27 @@
           <h3>GorB: co-op gym app</h3>
           <p>Group workout PWA turning check-ins and logged workouts into a shared pixel gym and co-op battles.</p>
 
-          <figure class="media-slot" id="gorb-gym-fig">
-            <img class="media-img" src="../img/gorb-gym.png" alt="GorB shared pixel gym with friends at workout stations" loading="lazy" />
-            <figcaption>The pixel gym, live: drawn by GorB&rsquo;s own code. Tap someone to move them.</figcaption>
-          </figure>
+          <figure class="media-slot" data-gorb-gym><div class="pixel-gym-box"><img src="../img/gorb-gym.png" alt="Pixel gym: five friends&#x27; avatars at the squat rack, bench, deadlift platform and treadmill, with one dozing on the rest bench" width="2048" height="1408" loading="lazy" style="width:100%;height:auto;object-fit:cover;object-position:center;display:block"></div><figcaption>Drawn live by GorB&rsquo;s own pixel code, with made-up people. Tap someone to move them.</figcaption></figure>
 
           <div class="accordion">
             <button type="button" class="accordion-trigger" aria-expanded="false">
-              <span>Excuse monsters, backend &amp; database stats</span>
+              <span>Backend &amp; database stats</span>
               <span class="accordion-icon" aria-hidden="true">+</span>
             </button>
             <div class="accordion-panel" aria-hidden="true" inert>
               <div class="accordion-inner">
+            <h4 class="dev-h">The server decides, not the phone</h4>
+<pre class="code"><span class="c">-- abridged from supabase/migrations: the app can only ASK to buy something</span>
+<span class="k">create function</span> shop_buy(p_item text, p_qty int) <span class="k">returns</span> jsonb
+<span class="k">language</span> plpgsql <span class="k">security definer</span> <span class="k">as</span> $$
+<span class="k">begin</span>
+  <span class="k">if</span> auth.uid() <span class="k">is null then raise exception</span> <span class="s">'Not signed in'</span>; <span class="k">end if</span>;
+  <span class="k">if</span> p_qty &lt; 1 <span class="k">or</span> p_qty &gt; 20 <span class="k">then raise exception</span> <span class="s">'Can’t buy that'</span>; <span class="k">end if</span>;
+  <span class="c">-- coins are checked and taken in the same step, so a double tap can't spend twice</span>
+  <span class="k">if not</span> spend_coins(auth.uid(), price * p_qty) <span class="k">then raise exception</span> <span class="s">'Not enough coins'</span>; <span class="k">end if</span>;
+  <span class="k">insert into</span> user_items ... <span class="k">on conflict do update set</span> qty = qty + p_qty;
+<span class="k">end</span> $$;</pre>
                 <p>v0.76, 114 commits, 60 migrations, 37 tables with row-level security, 129 server functions, and 5 Edge Functions on Supabase.</p>
-                <figure class="media-slot">
-                  <img class="media-img" src="../img/gorb-monsters.png" alt="GorB excuse monsters and their evolved good-habit forms" loading="lazy" />
-                  <figcaption>Excuse monsters and their good-habit forms, drawn in code.</figcaption>
-                </figure>
               </div>
             </div>
           </div>
@@ -325,7 +381,7 @@
         </article>
       </div>
 
-      <!-- Side Projects -->
+      <!-- Side Projects (Removed Telegram bots & FitTrack dev note) -->
       <div class="side-projects reveal" id="side-projects">
         <div class="side-projects-head">
           <span class="period-badge period-badge--amber">Period 4 &middot; FitTrack + Just a Dungeon</span>
@@ -334,7 +390,7 @@
         <div class="three-col-grid">
           <div class="mini-card">
             <figure class="media-slot">
-              <img class="media-img" src="../img/gym.jpg" alt="FitTrack 3D animated barbell squat model and lift chart" loading="lazy" />
+              <div class="media-frame" aria-label="Image slot for FitTrack"><img src="../img/gym.jpg" alt="Barbell squat on an animated 3D model above a chart of heaviest weight over eight weeks (sample data)" width="780" height="1688" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 18%;display:block"></div>
               <figcaption>3D animated exercise demo and lift chart.</figcaption>
             </figure>
             <h4>FitTrack</h4>
@@ -346,8 +402,8 @@
           </div>
           <div class="mini-card">
             <figure class="media-slot">
-              <img class="media-img" src="../img/dungeon.jpg" alt="Just a Dungeon gameplay screenshot" loading="lazy" />
-              <figcaption>Just a Dungeon gameplay screenshot.</figcaption>
+              <div class="media-frame" aria-label="Image slot for Just a Dungeon"><img src="../img/dungeon.jpg" alt="An archer fighting skeletons in a dungeon on autopilot" width="780" height="1688" loading="lazy" style="width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block"></div>
+              <figcaption>Gameplay screenshot from Just a Dungeon.</figcaption>
             </figure>
             <h4>Just a Dungeon</h4>
             <p>TypeScript + Three.js idle mobile dungeon game with cloud saves and 2-player co-op.</p>
@@ -357,6 +413,7 @@
             </div>
           </div>
           <div class="mini-card">
+            
             <h4>Smaller Classroom Tools</h4>
             <p>Unity Error Explainer, student portfolio engine, lesson deck tools (<code>pptxgenjs</code>), and Living Building.</p>
           </div>
@@ -364,6 +421,7 @@
       </div>
     </section>
 
+    <!-- Process (GitHub commit bars removed as requested) -->
     <section class="section container reveal" id="process">
       <div class="section-intro">
         <h2>How I build</h2>
@@ -377,6 +435,7 @@
       </div>
     </section>
 
+    <!-- Experience (Sept 2026 - Present) -->
     <section class="section container reveal" id="experience">
       <div class="section-intro">
         <h2>Experience</h2>
@@ -412,6 +471,7 @@
       </div>
     </section>
 
+    <!-- Contact (Email & LinkedIn only, no phone number) -->
     <section class="section container reveal" id="contact">
       <div class="contact-box">
         <h2>Contact</h2>
@@ -427,14 +487,17 @@
   </main>
 
   <footer class="site-footer container">
-    <p>&copy; 2026 Rafael Ngai &middot; <code>Atkinson Hyperlegible</code> &middot; <a href="../">View original layout</a></p>
+    <p>&copy; 2026 Rafael Ngai &middot; <code>Atkinson Hyperlegible</code></p>
   </footer>
 
+  <!-- Non-shifting floating mode indicator & toast -->
   <div class="mode-pill" id="tech-banner" hidden aria-live="polite">
     Developer view active: technical panels expanded
   </div>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script type="module" src="app.js"></script>
+  <script src="app.js"></script>
+<script type="module" src="../js/gorb-live.js"></script>
+<script type="module" src="wd-extra.js"></script>
 </body>
 </html>
