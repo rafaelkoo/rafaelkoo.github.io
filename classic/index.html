@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://rafaelkoo.github.io/">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Rafael Ngai: Support Worker (Game Design) who builds the school's timetable platform and learning tracker. Portfolio run by a mini timetable engine.">
+<meta property="og:title" content="Rafael Ngai">
+<meta property="og:description" content="Rafael Ngai: Support Worker (Game Design) who builds the school's timetable platform and learning tracker. Portfolio run by a mini timetable engine.">
+<meta property="og:image" content="https://rafaelkoo.github.io/img/timetable.jpg">
+<meta name="theme-color" content="#111522">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<title>Rafael Ngai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&family=Atkinson+Hyperlegible+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: the portfolio is a day on a timetable. A slim timetable bar under the header runs the page:
+   its blocks are the sections, the red line is where you are, and moving a block moves the section. */
+:root{--ease:cubic-bezier(.22,1,.36,1);interpolate-size:allow-keywords;
+  --canvas:#EEF0F3; --sheet:#FFFFFF; --sheet-2:#F7F8FA; --rule:#D7DBE1; --rule-2:#E6E9EE;
+  --ink:#14171C; --ink-2:#3C434D; --ink-3:#5F6773;
+  --bar:#111522; --bar-ink:#F2F4F8; --bar-ink-2:#A9B1C0; --bar-rule:#272D3D;
+  --now:#E5322D; --act:#3B5BFD; --act-ink:#FFFFFF; --ok:#16703E; --warn:#B45309;
+  --b-tt:#CDEFB0; --b-tr:#C9E4FF; --b-ft:#FFD8B8; --b-pt:#E8D5FF; --b-how:#FFF0A8; --b-ab:#D3F2EC; --b-ct:#FFD3E1; --b-lunch:#E3E6EB; --b-av:#BDEBCF; --b-ex:#DCE3EE; --b-hi:#FFD24A; --b-gb:#FFC4B8;
+  --b-ink:#14171C;
+  --font:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',Verdana,sans-serif;
+  --mono:'Atkinson Hyperlegible Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --canvas:#0F1218; --sheet:#171B23; --sheet-2:#1C212B; --rule:#2C3340; --rule-2:#252B36;
+  --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
+  --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
+  --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00; --b-gb:#6E2F28;
+  --b-ink:#F2F4F8; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --canvas:#0F1218; --sheet:#171B23; --sheet-2:#1C212B; --rule:#2C3340; --rule-2:#252B36;
+  --ink:#ECEFF4; --ink-2:#C3C9D3; --ink-3:#97A0AE;
+  --bar:#0A0D14; --bar-ink:#F2F4F8; --bar-ink-2:#9AA3B4; --bar-rule:#232938;
+  --now:#FF5A52; --act:#6E86FF; --act-ink:#0A0D14; --ok:#47C27C; --warn:#F2A541;
+  --b-tt:#3D5A2C; --b-tr:#294765; --b-ft:#6A4329; --b-pt:#4B3870; --b-how:#5E5320; --b-ab:#24544B; --b-ct:#6A3045; --b-lunch:#2B303A; --b-av:#1E5A3B; --b-ex:#36405A; --b-hi:#7A5B00; --b-gb:#6E2F28;
+  --b-ink:#F2F4F8; color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--canvas)}
+body{background:var(--canvas);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.55}
+a{color:var(--act);text-underline-offset:3px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--act);outline-offset:2px;border-radius:4px}
+img{max-width:100%;display:block;height:auto}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.08;letter-spacing:-.02em}
+p{margin:0}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- app header (like the timetable's top bar) ---------- */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bar)}
+.app{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bar);color:var(--bar-ink);box-shadow:0 1px 0 var(--bar-rule)}
+.app .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;min-height:56px;padding-block:6px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--bar-ink);text-decoration:none;font-weight:800;font-size:17px;min-height:44px}
+.brand small{display:block;font-weight:400;font-size:13px;color:var(--bar-ink-2)}
+.chip{font-family:var(--mono);font-size:13px;color:var(--bar-ink-2);padding:3px 8px;border:1px solid var(--bar-rule);border-radius:4px}
+.app .grow{flex:1 1 auto}
+.seg{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;border:1px solid var(--bar-rule);border-radius:6px;overflow:hidden}
+.seg button{background:none;border:0;color:var(--bar-ink-2);min-height:40px;padding:0 14px;font-size:15px;cursor:pointer}
+.seg button{position:relative;z-index:1;transition:color .25s}
+.seg button[aria-pressed="true"]{color:#FFFFFF;font-weight:700}
+.ind{position:absolute;top:0;bottom:0;left:0;width:50%;background:var(--act);transition:transform .38s var(--ease)}
+[data-on="developer"]>.ind{transform:translateX(100%)}
+.tbtn{background:none;border:1px solid var(--bar-rule);color:var(--bar-ink);border-radius:6px;min-height:40px;padding:0 12px;font-size:15px;cursor:pointer}
+.tbtn:hover,.seg button:hover{color:#FFFFFF}
+
+/* ---------- the timetable bar ---------- */
+.tt{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--apph,56px));z-index:15;background:var(--sheet);border-bottom:1px solid var(--rule);box-shadow:0 6px 18px rgba(10,14,25,.06)}
+.tt .wrap{padding-block:8px}
+.tt-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin-bottom:6px}
+.tt-top p{font-size:14px;color:var(--ink-3)}
+.tt-top .acts{display:flex;gap:6px}
+.lbtn{background:var(--sheet-2);border:1px solid var(--rule);border-radius:6px;min-height:36px;padding:0 12px;font-size:14px;cursor:pointer;color:var(--ink-2)}
+.reset2{display:none}
+.lbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
+.strip-scroll{overflow-x:auto;scrollbar-width:thin}
+.strip{position:relative;display:grid;grid-template-columns:repeat(12,minmax(84px,1fr));min-width:1008px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2)}
+.slot{position:relative;border-left:1px solid var(--rule-2);padding:20px 4px 4px;min-height:58px}
+.slot:first-child{border-left:0}
+.slot .tm{position:absolute;top:3px;left:6px;font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+.slot.target{background:color-mix(in srgb,var(--act) 12%,transparent);outline:2px dashed var(--act);outline-offset:-3px}
+[data-todo]{display:none!important}
+.slot.empty::after{content:"Free period";position:absolute;inset:22px 6px 6px;border:1px dashed var(--rule);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--ink-3)}
+.blk .d3{font-size:12px;font-weight:700;margin-top:2px}
+.blk.lock[data-id="avail"]{background-image:none;border:1.5px solid var(--ok);cursor:pointer}
+.blk{display:flex;flex-direction:column;justify-content:center;width:100%;min-height:34px;padding:4px 8px;border:1px solid rgba(0,0,0,.12);border-radius:5px;background:var(--c);color:var(--b-ink);font-size:13px;font-weight:700;line-height:1.2;text-align:left;cursor:pointer;touch-action:pan-x;user-select:none;transition:transform .15s,box-shadow .15s}
+.blk:hover{box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.blk .d{display:none;font-weight:400;font-size:12px;margin-top:3px;opacity:.85}
+.blk.here{box-shadow:0 0 0 2px var(--ink)}
+.blk.sel{transform:translateY(-3px);box-shadow:0 0 0 3px var(--act),0 6px 14px rgba(0,0,0,.2)}
+.blk.lock{cursor:not-allowed;font-weight:500;background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(0,0,0,.06) 6px 12px)}
+.blk.clash{animation:clash .5s}
+.blk.moved{animation:moved .6s}
+@keyframes clash{0%,100%{transform:none}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+@keyframes moved{0%{box-shadow:0 0 0 4px var(--ok)}100%{box-shadow:0 0 0 0 transparent}}
+.slot.clash-slot{background:color-mix(in srgb,var(--now) 16%,transparent)}
+.tt.open .slot{min-height:92px}
+.tt.open .blk{min-height:66px;justify-content:flex-start}
+.tt.open .blk .d{display:block}
+.now{position:absolute;top:0;bottom:0;width:2px;background:var(--now);left:0;pointer-events:none;transition:left .12s linear}
+.now::before{content:attr(data-t);position:absolute;top:2px;left:4px;font-family:var(--mono);font-size:10px;font-weight:700;color:#FFFFFF;background:var(--now);padding:0 4px;border-radius:3px;white-space:nowrap}
+.msg{min-height:22px;margin-top:6px;font-size:14px;color:var(--ink-2)}
+.msg.bad{color:var(--now);font-weight:700}
+.msg.good{color:var(--ok);font-weight:700}
+.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;opacity:.96;box-shadow:0 18px 36px rgba(0,0,0,.28);will-change:transform}
+.blk.lifted{opacity:.3;transform:scale(.96)}
+.slot.nogo{background:color-mix(in srgb,var(--now) 14%,transparent);outline:2px dashed var(--now);outline-offset:-3px}
+.tt.moving .blk:not(.lock):not(.sel){animation:jiggle .28s ease-in-out infinite alternate}
+.tt.moving .slot:nth-child(odd) .blk{animation-delay:-.14s}
+@keyframes jiggle{from{transform:rotate(-1.2deg)}to{transform:rotate(1.2deg)}}
+.now::after{content:"";position:absolute;bottom:-4px;left:-4px;width:10px;height:10px;border-radius:50%;background:var(--now);box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 60%,transparent);animation:pulse 1.8s ease-out infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--now) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+.sec-head .t{display:inline-block;transform-origin:50% 50%}
+.sec-body > *,.lunch{transition:opacity .45s var(--ease),transform .5s var(--ease)}
+.wait{opacity:.2;transform:translateY(32px)}
+.mess{display:inline-block;white-space:nowrap}
+.mess i{display:inline-block;font-style:normal;animation:settle .36s var(--ease) both;animation-delay:calc(.03s + var(--k) * 18ms)}
+@keyframes settle{0%{transform:translate(calc(var(--x)*.5),calc(var(--y)*.5));color:var(--ink-3)}100%{transform:none}}
+.hero .lede,.hero .ctas,.hero .try,.summary{animation:rise .4s var(--ease) both}.hero .lede{animation-delay:.04s}.hero .ctas{animation-delay:.08s}.hero .try{animation-delay:.12s}.summary{animation-delay:.16s}
+
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+body.dragging,body.dragging *{cursor:grabbing!important}
+
+/* ---------- page ---------- */
+.hero{padding-block:clamp(40px,6vw,72px) clamp(28px,4vw,44px)}
+.hero .k{font-family:var(--mono);font-size:14px;color:var(--ink-3)}
+.hero h1{font-size:clamp(40px,6vw,76px);font-weight:800;letter-spacing:-.04em;margin-top:12px;max-width:14em}
+.hero .lede{font-size:clamp(18px,1.7vw,21px);color:var(--ink-2);max-width:36em;margin-top:18px}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 20px;border-radius:6px;font-weight:700;text-decoration:none;font-size:16px;cursor:pointer;border:1px solid transparent}
+.btn-act{background:var(--act);color:#FFFFFF}
+.btn-line{border-color:var(--rule);background:var(--sheet);color:var(--ink)}
+.try{margin-top:22px;display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink-3)}
+.try b{color:var(--ink)}
+.try i{flex:0 0 auto;width:10px;height:10px;border-radius:2px;background:var(--now)}
+
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden;margin-top:28px}
+.summary div{background:var(--sheet);padding:16px 18px}
+.summary b{display:block;font-size:14px;color:var(--ink-3);font-weight:500;margin-bottom:4px}
+.summary span{font-size:16px}
+
+#flow{display:flex;flex-direction:column;gap:20px;padding-bottom:20px}
+.sec{background:var(--sheet);border:1px solid var(--rule);border-radius:6px;scroll-margin-top:calc(var(--apph,56px) + var(--tth,110px) + 16px)}
+.sec-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:14px clamp(18px,3vw,32px);border-bottom:1px solid var(--rule-2)}
+.sw{width:14px;height:14px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.15)}
+.sec-head .t{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.sec-head .st{margin-left:auto;font-size:13px;font-weight:700;color:var(--ok)}
+.sec-head .st.wip{color:var(--warn)}
+.sec-body{padding:clamp(20px,3vw,36px);display:flex;flex-direction:column;gap:24px}
+.sec h2{font-size:clamp(28px,3.4vw,42px);font-weight:800;letter-spacing:-.03em}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:18px 32px}
+.facts h3{font-size:16px;margin-bottom:4px;letter-spacing:0}
+.facts p{color:var(--ink-2);font-size:16px}
+.shot{border:1px solid var(--rule);border-radius:6px;overflow:hidden;background:var(--sheet-2)}
+.cap{font-size:14px;color:var(--ink-3);margin-top:8px}
+.row{display:flex;flex-wrap:wrap;gap:24px 40px;align-items:center}
+.row > *{min-width:0}
+.phone{flex:0 1 240px;margin:0 auto}
+.phone img{border-radius:28px;box-shadow:0 0 0 7px #151821,0 18px 40px rgba(0,0,0,.25)}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px}
+.links a.more{font-weight:700}
+.stack{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.lockbox{display:flex;gap:12px;padding:14px 16px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);font-size:16px;color:var(--ink-2)}
+.lockbox svg{flex:0 0 20px;color:var(--ok);margin-top:3px}
+
+/* developer-only material */
+.dev{border:1px dashed var(--rule);border-radius:6px;padding:16px 18px;background:var(--sheet-2);display:flex;flex-direction:column;gap:10px}
+.dev h3{font-size:15px;letter-spacing:0;display:flex;align-items:center;gap:8px}
+.dev h3::before{content:"</>";font-family:var(--mono);font-size:12px;color:var(--act);border:1px solid var(--act);border-radius:3px;padding:0 4px}
+.dev p,.dev li{font-size:15px;color:var(--ink-2)}
+.dev ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.code{overflow-x:auto;margin:0;padding:12px 14px;background:var(--bar);color:#DCE3F0;border-radius:5px;font-family:var(--mono);font-size:13px;line-height:1.55}
+.code .c{color:#8C97AD}.code .k{color:#9DB4FF}.code .s{color:#B5E8A0}
+body[data-view="recruiter"] .dev{display:none}
+body[data-view="developer"] .rec{display:none}
+
+.lunch{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:14px clamp(18px,3vw,32px);border:1px dashed var(--rule);border-radius:6px;background:repeating-linear-gradient(135deg,transparent 0 10px,color-mix(in srgb,var(--ink) 4%,transparent) 10px 20px);font-size:16px;color:var(--ink-2)}
+.lunch .t{font-family:var(--mono);font-size:13px;color:var(--ink-3)}
+.lunch.avail a{color:var(--ok);font-weight:700}
+.lunch.avail{border:1px solid color-mix(in srgb,var(--ok) 50%,transparent);background:color-mix(in srgb,var(--ok) 9%,var(--sheet));color:var(--ink)}
+
+.duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:18px}
+.card{border:1px solid var(--rule-2);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--sheet-2)}
+.card h3{font-size:22px}
+.card p{font-size:16px;color:var(--ink-2)}
+.card .phone{flex:none;width:min(55%,200px)}
+.shots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin:4px 0}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:10px;align-items:center}
+.shots img{border-radius:22px;box-shadow:0 0 0 6px #151821,0 14px 30px rgba(0,0,0,.22)}
+.shots figcaption{font-size:14px;color:var(--ink-3);text-align:center}
+.shotnote{font-size:13px;color:var(--ink-3)}
+.gone{display:none!important}
+.summary.metrics b{font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.summary.metrics span{font-size:15px;color:var(--ink-2)}
+#flow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+#flow>*{grid-column:1/-1;min-width:0}
+#flow>.sec.half.paired{grid-column:auto}
+.sec.half .sec-body h2{font-size:clamp(24px,2.4vw,30px)}
+.sec.half .facts{grid-template-columns:1fr}
+.sec.half .art{grid-template-columns:1fr}
+.sec.half .art figure.wide{grid-column:auto}
+.lead{font-size:18px;line-height:1.5;color:var(--ink-2);margin:0}
+.duo .card .phone{width:min(36%,120px)}
+@media (max-width:900px){#flow>.sec.half.paired{grid-column:1/-1}}
+
+.fold{border:1px solid var(--rule);border-radius:10px;background:var(--sheet)}
+.fold>summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;font-weight:700;font-size:16px;color:var(--ink)}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:"+";display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--sheet-2);font-weight:800;transition:transform .25s}
+.fold[open]>summary::before{content:"\2013"}
+.fold>summary:hover{color:var(--act)}
+.fold>summary:focus-visible{outline:3px solid var(--act);outline-offset:2px;border-radius:10px}
+.fold>*:not(summary){margin:0 16px 16px}.fold::details-content{block-size:0;overflow:hidden;transition:block-size .32s var(--ease),content-visibility .32s allow-discrete}.fold[open]::details-content{block-size:auto}.fold>summary::before{transition:transform .32s var(--ease)}.fold[open]>summary::before{transform:rotate(180deg)}
+.duo .card .phone{width:min(45%,160px)}
+
+.art{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:4px 0}
+.art figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.art figure.wide{grid-column:span 2}.art figure.full{grid-column:1/-1}
+.art img{width:100%;height:auto;border-radius:8px;background:#1b1712}
+.art figure:not(.wide):not(.full) img{aspect-ratio:auto}
+.art figcaption{font-size:14px;color:var(--ink-3)}
+@media (max-width:860px){.art{grid-template-columns:1fr}.art figure.wide,.art figure.full{grid-column:auto}}
+
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
+.quote{margin:0;border-left:4px solid var(--c);background:var(--sheet-2);border-radius:0 6px 6px 0;padding:18px 22px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.quote p{font-size:18px;line-height:1.5;color:var(--ink)}
+.quote footer{font-size:15px;color:var(--ink-3)}
+.quote footer b{color:var(--ink-2)}
+.recl{margin:0;padding-left:20px;color:var(--ink-2);font-size:16px;display:flex;flex-direction:column;gap:4px}
+@media (max-width:860px){.shots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.steps{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.steps li{border:1px solid var(--rule-2);border-radius:6px;padding:16px;background:var(--sheet-2)}
+.steps b{display:block;margin-bottom:4px}
+.steps span{font-size:15px;color:var(--ink-2)}
+.small{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule-2)}
+.small li{display:flex;flex-wrap:wrap;gap:4px 24px;padding:12px 0;border-bottom:1px solid var(--rule-2);font-size:16px}
+.small b{flex:0 0 220px}
+.small span{flex:1 1 320px;min-width:0;color:var(--ink-2)}
+.about{display:flex;flex-wrap:wrap;gap:24px 40px}
+.photo{flex:0 1 220px;width:100%;max-width:220px;aspect-ratio:4/5;border:1px dashed var(--ink-3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;color:var(--ink-2);background:var(--sheet-2)}
+.about-copy{flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:14px}
+.about-copy p{color:var(--ink-2)}
+.skills{margin:0;border-top:1px solid var(--rule-2)}
+.skills div{display:flex;flex-wrap:wrap;gap:2px 20px;padding:10px 0;border-bottom:1px solid var(--rule-2);font-size:16px}
+.skills dt{flex:0 0 140px;font-weight:700}
+.skills dd{flex:1 1 260px;margin:0;color:var(--ink-2)}
+.mailrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.mail{font-family:var(--mono);font-size:17px;padding:10px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);user-select:all}
+.foot{padding-block:28px;font-size:14px;color:var(--ink-3);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 20px}
+.skip{position:absolute;left:12px;top:-60px;z-index:40;background:var(--act);color:#FFFFFF;padding:10px 16px;border-radius:6px;font-weight:700;text-decoration:none;transition:top .15s}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + 8px)}
+.hirebtn{white-space:nowrap;background:var(--b-hi);color:#14171C;border:0;border-radius:6px;min-height:40px;padding:0 16px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 0 0 0 rgba(255,210,74,.6);animation:beckon 2.6s ease-out 3s 3}
+.hirebtn:hover{filter:brightness(1.05)}
+@keyframes beckon{0%{box-shadow:0 0 0 0 rgba(255,210,74,.65)}70%{box-shadow:0 0 0 12px rgba(255,210,74,0)}100%{box-shadow:0 0 0 0 rgba(255,210,74,0)}}
+.blk[data-id="hire"]{border:1.5px solid #14171C;color:#14171C}
+.tl{margin:0;padding:0;list-style:none;border-left:2px solid var(--rule);display:flex;flex-direction:column;gap:22px}
+.tl li{position:relative;display:flex;flex-wrap:wrap;gap:4px 24px;padding-left:22px}
+.tl li::before{content:"";position:absolute;left:-7px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--sheet);border:2px solid var(--act)}
+.tl li.cur::before{background:var(--act)}
+.tl .when{flex:0 0 150px;font-family:var(--mono);font-size:14px;color:var(--ink-3);padding-top:2px}
+.tl .what{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:6px}
+.tl h3{font-size:20px;letter-spacing:-.01em}
+.tl .org{font-size:15px;color:var(--ink-3)}
+.tl .what p{font-size:16px;color:var(--ink-2)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-family:var(--mono);font-size:12px;padding:3px 8px;border-radius:4px;background:var(--sheet-2);border:1px solid var(--rule-2);color:var(--ink-2)}
+.hiremsg{width:100%;min-height:160px;resize:vertical;font:inherit;font-size:16px;line-height:1.5;padding:12px 14px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet-2);color:var(--ink)}
+.bit{position:fixed;z-index:60;width:9px;height:9px;border-radius:2px;pointer-events:none}
+.wdlive{border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--sheet)}
+.wdtop{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;padding:10px 16px;background:var(--sheet-2);border-bottom:1px solid var(--rule-2);font-size:14px;color:var(--ink-3)}
+.wdtop b{color:var(--ink)}
+.wdlist{margin:0;padding:0;list-style:none}
+.wdlist li{display:grid;grid-template-columns:14px minmax(0,1fr) 84px 64px 70px;align-items:center;gap:6px 14px;padding:10px 16px;border-top:1px solid var(--rule-2);font-size:15px}
+.wdlist li:first-child{border-top:0}
+.wdlist .dot2{width:10px;height:10px;border-radius:50%}
+.wdlist .ok .dot2{background:var(--ok)}.wdlist .warn .dot2{background:var(--warn)}.wdlist .down .dot2{background:var(--now)}
+.wdlist .nm3{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wdlist .nm3 small{display:block;font-weight:400;font-size:13px;color:var(--ink-3);white-space:normal}
+.wdlist .sc{font-family:var(--mono);font-size:14px;text-align:right}
+.wdlist .ld{font-family:var(--mono);font-size:13px;color:var(--ink-3);text-align:right}
+.wdlist svg.spk{width:84px;height:24px;display:block}
+.wdlist svg.spk polyline{fill:none;stroke:var(--act);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+.wdempty{padding:14px 16px;font-size:15px;color:var(--ink-2)}
+.btn.copied{background:var(--ok);border-color:var(--ok);color:#FFFFFF;justify-content:center}
+.btn .tick{width:18px;height:18px;flex:none}
+.btn .tick path{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:24;stroke-dashoffset:24;animation:draw .35s .05s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hirebtn.booked{background:var(--ok);color:#FFFFFF;animation:none;display:inline-flex;align-items:center;gap:4px;padding:0 12px}
+.hirebtn .tick{width:14px;height:14px}
+.hirebtn .tick path{fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.wdlist .ring{width:38px;height:38px;justify-self:end;position:relative}
+.wdlist .ring svg{width:38px;height:38px;transform:rotate(-90deg);display:block}
+.wdlist .ring circle{fill:none;stroke-width:4}
+.wdlist .ring .bg{stroke:var(--rule-2)}
+.wdlist .ring .fg{stroke:var(--ok);stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease)}
+.wdlist .warn .ring .fg{stroke:var(--warn)}.wdlist .down .ring .fg{stroke:var(--now)}
+.wdlist .ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700}
+.wdlist .skel{display:block;height:12px;border-radius:4px;background:linear-gradient(90deg,var(--rule-2) 25%,var(--sheet-2) 50%,var(--rule-2) 75%);background-size:300% 100%;animation:shimmer 1.4s linear infinite}
+.wdlist .skel.c{width:38px;height:38px;border-radius:50%;justify-self:end}
+@keyframes shimmer{from{background-position:100% 0}to{background-position:-200% 0}}
+@media (prefers-reduced-motion: reduce){.wdlist .skel{animation:none}.btn .tick path{animation:none;stroke-dashoffset:0}.ind,.wdlist .ring .fg{transition:none}.toast.show::after{animation:none}}
+.toast::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;border-radius:2px;background:currentColor;opacity:.35;transform-origin:left;transform:scaleX(0)}
+.toast.show::after{animation:tbar 2.8s linear forwards}
+@keyframes tbar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
+@media (max-width:560px){.wdlist li{grid-template-columns:12px minmax(0,1fr) 44px;}.wdlist svg.spk,.wdlist .ld{display:none}}
+.tbtn[aria-pressed="true"]{background:var(--act);border-color:var(--act);color:#FFFFFF}
+.phonewrap{position:fixed;z-index:12;right:max(24px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + var(--apph,56px) + var(--tth,110px) + 16px);bottom:16px;width:392px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.phonebody{flex:1 1 auto;width:392px;max-height:820px;border-radius:44px;background:#0B0D12;padding:12px;box-shadow:0 0 0 1px #2A3040,0 24px 60px rgba(10,14,25,.35)}
+.phonebody iframe{width:100%;height:100%;border:0;border-radius:33px;background:var(--canvas);display:block}
+.phonecap{font-size:13px;color:var(--ink-3);text-align:center}
+body.phone-on main .wrap,body.phone-on .tt .wrap{max-width:none;margin-right:440px;margin-left:max(16px,calc((100vw - 440px - 1160px) / 2))}
+body.phone-on .tt .wrap{margin-right:24px}
+body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
+.mnav,.toast,.tip-phone,.daybtn{display:none}
+.daybtn{flex:0 0 58px;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:1px solid var(--rule);border-radius:8px;background:var(--bar);color:var(--bar-ink);font-size:11px;font-weight:700;cursor:pointer}
+.sheet[hidden],.scrim[hidden]{display:none}
+@media (max-width:700px){
+  .tt{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:25;border-bottom:0;border-top:1px solid var(--rule);box-shadow:0 -8px 24px rgba(10,14,25,.12);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tt .wrap{padding-block:6px 8px}
+  .tt-top,.tt .msg{display:none}
+  .strip-row{display:flex;align-items:stretch;gap:8px}
+  .strip-row .strip-scroll{flex:1 1 auto;min-width:0;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 10px,#000 calc(100% - 14px),transparent 100%)}
+  .strip-row .strip-scroll::-webkit-scrollbar{display:none}
+  .tt .strip{grid-template-columns:repeat(12,minmax(72px,1fr));min-width:864px}
+  .tt .slot{min-height:48px;padding:15px 3px 3px}
+  .tt .slot .tm{font-size:9.5px;top:2px;left:5px}
+  .tt .blk{min-height:28px;padding:3px 7px;font-size:12px}
+  .tt .blk .d,.tt .blk .d3{display:none}
+  .tt .slot.empty::after{inset:17px 4px 4px;font-size:11px}
+  .daybtn{display:flex}
+  .app .seg,#reset,#phoneBtn{display:none!important}
+  .tip-desk{display:none}.tip-phone{display:inline}
+  main{padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+  .hero{padding-block:28px 20px}
+  .hero h1{font-size:clamp(36px,10.5vw,48px)}
+  .hero .lede{font-size:17px}
+  .hero .ctas .btn{flex:1 1 auto;justify-content:center}
+  .summary{grid-template-columns:1fr 1fr}
+  .summary div{padding:12px 14px}
+  .summary span{font-size:15px}
+  #flow{gap:14px}
+  .sec{border-radius:14px}
+  .sec-head{padding:12px 16px}
+  .sec-body{padding:18px 16px 22px;gap:18px}
+  .sec h2{font-size:28px}
+  .shot{margin-inline:-16px;border-radius:0;border-inline:0}
+  .facts{gap:14px}
+  .phone{flex-basis:200px;max-width:220px}
+  .duo{gap:14px}
+  .card{padding:16px}
+  .tl .when{flex-basis:100%}
+  .lunch{border-radius:14px;padding:12px 16px;font-size:15px}
+  .mnav{display:none!important;position:fixed;left:0;right:0;bottom:0;z-index:25;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));pointer-events:none}
+  .pill{pointer-events:auto;width:100%;display:flex;align-items:center;gap:10px;min-height:54px;padding:0 18px;border-radius:999px;background:var(--bar);color:var(--bar-ink);border:1px solid var(--bar-rule);box-shadow:0 12px 32px rgba(10,14,25,.35);cursor:pointer;text-align:left}
+  .pill .dot{flex:0 0 10px;width:10px;height:10px;border-radius:50%;background:var(--now);animation:pulse 1.8s ease-out infinite}
+  .pill .pt{font-family:var(--mono);font-size:12px;color:var(--bar-ink-2);white-space:nowrap}
+  .pill .pn{flex:1 1 auto;min-width:0;font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pill .pc{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--bar-ink-2)}
+  .toast{display:block;position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:26;max-width:calc(100% - 32px);transform:translate(-50%,10px);opacity:0;pointer-events:none;background:var(--ink);color:var(--canvas);padding:10px 14px;border-radius:10px;font-size:14px;line-height:1.35;transition:opacity .25s,transform .25s}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.bad{background:var(--now);color:#FFFFFF}
+}
+.scrim{position:fixed;inset:0;z-index:39;background:rgba(8,10,16,.5)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:88vh;max-height:88svh;overflow:auto;overscroll-behavior:contain;background:var(--sheet);color:var(--ink);border-radius:20px 20px 0 0;padding:6px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -12px 40px rgba(10,14,25,.3)}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--rule);margin:4px auto 10px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sheet-head h2{font-size:22px}
+.x{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;border:1px solid var(--rule);background:var(--sheet-2);color:var(--ink);cursor:pointer}
+.sheet-hint{font-size:14px;color:var(--ink-3);margin:6px 0 12px}
+.seg2{position:relative;display:flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-bottom:12px;background:var(--sheet-2)}
+.seg2 button{position:relative;z-index:1;flex:1;min-height:44px;border:0;background:none;color:var(--ink-2);font-size:15px;cursor:pointer;transition:color .25s}
+.seg2 button[aria-pressed="true"]{color:#FFFFFF;font-weight:700}
+.day{margin:0;padding:0;list-style:none;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.day li+li{border-top:1px solid var(--rule-2)}
+.drow2{display:grid;grid-template-columns:92px 12px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:54px;padding:8px 14px;border:0;background:var(--sheet);color:var(--ink);text-align:left;cursor:pointer}
+.drow2 .tm2{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+.drow2 .sw2{width:12px;height:30px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.12)}
+.drow2 .nm2{font-weight:700;font-size:16px;line-height:1.2}
+.drow2 .nm2 small{display:block;font-weight:400;font-size:13px;color:var(--ink-3)}
+.drow2 .bd{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--now);color:#FFFFFF}
+.drow2 .bd.lk{background:var(--sheet-2);color:var(--ink-3);border:1px solid var(--rule)}
+.drow2.here{background:color-mix(in srgb,var(--now) 7%,var(--sheet))}
+.drow2.free .nm2{font-weight:400;color:var(--ink-3)}
+.drow2.free .sw2{background:none;border:1px dashed var(--rule)}
+.drow2.locked .sw2{background-image:repeating-linear-gradient(135deg,transparent 0 3px,rgba(0,0,0,.12) 3px 6px)}
+.drow2.sel{background:color-mix(in srgb,var(--act) 12%,var(--sheet));box-shadow:inset 3px 0 0 var(--act)}
+.sheet.moving .drow2:not(.locked) .sw2{animation:jiggle .28s ease-in-out infinite alternate}
+.sheet-msg{min-height:20px;margin:10px 2px;font-size:14px;color:var(--ink-2)}
+.sheet-msg.bad{color:var(--now);font-weight:700}.sheet-msg.good{color:var(--ok);font-weight:700}
+.sheet-acts{display:flex;gap:8px}
+.sheet-acts .lbtn{flex:1;min-height:44px;font-size:15px}
+@media (max-width:640px){
+  .brand small,.chip,.app .grow{display:none}
+  .app .wrap{min-height:48px;padding-block:4px;gap:6px 10px;flex-wrap:nowrap}
+  .brand{font-size:16px;flex:1 1 auto}
+  .seg button{padding:0 10px;font-size:14px;min-height:38px}
+  .tbtn{min-height:38px;padding:0 10px;font-size:14px}
+  .hirebtn{min-height:38px;padding:0 12px;font-size:14px}
+}
+@media (max-width:480px){
+  #reset{display:none}
+  .reset2{display:inline-block}
+  .brand{font-size:15px;white-space:nowrap}
+  .seg button{padding:0 8px;font-size:13px}
+  .hirebtn{padding:0 10px}
+  .tt .wrap{padding-block:6px}
+  .tt-top{margin-bottom:4px;justify-content:flex-end}
+  .tt-top p{display:none}
+  .tt.open .tt-top p{display:block}
+  .lbtn{min-height:34px}
+  .slot{min-height:50px;padding-top:18px}
+  .strip{grid-template-columns:repeat(12,minmax(78px,1fr));min-width:936px}
+  .msg{font-size:13px;margin-top:4px}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+<style>body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<header class="app" id="app">
+  <div class="wrap">
+    <a class="brand" href="#top">Rafael Ngai<small>Software developer · builds the systems a two-site school runs on</small></a>
+    <span class="chip" id="today">Today</span>
+    <span class="grow"></span>
+    <div class="seg" role="group" aria-label="Who is reading"><span class="ind" aria-hidden="true"></span>
+      <button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button>
+      <button type="button" data-view="developer" aria-pressed="false">Developer</button>
+    </div>
+    <button type="button" class="tbtn gone" id="phoneBtn" aria-pressed="false" hidden>Phone view</button>
+    <button type="button" class="hirebtn" id="hireBtn">Hire me</button>
+    <button type="button" class="tbtn gone" id="reset">Reset</button>
+  </div>
+</header>
+
+<!-- THE TIMETABLE THAT RUNS THE PAGE -->
+<section class="tt" id="tt" aria-label="Page timetable">
+  <div class="wrap">
+    <div class="tt-top">
+      <p id="ttHint">This page is my school day. Tap a period to jump there, or drag one to reorder the page.</p>
+      <div class="acts">
+        <button type="button" class="lbtn" id="moveMode" aria-pressed="false">Rearrange</button>
+        <button type="button" class="lbtn gone" id="openTT" aria-expanded="false">Expand</button>
+        <button type="button" class="lbtn reset2 gone" id="reset2">Reset</button>
+      </div>
+    </div>
+    <div class="strip-row">
+      <div class="strip-scroll">
+        <div class="strip" id="strip" role="list"></div>
+      </div>
+      <button type="button" class="daybtn" id="dayBtn" aria-haspopup="dialog" aria-controls="sheet" aria-label="My day: rearrange, switch view or reset">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"></path></svg><span>My day</span></button>
+    </div>
+    <p class="msg" id="msg" role="status" aria-live="polite"></p>
+  </div>
+</section>
+
+<div class="mnav" id="mnav"><button type="button" class="pill" id="pill" aria-haspopup="dialog" aria-controls="sheet"><i class="dot" aria-hidden="true"></i><span class="pt" id="pillTime">Registration</span><span class="pn" id="pillName">Timetable</span><span class="pc">My day <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"></path></svg></span></button></div>
+<div class="toast" id="toast" aria-hidden="true"></div>
+<p class="sr" id="live2" role="status" aria-live="polite"></p>
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+  <div class="grab" aria-hidden="true"></div>
+  <div class="sheet-head"><h2 id="sheetTitle">My school day</h2><button type="button" class="x" id="sheetClose" aria-label="Close">
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+  <p class="sheet-hint" id="sheetHint">This page runs on my timetable. Tap a period to go there.</p>
+  <div class="seg2" role="group" aria-label="Who is reading"><span class="ind" aria-hidden="true"></span><button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button><button type="button" data-view="developer" aria-pressed="false">Developer</button></div>
+  <ol class="day" id="day"></ol>
+  <p class="sheet-msg" id="sheetMsg" role="status" aria-live="polite"></p>
+  <div class="sheet-acts"><button type="button" class="lbtn" id="mMove" aria-pressed="false">Rearrange</button><button type="button" class="lbtn" id="mReset">Reset</button></div>
+</section>
+<aside class="phonewrap" id="phoneWrap" hidden aria-label="Phone view of this page"><div class="phonebody"><iframe id="phoneFrame" title="This portfolio at phone size" loading="lazy"></iframe></div><p class="phonecap">Phone view · same page, live. Move a block on either side.</p></aside>
+<main id="top"><span id="main" tabindex="-1"></span>
+  <div class="wrap">
+    <section class="hero">
+      <p class="k">Software developer · Berkshire, UK</p>
+      <h1>I build the tools that replace <span class="sr">the mess.</span><span class="mess" aria-hidden="true"><i style="--k:0;--x:1px;--y:-41px;--r:10deg">t</i><i style="--k:1;--x:-34px;--y:-51px;--r:28deg">h</i><i style="--k:2;--x:-28px;--y:-14px;--r:34deg">e</i> <i style="--k:4;--x:-33px;--y:4px;--r:-13deg">m</i><i style="--k:5;--x:-36px;--y:-49px;--r:15deg">e</i><i style="--k:6;--x:13px;--y:-52px;--r:-10deg">s</i><i style="--k:7;--x:-29px;--y:10px;--r:14deg">s</i><i style="--k:8;--x:-33px;--y:12px;--r:-25deg">.</i></span></h1>
+      <p class="lede">A timetable trapped in a spreadsheet. Student work scattered across folders. Progress nobody could see. I find what slows people down and build the software that fixes it, with AI writing much of the code and me deciding what it does and testing it before anyone relies on it.</p>
+      <div class="ctas">
+        <a class="btn btn-act" href="../timetable-demo/">Try the real timetable ↗</a>
+        <button type="button" class="btn btn-line" id="copyHero">Copy email</button>
+        <a class="btn btn-line" href="#contact">Contact</a>
+      </div>
+      <p class="try"><i aria-hidden="true"></i><span><b>Try it:</b> drag a block in the timetable above. Lunch is locked.</span></p>
+      <div class="summary metrics" aria-label="In numbers">
+        <div><b>~100 people</b><span>use my timetable platform across two school sites</span></div>
+        <div><b>31,000+ changes</b><span>made in it by 10 staff in October</span></div>
+        <div><b>718 course units</b><span>linked in the Student Tracker, backed by 129 tests</span></div>
+        <div><b>5 sites</b><span>checked every morning by my watchdog</span></div>
+      </div>
+    </section>
+
+    <div id="flow">
+
+      <!-- TIMETABLE -->
+      <section class="sec" id="s-tt" style="--c:var(--b-tt)" aria-labelledby="h-tt">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Live · 2 sites · ~100 people</span></div>
+        <div class="sec-body">
+          <h2 id="h-tt">Timetable platform for a two-site school</h2>
+          <div class="shot"><img src="../img/timetable.jpg" alt="The timetable editor for a week, with the phone view beside it showing the same day live" width="2000" height="1250" loading="lazy"></div>
+          <div class="facts">
+            <div><h3>The problem</h3><p>The timetable lived in Excel, and I hated reading it there. Finding who was where meant scrolling a spreadsheet.</p></div>
+            <div><h3>What I built</h3><p>An editor for building the week, a published read-only rota, and a front-desk board for arrivals and pick-ups, with breaks, transport and mentoring slots.</p></div>
+            <div><h3>What changed</h3><p>Two sites now run their day from it, and about 100 people at the school use it. In October alone, 10 staff made over 31,000 changes in it, across about 570 timetabled sessions a week for roughly 170 students and 50 staff.</p></div>
+          </div>
+          <div class="quotes">
+          <blockquote class="quote">
+            <p>“Raf’s rota system has saved us twice over. It saved the company a large bill for a ready-made system, in a crowded market where none of them fitted all our needs. And it removed the manual admin: instead of editing spreadsheets and numbers, we now pull reports and use them to improve how staff work.”</p>
+            <footer><b>Jacob</b></footer>
+          </blockquote>
+          <blockquote class="quote">
+            <p>“Working alongside Raf while he built the rota system was a joy. He was open to all feedback and requests, and his communication was excellent throughout. He built it with its users in mind, and it has improved my own productivity.”</p>
+            <footer><b>Andrew</b> · Supervisor Subject Lead</footer>
+          </blockquote>
+          </div>
+          <details class="fold"><summary>On the phone, and how pupils&#39; addresses stay private</summary>
+          <div class="row">
+            <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:14px">
+              <h3 style="font-size:22px">On the phone, and on the way to every pick-up</h3>
+              <p style="color:var(--ink-2)">Staff on the move see who is where right now and tick breaks. A driver taps a journey and gets each stop with a Google Maps button.</p>
+              <div class="lockbox"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg><p>Pupils' home addresses never travel with the timetable data. The server keeps them apart, hands a run's addresses only to accounts allowed to plan that run, and logs every read.</p></div>
+            </div>
+            <div class="phone"><img src="../img/phone-map.jpg" alt="Phone view of a minibus run from home to school, listing each pupil with a Map button" width="780" height="1688" loading="lazy"></div>
+          </div>
+          </details>
+          <div class="dev">
+            <h3>How the address rule works</h3>
+            <p>The server, not the page, decides who gets addresses. A run's addresses go only to the people on that run or an editor allowed to edit it, and the read is logged without the address itself.</p>
+<pre class="code"><span class="c">// abridged from lib/homeaddr.js</span>
+<span class="k">function</span> forBlock(me, q, who) {
+  <span class="k">const</span> s = store.get(<span class="s">'sessions'</span>, q.wk + <span class="s">'|'</span> + q.sid)?.data?.s;
+  <span class="k">const</span> onIt = staffIdOf(me) &amp;&amp; [s.staffId, ...helpersOf(s)].includes(staffIdOf(me));
+  <span class="k">const</span> ed = me.role === <span class="s">'join'</span> || perms.canEditSession(me.role, s);
+  <span class="k">if</span> (!onIt &amp;&amp; !ed) <span class="k">return</span> { status: 403 };   <span class="c">// no address leaves the server</span>
+  store.audit({ who, op: <span class="s">'homeaddr-read'</span>, n: count });  <span class="c">// who read, never what</span>
+  ...
+}</pre>
+            <ul><li>Every record carries an etag, so a save is refused if someone else changed that record first.</li><li>New work goes into a prototype copy and is tested by checklist and automated suites before it reaches the live site.</li></ul>
+          </div>
+          <div class="links"><a class="more" href="../timetable-demo/">Open the live demo ↗</a><span class="stack">Vanilla JS · Node.js · per-record document store · test suites · audit log</span></div>
+        </div>
+      </section>
+
+      <!-- TRACKER -->
+      <section class="sec" id="s-tr" style="--c:var(--b-tr)" aria-labelledby="h-tr">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st wip">In progress · demo live</span></div>
+        <div class="sec-body">
+          <h2 id="h-tr">Student Tracker</h2>
+          <div class="facts">
+            <div><h3>The problem</h3><p>Evidence of what students had learned was scattered and untidy, and near-identical coursework had to be done twice for overlapping units.</p></div>
+            <div><h3>What I'm building</h3><p>One platform that links 718 real course units (3,068 criteria across 21 qualifications) criterion by criterion. Students hand in work per task, staff mark per criterion, and Internal Verifiers check every passed unit.</p></div>
+            <div><h3>What will change</h3><p>Work done for one unit counts towards another, and a student who misses one criterion resubmits only that one.</p></div>
+          </div>
+          <div><div class="shot"><img src="../img/tracker-path.jpg" alt="Path view of the Personal Finances unit, showing which units share criteria with it and whether each link is signed off" width="2000" height="1250" loading="lazy"></div><p class="cap">Path view: which units share criteria with Personal Finances, and which links have been signed off.</p></div>
+          <div class="dev">
+            <h3>How the rules work</h3>
+            <p>Every change is a named action. Its rule is a pure function that returns the writes it wants, and the store saves all of them or none. The page loads the same rule files only to grey out buttons.</p>
+<pre class="code"><span class="c">// abridged: every action has the same shape</span>
+register({ name: <span class="s">'markWork'</span>, role: <span class="s">'staff'</span>, run(ctx, input) {
+  <span class="k">if</span> (!teacher &amp;&amp; !mentor) <span class="k">return</span> { error: <span class="s">'Only this unit\'s teachers…'</span> };
+  <span class="k">return</span> { writes, notes: [<span class="s">'Marks saved.'</span>] };
+}});
+
+<span class="c">// lib/store.js: all of it or none of it</span>
+writeMany(ops) {
+  <span class="k">for</span> (<span class="k">const</span> op <span class="k">of</span> ops) <span class="k">if</span> (etagOf(op) !== op.ifMatch) <span class="k">return</span> { conflict: <span class="k">true</span> };
+  ops.forEach(write);
+}</pre>
+            <ul><li>129 automated tests, plain Node, nothing to install.</li><li>Each person's browser only receives the records that person may see.</li><li>Decisions are written down as numbered decision records before the code.</li></ul>
+          </div>
+          <div class="links"><a class="btn btn-act" href="../tracker-demo/">Try the tracker demo ↗</a><span style="font-size:15px;color:var(--ink-3)">Made-up people, real AIM course content. Switch roles; it resets.</span></div>
+        </div>
+      </section>
+
+      <!-- FITTRACK + DUNGEON -->
+      <section class="sec" id="s-ft" style="--c:var(--b-ft)" aria-labelledby="h-ft">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Live · open source</span></div>
+        <div class="sec-body">
+          <h2 id="h-ft">FitTrack, and a game on the side</h2>
+          <div class="duo">
+            <article class="card">
+              <span class="stack">PWA · Three.js · no backend</span>
+              <h3>FitTrack</h3>
+              <p>I trained five days a week and guessed at whether I was improving. Now every set is logged against last session, every lift has a chart, and every exercise has an animated 3D demo.</p>
+              <div class="dev"><h3>Under the hood</h3><ul><li>A Three.js mannequin with two-bone IK and 94 keyframed movements across 93 exercises.</li><li>Plain ES modules, no build step; a service worker makes it work offline.</li></ul></div>
+              <div class="links"><a class="more" href="https://rafaelkoo.github.io/GymTrackingApp/" target="_blank" rel="noopener">Open the app ↗</a><a href="https://github.com/rafaelkoo/GymTrackingApp" target="_blank" rel="noopener">Code ↗</a></div>
+              <div class="phone"><img src="../img/gym.jpg" alt="Barbell squat on an animated 3D model above a chart of heaviest weight over eight weeks (sample data)" width="780" height="1688" loading="lazy"></div>
+            </article>
+            <article class="card">
+              <span class="stack">TypeScript · Three.js · Supabase</span>
+              <h3>Just a Dungeon</h3>
+              <p>An idle dungeon game for phones that plays itself until you take over, with cloud saves, leaderboards and 2-player co-op.</p>
+              <div class="dev"><h3>Under the hood</h3><ul><li>A fixed 60-steps-a-second simulation kept separate from rendering.</li><li>GitHub Actions builds and deploys it on every push to main.</li></ul></div>
+              <div class="links"><a class="more" href="https://rafaelkoo.github.io/Just-a-Dungeon/" target="_blank" rel="noopener">Play ↗</a><a href="https://github.com/rafaelkoo/Just-a-Dungeon" target="_blank" rel="noopener">Code ↗</a></div>
+              <div class="phone"><img src="../img/dungeon.jpg" alt="An archer fighting skeletons in a dungeon on autopilot" width="780" height="1688" loading="lazy"></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- WEBSITE WATCHDOG -->
+      <section class="sec half" id="s-wd" style="--c:var(--b-pt)" aria-labelledby="h-wd">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Runs every morning</span></div>
+        <div class="sec-body">
+          <h2 id="h-wd">Website watchdog</h2>
+          <p class="lead">Every morning it checks my five sites on desktop and phone, scores them, and raises its own alerts when something breaks.</p>
+          <details class="fold"><summary>The problem, what I built, what changed</summary>
+          <div class="facts">
+            <div><h3>The problem</h3><p>I run several sites on my own, and nobody tells me when one breaks. A broken link or a layout that scrolls sideways on phones could sit there for weeks.</p></div>
+            <div><h3>What I built</h3><p>Every morning it opens each site in a real browser at desktop and phone size, checks speed, errors, links and accessibility, keeps a history, and opens a GitHub issue when something gets worse.</p></div>
+            <div><h3>What changed</h3><p>On its first run it found three real problems: low-contrast labels on this page and the tracker demo, which I fixed, and zoom turned off in my game, which is deliberate.</p></div>
+          </div>
+          </details>
+          <div class="wdlive" id="wdLive" aria-live="polite">
+            <div class="wdtop"><b>Latest check</b><span id="wdWhen">Loading the live results…</span></div>
+            <ul class="wdlist" id="wdList"></ul>
+          </div>
+          <div class="dev">
+            <h3>How it decides</h3>
+<pre class="code"><span class="c">// abridged from watchdog.mjs: 100 is perfect</span>
+s -= Math.min(30, 10 * v.jsErrors.length);                       <span class="c">// page errors</span>
+s -= Math.min(40, axe.reduce((a, x) =&gt; a + IMPACT[x.impact], 0)); <span class="c">// critical 8, serious 4</span>
+s -= v.overflowPx &gt; 1 ? 10 : 0;                                   <span class="c">// scrolls sideways on a phone</span>
+s -= Math.min(20, 5 * brokenLinks.length);
+
+<span class="c">// an alert only for what is new or worse, so it never nags about known issues</span>
+<span class="k">if</span> (score &lt;= prev.score - 10) problems.push(<span class="s">`Score dropped from ${prev.score}`</span>);</pre>
+            <ul><li>Runs on GitHub Actions at 06:17 every day, free, with no passwords to manage.</li><li>The issue closes itself when the next check is clean.</li><li>Accepted exceptions are written down with the reason, not silently ignored.</li></ul>
+          </div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener">Code on GitHub ↗</a><a href="https://github.com/rafaelkoo/site-watchdog/issues" target="_blank" rel="noopener">Current alerts ↗</a><span class="stack">Node.js · Playwright · axe-core · GitHub Actions</span></div>
+        </div>
+      </section>
+
+      <!-- GORB -->
+      <section class="sec half" id="s-gb" style="--c:var(--b-gb)" aria-labelledby="h-gb">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">114 updates in 17 days</span></div>
+        <div class="sec-body">
+          <h2 id="h-gb">GorB: a gym app that turns training into a co-op game</h2>
+          <p class="lead">A group gym app where real training powers a co-op pixel game, with every battle and coin decided by the server.</p>
+          <details class="fold"><summary>The problem, what I built, what changed</summary>
+          <div class="facts">
+            <div><h3>The problem</h3><p>FitTrack, my earlier gym app, lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
+            <div><h3>What I built</h3><p>A group app where real training powers a game. You check in with a photo and log workouts with weight suggestions that follow your goal. Your training sets your pixel character's stats. Your group trains in a shared pixel gym, battles "excuse monsters" like the Couch Monster, and takes on a weekly co-op boss.</p></div>
+            <div><h3>What changed</h3><p>It grew from a check-in app into a game in 17 days: 114 updates, now version 0.76. FitTrack's features came across with an import for my old data, and FitTrack itself stays as the one-person version.</p></div>
+          </div>
+          </details>
+          <div class="art">
+            <figure class="wide"><img src="../img/gorb-gym.png" alt="Pixel gym: five friends' avatars at the squat rack, bench, deadlift platform and treadmill, with one dozing on the rest bench" width="2048" height="1408" loading="lazy"><figcaption>The group's pixel gym: everyone stands at the station for what they trained today</figcaption></figure>
+          </div>
+          <p class="shotnote">Drawn by the app's own code with made-up people. The real app is for my friends, so it needs a sign-in.</p>
+          <details class="fold"><summary>The excuse monsters, and how the game stays fair</summary>
+          <div class="art"><figure><img src="../img/gorb-battle.png" alt="Battle: a pixel character, seen from behind, facing the Couch Monster, a grinning brown sofa" width="1600" height="1120" loading="lazy"><figcaption>Battling the Couch Monster</figcaption></figure><figure class="full"><img src="../img/gorb-monsters.png" alt="Ten excuse monsters and their evolved forms, such as the Couch Monster becoming the Yoga Mat Guardian and the Snooze Clock becoming the Early-Bird Clock" width="2200" height="540" loading="lazy"><figcaption>Excuse monsters and their good-habit forms: 18 species, all drawn in code</figcaption></figure></div>
+          <div class="rec"><ul class="recl"><li>Every battle, catch and coin is decided by the database (129 server functions), so nobody can cheat by editing the app.</li><li>Privacy rules on all 37 tables: you only see your groupmates.</li><li>Weight suggestions follow your goal's rep range, step back when you plateau, and suggest a swap if you stay stuck.</li><li>Database changes deploy themselves from GitHub.</li></ul></div>
+          </details>
+          <div class="dev">
+            <h3>The server decides, not the phone</h3>
+<pre class="code"><span class="c">-- abridged from supabase/migrations: the app can only ASK to buy something</span>
+<span class="k">create function</span> shop_buy(p_item text, p_qty int) <span class="k">returns</span> jsonb
+<span class="k">language</span> plpgsql <span class="k">security definer</span> <span class="k">as</span> $$
+<span class="k">begin</span>
+  <span class="k">if</span> auth.uid() <span class="k">is null then raise exception</span> <span class="s">'Not signed in'</span>; <span class="k">end if</span>;
+  <span class="k">if</span> p_qty &lt; 1 <span class="k">or</span> p_qty &gt; 20 <span class="k">then raise exception</span> <span class="s">'Can’t buy that'</span>; <span class="k">end if</span>;
+  <span class="c">-- coins are checked and taken in the same step, so a double tap can't spend twice</span>
+  <span class="k">if not</span> spend_coins(auth.uid(), price * p_qty) <span class="k">then raise exception</span> <span class="s">'Not enough coins'</span>; <span class="k">end if</span>;
+  <span class="k">insert into</span> user_items ... <span class="k">on conflict do update set</span> qty = qty + p_qty;
+<span class="k">end</span> $$;</pre>
+            <ul><li>59 database migrations, each applied automatically by GitHub Actions and safe to run twice.</li><li>Photos are re-encoded on the phone, which drops GPS data, and are deleted after 7 days (chat photos after 5).</li><li>Five Edge Functions send push notifications and the weekly summaries, in each person's own language (English or 繁中).</li><li>The pixel gym, avatars, 18 monsters and their evolved forms are all drawn on a canvas in code, not from image files.</li></ul>
+          </div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo/GorB" target="_blank" rel="noopener">Code on GitHub ↗</a><span class="stack">Supabase (Postgres, Auth, Storage, Edge Functions) · Web Push · Canvas pixel art · Three.js · PWA</span></div>
+        </div>
+      </section>
+
+      <!-- LUNCH (locked) -->
+      <div class="lunch" id="s-lunch"><span class="t" data-time></span><b>Lunch.</b><span>Locked on the timetable, like a real break. Good moment to <a href="../timetable-demo/">open the timetable demo ↗</a></span></div>
+
+      <!-- EXPERIENCE -->
+      <section class="sec" id="s-ex" style="--c:var(--b-ex)" aria-labelledby="h-ex">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body">
+          <h2 id="h-ex">Experience</h2>
+          <ol class="tl">
+            <li class="cur"><span class="when">Oct 2026 – now</span><div class="what">
+              <h3>Building the school's systems</h3>
+              <p class="org">Protected development time each week, alongside teaching</p>
+              <p>I design and build the timetable platform both sites run on, used by about 100 people at the school, and the learning tracker now in development.</p>
+              <div class="tags"><span>JavaScript</span><span>Node.js</span><span>Document store</span><span>Automated tests</span></div>
+            </div></li>
+            <li class="cur"><span class="when">May 2025 – now</span><div class="what">
+              <h3>Support Worker (Game Design)</h3>
+              <p class="org">A creative-skills school in Berkshire</p>
+              <p>I teach students Game Design, Coding in Unity, Website Design and Music Theory. I built my own tools for it: a code pipeline that makes my lesson decks, a slide kit other teachers fill in, and a Unity error explainer for students.</p>
+              <div class="tags"><span>Unity</span><span>C#</span><span>Web design</span><span>Node.js</span><span>Music theory</span></div>
+            </div></li>
+            <li data-todo><span class="when">[DATES]</span><div class="what"><h3>[EARLIER ROLE]</h3><p>[WHAT YOU DID]</p></div></li>
+            <li><span class="when">2023</span><div class="what">
+              <h3>BSc Virtual and Augmented Reality, Merit</h3>
+              <p class="org">University of Portsmouth</p>
+              <div class="tags"><span>Unity</span><span>C#</span><span>3D</span></div>
+            </div></li>
+          </ol>
+          <p><a class="more" href="../cv/Rafael_Ngai_CV.pdf" target="_blank" rel="noopener">Full CV (PDF, 2 pages) ↗</a></p>
+        </div>
+      </section>
+
+      <!-- HIRE (added by the visitor) -->
+      <section class="sec" id="s-hire" style="--c:var(--b-hi)" aria-labelledby="h-hire" hidden>
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Booked</span></div>
+        <div class="sec-body">
+          <h2 id="h-hire">Interview booked. Thank you!</h2>
+          <p style="color:var(--ink-2)">You put an interview with me in <b data-hire-time></b>. Here's a message ready to send to <b>rafaelkoo.uk@gmail.com</b>. Change anything you like.</p>
+          <label for="hireMsg" class="sr">Message to Rafael</label>
+          <textarea id="hireMsg" class="hiremsg">Hi Rafael,
+
+I saw your portfolio and I'd like to talk to you about a developer role at [your company]. Are you free for a call?
+
+[Your name]</textarea>
+          <div class="mailrow"><button type="button" class="btn btn-act" id="copyHire">Copy message</button><button type="button" class="btn btn-line" id="cancelHire">Cancel interview</button></div>
+        </div>
+      </section>
+
+      <!-- HOW I WORK -->
+      <section class="sec" id="s-how" style="--c:var(--b-how)" aria-labelledby="h-how">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body">
+          <h2 id="h-how">AI writes code fast. Process makes it trustworthy.</h2>
+          <p style="color:var(--ink-2);max-width:40em">AI writes most of the code. I decide what gets built, how it should look and work, and whether it is right before anyone else sees it.</p>
+          <ol class="steps">
+            <li><b>1 · Plan the whole project</b><span>What it is for, who will use it and what "done" looks like, before any code.</span></li>
+            <li><b>2 · Write the document first</b><span>A written plan, a glossary and numbered decision records. The tracker has 12 of them behind its rules.</span></li>
+            <li><b>3 · Pick the right skills</b><span>I set the AI up with the skills the job needs: design rules, accessibility, testing, code review, and my own skills for the school's rules.</span></li>
+            <li><b>4 · Decide how to present it</b><span>Mockups with 2–4 options are agreed before a feature is built.</span></li>
+            <li><b>5 · Build with AI, in a prototype</b><span>New work lands in a prototype copy and only reaches the live system after it passes testing.</span></li>
+            <li><b>6 · Check it, then ship</b><span>Automated tests (129 in the tracker) and a "do this, should see that" checklist run before every release. Docs and handover notes are updated in the same session.</span></li>
+          </ol>
+          <details class="fold"><summary>Smaller things I built along the way</summary>
+          <div>
+            
+            <ul class="small">
+              <li><b>Unity Error Explainer</b><span>Paste a red console error and it explains the cause and the fix in plain words, using an AI model.</span></li>
+              <li><b>Student portfolio engine</b><span>A script generates each student's portfolio site, with their own palette and opening.</span></li>
+              <li><b>Lesson deck tools</b><span>A code pipeline builds my lesson decks, and a sidebar kit lets other teachers fill in boxes instead.</span></li>
+              <li><b>Living Building</b><span>A timetable shown as a 3D building you can scrub through time.</span></li>
+            </ul>
+          </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="sec" id="s-ab" style="--c:var(--b-ab)" aria-labelledby="h-ab">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body about">
+          <div class="photo" data-todo>[YOUR PHOTO]</div>
+          <div class="about-copy">
+            <h2 id="h-ab">I like dealing with problems.</h2>
+            <p>I'm a Support Worker (Game Design) at a creative-skills school in Berkshire. Alongside supporting students and teaching Game Design, Coding in Unity, Website Design and Music Theory, I design and build the school's systems: the timetable platform both sites run on, and the learning tracker I'm building now. The school gives me protected time each week for that development work. I hold a BSc in Virtual and Augmented Reality (Merit, 2023).</p>
+            <p>This site is set in Atkinson Hyperlegible, a typeface designed for low-vision readers. I use it in the school's own tools too, so they stay easy to read for every student.</p>
+            <details class="fold"><summary>Skills and tools</summary>
+            <dl class="skills">
+              <div><dt>Web</dt><dd>HTML, CSS, vanilla JavaScript, TypeScript, Node.js, Three.js</dd></div>
+              <div><dt>Apps and data</dt><dd>Python, C#, Unity, progressive web apps, JSON and document stores</dd></div>
+              <div><dt>AI tooling</dt><dd>Claude Code with custom skills, inside a plan, document, prototype, test process</dd></div>
+              <div><dt>Automation</dt><dd>Google Apps Script, pptxgenjs, Telegram bots, scheduled jobs</dd></div>
+              <div><dt>Languages</dt><dd>English, Cantonese, Mandarin</dd></div>
+            </dl>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="sec" id="s-ct" style="--c:var(--b-ct)" aria-labelledby="h-ct">
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span></div>
+        <div class="sec-body" id="contact">
+          <h2 id="h-ct">Got a messy problem? I'd like to hear about it.</h2>
+          <p style="color:var(--ink-2);max-width:36em">I want a developer role where the job is finding what slows people down and building the tool that fixes it. </p>
+          <div class="mailrow"><span class="mail" id="mail">rafaelkoo.uk@gmail.com</span><button type="button" class="btn btn-line" id="copyMail">Copy email</button></div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo" target="_blank" rel="noopener">GitHub ↗</a><a class="more" href="https://www.linkedin.com/in/rafael-ngai" target="_blank" rel="noopener">LinkedIn ↗</a><a class="more" href="../cv/Rafael_Ngai_CV.pdf" target="_blank" rel="noopener">CV (PDF) ↗</a></div>
+        </div>
+      </section>
+      <div class="lunch avail" id="s-avail" style="--c:var(--b-av)"><span class="t" data-time></span><b>Available <span data-start>[START DATE]</span>.</b><span><span data-todo>[LOCATION PREFERENCE] · </span><a href="#contact">Get in touch</a></span></div>
+    </div>
+
+    <footer class="foot"><p>© 2026 Rafael Ngai</p><p>Designed and built by me, with AI. The timetable bar is a small rebuild of my timetable engine's rules.</p></footer>
+  </div>
+</main>
+
+<script>
+(function(){
+  'use strict';
+  var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var EASE='cubic-bezier(.2,.8,.2,1)';
+  /* ---------- the mini timetable engine ---------- */
+  /* ===== FILL THESE IN: the 10 dates on the timetable (YYYY-MM-DD) and the date you could start a new job. =====
+     Leave a value as null and the page shows a [DATE] / [START DATE] placeholder instead. */
+  /* ===== FILL THIS IN: the date you could start a new job (YYYY-MM-DD). While it's null the page says "ask me". ===== */
+  var CONFIG={start:null};
+  function fmt(s,ph){if(!s)return ph;var d=new Date(s+'T12:00:00');if(isNaN(d))return ph;return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+  var TIMES=['Registration','Period 1','Period 2','Period 3','Period 4','Lunch','Period 5','Period 6','Period 7','Period 8','Period 9','After school'];
+  var LUNCH=5,LAST=TIMES.length-1;
+  var START=CONFIG.start?'from '+fmt(CONFIG.start,''):'to start: ask me';
+  document.querySelectorAll('[data-start]').forEach(function(e){e.textContent=START;});
+  var BLOCKS={
+    tt:{name:'Timetable',d:'Live at 2 sites',c:'--b-tt',sec:'s-tt'},
+    tr:{name:'Student Tracker',d:'718 units, in progress',c:'--b-tr',sec:'s-tr'},
+    lunch:{name:'Lunch',d:'Locked',c:'--b-lunch',sec:'s-lunch',lock:true},
+    avail:{name:'Available',d:'Start date',c:'--b-av',sec:'s-avail',lock:true},
+    ft:{name:'FitTrack + game',d:'Live, open source',c:'--b-ft',sec:'s-ft'},
+    how:{name:'How I build',d:'My AI process',c:'--b-how',sec:'s-how'},
+    ab:{name:'About',d:'Who I am',c:'--b-ab',sec:'s-ab'},
+    ct:{name:'Contact',d:'Email, GitHub',c:'--b-ct',sec:'s-ct'},
+    ex:{name:'Experience',d:'Since May 2025',c:'--b-ex',sec:'s-ex'},
+    wd:{name:'Website watchdog',d:'Checks my sites daily',c:'--b-pt',sec:'s-wd'},
+    gb:{name:'GorB',d:'Group gym app',c:'--b-gb',sec:'s-gb'},
+    hire:{name:'Interview with you',d:'Booked by you',c:'--b-hi',sec:'s-hire'}
+  };
+  var DEFAULT=['tt','tr','wd','gb','ft','lunch','ex','how','ab','ct',null,'avail'];
+  var KEY='rn-portfolio-v6';
+  var S={slots:DEFAULT.slice(),view:'recruiter',open:false};
+  function valid(sl){var ids=sl.filter(function(x){return x&&x!=='hire';}).sort().join();return ids===DEFAULT.filter(Boolean).sort().join()&&sl.filter(function(x){return x==='hire';}).length<=1&&sl[LUNCH]==='lunch'&&sl[LAST]==='avail';}
+  try{var saved=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(saved&&Array.isArray(saved.slots)&&saved.slots.length===TIMES.length&&valid(saved.slots)){S.slots=saved.slots;S.view=saved.view==='developer'?'developer':'recruiter';S.open=!!saved.open;}}catch(e){}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+  var strip=document.getElementById('strip'),msg=document.getElementById('msg'),flow=document.getElementById('flow'),tt=document.getElementById('tt');
+  var moveMode=false,selected=null;
+  var PH=matchMedia('(max-width: 700px)');
+  function isPhone(){return PH.matches;}
+  var toastT;
+  function say(t,kind){msg.textContent=t;msg.className='msg'+(kind?' '+kind:'');
+    var sm=document.getElementById('sheetMsg');if(sm){sm.textContent=t;sm.className='sheet-msg'+(kind?' '+kind:'');}
+    var to=document.getElementById('toast');
+    if(to&&isPhone()&&document.getElementById('sheet').hidden){to.textContent=t;to.className='toast show'+(kind==='bad'?' bad':'');clearTimeout(toastT);toastT=setTimeout(function(){to.className='toast'+(kind==='bad'?' bad':'');},2800);}
+    var live=document.getElementById('live2');if(live){live.textContent='';setTimeout(function(){live.textContent=t;},20);}
+  }
+
+  /* FLIP: remember where things were, change the DOM, then slide them from old to new places. */
+  function snap(){
+    var m={b:{},s:{}};
+    strip.querySelectorAll('.blk').forEach(function(e){m.b[e.dataset.id]=e.getBoundingClientRect();});
+    flow.querySelectorAll(':scope > *').forEach(function(e){m.s[e.id]=e.getBoundingClientRect();});
+    m.r={};document.querySelectorAll('#day .drow2').forEach(function(e){m.r[e.dataset.k]=e.getBoundingClientRect();});
+    return m;
+  }
+  function flip(prev,override){
+    if(RM)return;
+    strip.querySelectorAll('.blk').forEach(function(e){
+      var p=(override&&override[e.dataset.id])||prev.b[e.dataset.id];if(!p)return;var n=e.getBoundingClientRect();
+      var dx=p.left-n.left,dy=p.top-n.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;
+      var big=override&&override[e.dataset.id];
+      e.animate([{transform:'translate('+dx+'px,'+dy+'px)'+(big?' rotate(-4deg) scale(1.06)':''),zIndex:3},{transform:'none',zIndex:3}],{duration:big?380:520,easing:'cubic-bezier(.3,1.35,.5,1)'});
+    });
+    flow.querySelectorAll(':scope > *').forEach(function(e){
+      var p=prev.s[e.id];if(!p)return;var n=e.getBoundingClientRect(),dy=p.top-n.top;if(Math.abs(dy)<1)return;
+      var far=Math.min(Math.abs(dy),2400)*Math.sign(dy);
+      e.animate([{transform:'translateY('+far+'px)'},{transform:'none'}],{duration:700,easing:EASE});
+    });
+    document.querySelectorAll('#day .drow2').forEach(function(e){
+      var p=prev.r&&prev.r[e.dataset.k];if(!p)return;var dy=p.top-e.getBoundingClientRect().top;if(Math.abs(dy)<1)return;
+      e.animate([{transform:'translateY('+dy+'px)',zIndex:2},{transform:'none',zIndex:2}],{duration:460,easing:'cubic-bezier(.3,1.3,.5,1)'});
+    });
+  }
+
+  function render(focusId){
+    strip.innerHTML='';
+    S.slots.forEach(function(id,i){
+      var slot=document.createElement('div');slot.className='slot'+(id?'':' empty');slot.dataset.i=i;slot.setAttribute('role','listitem');
+      var tm=document.createElement('span');tm.className='tm';tm.textContent=TIMES[i];slot.appendChild(tm);
+      if(id){
+        var b=BLOCKS[id],el=document.createElement('button');
+        el.type='button';el.className='blk'+(b.lock?' lock':'')+(selected===id?' sel':'');el.dataset.id=id;
+        el.style.setProperty('--c','var('+b.c+')');
+        el.innerHTML='<span>'+b.name+'</span><span class="d">'+b.d+'</span>'+(id==='avail'?'<span class="d3">'+START+'</span>':'');
+        el.setAttribute('aria-label',b.name+', '+TIMES[i]+(b.lock?', locked':'. Enter to go there. Arrow keys move it.'));
+        slot.appendChild(el);
+      }else{slot.setAttribute('aria-label',TIMES[i]+', free period');}
+      strip.appendChild(slot);
+    });
+    var now=document.createElement('div');now.className='now';now.id='now';now.setAttribute('aria-hidden','true');strip.appendChild(now);
+    S.slots.forEach(function(id,i){if(!id)return;var sec=document.getElementById(BLOCKS[id].sec);flow.appendChild(sec);var t=sec.querySelector('[data-time]');if(t)t.textContent=TIMES[i];});
+    pairHalves();
+    var hs=document.getElementById('s-hire'),hi=idx('hire');hs.hidden=hi<0;var hbx=document.getElementById('hireBtn');if(hbx&&hbx.classList.contains('booked')!==(hi>=0)){hbx.classList.toggle('booked',hi>=0);hbx.innerHTML=hi>=0?'<svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Booked':'Hire me';}if(hi>=0)hs.querySelector('[data-hire-time]').textContent=TIMES[hi];
+    renderDay();
+    if(focusId){var f=isPhone()?document.querySelector('#day [data-k="'+focusId+'"]'):strip.querySelector('[data-id="'+focusId+'"]');if(f&&(!isPhone()||!document.getElementById('sheet').hidden))f.focus({preventScroll:true});}
+    updateNow(true);
+  }
+
+  function lockMsg(id){return id==='avail'?'My start date is locked to the end of the day.':'Lunch is locked. Breaks stay put, just like on the real timetable.';}
+  function idx(id){return S.slots.indexOf(id);}
+  function tryMove(id,to,fromRect){
+    var from=idx(id),b=BLOCKS[id];
+    if(to<0||to>=S.slots.length||to===from){if(fromRect)bounceBack(id,fromRect);return;}
+    if(b.lock){flash(id);say(lockMsg(id),'bad');return;}
+    var other=S.slots[to];
+    if(other&&BLOCKS[other].lock){if(fromRect)bounceBack(id,fromRect);flash(other,to);say('Clash: '+(other==='lunch'?'Lunch is locked':'the last slot is my start date, and it is locked')+'. '+b.name+' stays in '+TIMES[from]+'.','bad');return;}
+    var prev=snap(),ov={};if(fromRect)ov[id]=fromRect;
+    S.slots[to]=id;S.slots[from]=other||null;
+    save();render(id);flip(prev,ov);
+    var sec=document.getElementById(b.sec);
+    if(!RM){sec.animate([{boxShadow:'0 0 0 4px var(--c)'},{boxShadow:'0 0 0 0 transparent'}],{duration:1400,easing:'ease-out',delay:450});
+      var t=sec.querySelector('[data-time]');if(t)t.animate([{transform:'rotateX(90deg)'},{transform:'rotateX(-15deg)'},{transform:'none'}],{duration:520,delay:300,easing:'ease-out'});}
+    say(b.name+' moved to '+TIMES[to]+(other?', swapped with '+BLOCKS[other].name:'')+'. The page below slid into the new order.','good');
+  }
+  function bounceBack(id,fromRect){
+    if(RM)return;var e=strip.querySelector('[data-id="'+id+'"]');if(!e)return;var n=e.getBoundingClientRect();
+    e.animate([{transform:'translate('+(fromRect.left-n.left)+'px,'+(fromRect.top-n.top)+'px) rotate(6deg)'},{transform:'none'}],{duration:560,easing:'cubic-bezier(.3,1.5,.5,1)'});
+  }
+  function flash(id,slotI){
+    var el=strip.querySelector('[data-id="'+id+'"]');if(el){el.classList.remove('clash');void el.offsetWidth;el.classList.add('clash');}
+    var s=strip.children[slotI!=null?slotI:idx(id)];if(s){s.classList.remove('clash-slot');void s.offsetWidth;s.classList.add('clash-slot');setTimeout(function(){s.classList.remove('clash-slot');},900);}
+    var now=document.getElementById('now');if(now&&!RM)now.animate([{boxShadow:'0 0 0 0 var(--now)'},{boxShadow:'0 0 0 6px transparent'}],{duration:600,iterations:2});
+  }
+  function go(id){var sec=document.getElementById(BLOCKS[id].sec);if(sec)sec.scrollIntoView({behavior:RM?'auto':'smooth',block:'start'});}
+
+  strip.addEventListener('keydown',function(e){
+    var el=e.target.closest('.blk');if(!el)return;var id=el.dataset.id;
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();tryMove(id,idx(id)+(e.key==='ArrowLeft'?-1:1));}
+  });
+
+  /* pointer: drag with a mouse any time; with touch, use Rearrange (tap a block, then tap a slot) */
+  var drag=null;
+  strip.addEventListener('pointerdown',function(e){
+    var el=e.target.closest('.blk');if(!el||e.button>0)return;
+    if(e.pointerType!=='mouse'&&!moveMode)return;
+    drag={id:el.dataset.id,x:e.clientX,y:e.clientY,lx:e.clientX,el:el,on:false,pid:e.pointerId,rot:0};
+  });
+  addEventListener('pointermove',function(e){
+    if(!drag||e.pointerId!==drag.pid)return;
+    if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>6){
+      drag.on=true;document.body.classList.add('dragging');
+      var r=drag.el.getBoundingClientRect();drag.ox=e.clientX-r.left;drag.oy=e.clientY-r.top;
+      var g=drag.el.cloneNode(true);g.className='blk ghost';g.style.width=r.width+'px';document.body.appendChild(g);drag.g=g;
+      drag.el.classList.add('lifted');
+    }
+    if(drag.on){
+      e.preventDefault();
+      var v=e.clientX-drag.lx;drag.lx=e.clientX;drag.rot+=((Math.max(-14,Math.min(14,v*1.4)))-drag.rot)*.3;
+      drag.g.style.transform='translate('+(e.clientX-drag.ox)+'px,'+(e.clientY-drag.oy)+'px) rotate('+drag.rot.toFixed(1)+'deg) scale(1.06)';
+      strip.querySelectorAll('.slot.target,.slot.nogo').forEach(function(s){s.classList.remove('target','nogo');});
+      var s=slotAt(e.clientX,e.clientY);if(s){var occ=S.slots[+s.dataset.i];s.classList.add(occ&&BLOCKS[occ].lock?'nogo':'target');}
+    }
+  },{passive:false});
+  addEventListener('pointerup',function(e){
+    if(!drag||e.pointerId!==drag.pid)return;
+    var d=drag;drag=null;document.body.classList.remove('dragging');
+    strip.querySelectorAll('.slot.target,.slot.nogo').forEach(function(s){s.classList.remove('target','nogo');});
+    if(d.el)d.el.classList.remove('lifted');
+    if(d.on){
+      var gr=d.g.getBoundingClientRect();d.g.remove();
+      var s=slotAt(e.clientX,e.clientY);
+      if(s)tryMove(d.id,+s.dataset.i,gr);else bounceBack(d.id,gr);
+      d.el.dataset.justDragged='1';setTimeout(function(){if(d.el)delete d.el.dataset.justDragged;},0);
+    }
+  });
+  function slotAt(x,y){var g=document.elementsFromPoint(x,y);for(var i=0;i<g.length;i++){var s=g[i].closest&&g[i].closest('.slot');if(s&&strip.contains(s))return s;}return null;}
+
+  strip.addEventListener('click',function(e){
+    var el=e.target.closest('.blk'),slot=e.target.closest('.slot');
+    if(el&&el.dataset.justDragged)return;
+    if(moveMode){
+      if(el&&!selected){if(BLOCKS[el.dataset.id].lock){flash(el.dataset.id);say(lockMsg(el.dataset.id)+' Pick another block.','bad');return;}selected=el.dataset.id;render(selected);say('Now tap the period you want '+BLOCKS[selected].name+' at.');return;}
+      if(selected&&slot){var s=selected;selected=null;if(+slot.dataset.i===idx(s)){render(s);say('Cancelled.');return;}var before=S.slots.join();tryMove(s,+slot.dataset.i);if(S.slots.join()===before)render();return;}
+      return;
+    }
+    if(el)go(el.dataset.id);
+  });
+
+  var mm=document.getElementById('moveMode');
+  mm.addEventListener('click',function(){moveMode=!moveMode;selected=null;mm.setAttribute('aria-pressed',moveMode);tt.classList.toggle('moving',moveMode);render();
+    say(moveMode?'Rearrange is on: tap a block, then tap the time to move it to.':'Rearrange is off. Click a block to go there.');});
+  var ob=document.getElementById('openTT');
+  function setOpen(anim){
+    var prev=anim&&!RM?snap():null;
+    tt.classList.toggle('open',S.open);ob.setAttribute('aria-expanded',S.open);ob.textContent=S.open?'Collapse':'Expand';measure();
+    if(prev)strip.querySelectorAll('.blk .d').forEach(function(d,i){if(S.open)d.animate([{opacity:0,transform:'translateY(-4px)'},{opacity:1,transform:'none'}],{duration:300,delay:i*30,easing:EASE,fill:'backwards'});});
+  }
+  ob.addEventListener('click',function(){S.open=!S.open;save();setOpen(true);});
+
+  /* ---------- the red "now" line follows your scroll ---------- */
+  function updateNow(instant){
+    var now=document.getElementById('now');if(!now)return;
+    var line=(document.getElementById('app').offsetHeight+(isPhone()?0:tt.offsetHeight))+60;
+    var order=S.slots.map(function(id,i){return id?{id:id,i:i,el:document.getElementById(BLOCKS[id].sec)}:null;}).filter(Boolean);
+    var pos=0,here=null;
+    var top0=order[0].el.getBoundingClientRect().top;
+    if(top0>line){pos=Math.max(0,order[0].i-.0001);}
+    else{pos=S.slots.length;
+      for(var k=0;k<order.length;k++){var r=order[k].el.getBoundingClientRect();
+        if(r.top<=line&&r.bottom>line){pos=order[k].i+Math.min(1,Math.max(0,(line-r.top)/r.height));here=order[k].id;break;}
+        if(r.top>line){pos=order[k].i;break;}}}
+    var w=strip.scrollWidth,cols=S.slots.length;
+    if(instant)now.style.transition='none';
+    now.style.left=Math.min(w-2,Math.max(0,pos/cols*w))+'px';
+    if(instant){void now.offsetWidth;now.style.transition='';}
+    now.dataset.t=TIMES[Math.min(cols-1,Math.max(0,Math.floor(pos)))];
+    strip.querySelectorAll('.blk').forEach(function(b){b.classList.toggle('here',b.dataset.id===here);});
+    var ti=Math.min(cols-1,Math.max(0,Math.floor(pos)));
+    document.getElementById('pillTime').textContent=TIMES[ti];
+    document.getElementById('pillName').textContent=here?BLOCKS[here].name:(pos<=0?'Intro':'End of the day');
+    document.querySelectorAll('#day .drow2').forEach(function(r){var on=r.dataset.k===here;r.classList.toggle('here',on);var bd=r.querySelector('.bd.nw');if(on&&!bd){bd=document.createElement('span');bd.className='bd nw';bd.textContent='Now';r.appendChild(bd);}else if(!on&&bd)bd.remove();});
+    var sc=strip.parentElement;if(sc.scrollWidth>sc.clientWidth&&!drag){var x=pos/cols*w;if(x<sc.scrollLeft+20||x>sc.scrollLeft+sc.clientWidth-40)sc.scrollLeft=Math.max(0,x-sc.clientWidth/2);}
+  }
+  var tick=false;addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(function(){tick=false;updateNow();});}},{passive:true});
+  addEventListener('resize',function(){measure();updateNow(true);});
+  function measure(){document.documentElement.style.setProperty('--apph',document.getElementById('app').offsetHeight+'px');document.documentElement.style.setProperty('--tth',(isPhone()?0:tt.offsetHeight)+'px');}
+
+  /* ---------- Recruiter / Developer view: the extra boxes unfold ---------- */
+  var segBtns=document.querySelectorAll('.seg button,.seg2 button');
+  function pairHalves(){var kids=[].slice.call(flow.children).filter(function(e){return !e.hidden;});kids.forEach(function(e){e.classList.remove('paired');});for(var i=0;i<kids.length-1;i++){if(kids[i].classList.contains('half')&&kids[i+1].classList.contains('half')&&!kids[i].hidden&&!kids[i+1].hidden){kids[i].classList.add('paired');kids[i+1].classList.add('paired');i++;}}}
+  function setView(v,announce){
+    var was=document.body.dataset.view;S.view=v;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===v);b.parentNode.dataset.on=v;});save();
+    document.querySelectorAll('details.fold').forEach(function(d){d.open=(v==='developer');});
+    var devs=[].slice.call(document.querySelectorAll('.dev')),recs=[].slice.call(document.querySelectorAll('.rec'));
+    if(!announce||RM||was===v){document.body.dataset.view=v;}
+    else if(v==='developer'){
+      fold(recs,false,function(){document.body.dataset.view=v;fold(devs,true);});
+    }else{
+      fold(devs,false,function(){document.body.dataset.view=v;fold(recs,true);});
+    }
+    if(announce)say(v==='developer'?'Developer view: code, tests and decisions are now open under each project.':'Recruiter view: the short version, with the summary at the top.','good');
+  }
+  function fold(els,open,done){
+    var vis=els.filter(function(e){return e.offsetParent!==null||open;});
+    if(!vis.length){if(done)done();return;}
+    var left=vis.length;
+    vis.forEach(function(e,i){
+      var h=e.offsetHeight||e.scrollHeight;
+      var a=e.animate(open?[{height:'0px',opacity:0,transform:'translateY(-8px)'},{height:h+'px',opacity:1,transform:'none'}]:[{height:h+'px',opacity:1},{height:'0px',opacity:0}],{duration:open?420:260,delay:open?Math.min(i,6)*50:0,easing:EASE,fill:'backwards'});
+      e.style.overflow='hidden';
+      a.onfinish=function(){e.style.overflow='';if(--left===0&&done)done();};
+    });
+  }
+  segBtns.forEach(function(b){b.addEventListener('click',function(){setView(b.dataset.view,true);});});
+
+  document.getElementById('reset2').addEventListener('click',function(){document.getElementById('reset').click();});
+  document.getElementById('reset').addEventListener('click',function(){
+    var prev=snap();S={slots:DEFAULT.slice(),view:S.view,open:false};moveMode=false;selected=null;mm.setAttribute('aria-pressed','false');tt.classList.remove('moving');
+    setOpen();render();flip(prev);setView('recruiter',true);save();say('Back to the original timetable.','good');});
+
+  var TICK='<svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  function copied(b,label,idle){if(!b.style.minWidth)b.style.minWidth=b.offsetWidth+'px';b.classList.add('copied');b.innerHTML=TICK+'<span>'+label+'</span>';
+    clearTimeout(b._t);b._t=setTimeout(function(){b.classList.remove('copied');b.textContent=idle;},2200);}
+  /* ---------- Hire me: the engine books an interview into my free period ---------- */
+  var hb=document.getElementById('hireBtn');
+  function confetti(el){
+    if(RM||!el)return;var r=el.getBoundingClientRect(),cs=getComputedStyle(document.documentElement);
+    var cols=['--b-tt','--b-tr','--b-ft','--b-pt','--b-how','--b-hi','--now'].map(function(v){return cs.getPropertyValue(v).trim();});
+    for(var i=0;i<18;i++){var b=document.createElement('span');b.className='bit';b.style.background=cols[i%cols.length];
+      b.style.left=(r.left+r.width/2)+'px';b.style.top=(r.top+r.height/2)+'px';document.body.appendChild(b);
+      var a=Math.random()*Math.PI*2,d=40+Math.random()*70;
+      b.animate([{transform:'translate(-50%,-50%) rotate(0)',opacity:1},{transform:'translate('+(Math.cos(a)*d)+'px,'+(Math.sin(a)*d+30)+'px) rotate('+(Math.random()*540-270)+'deg)',opacity:0}],{duration:900+Math.random()*400,easing:'cubic-bezier(.22,1,.36,1)'}).onfinish=function(){this.effect.target.remove();};}
+  }
+  hb.addEventListener('click',function(){
+    var cur=idx('hire');
+    if(cur>=0){go('hire');say('You already booked me for '+TIMES[cur]+'. The message is ready below.','good');return;}
+    var free=S.slots.indexOf(null);
+    if(free<0){if(!RM)strip.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:300,iterations:2});
+      say('My day is full: you filled the free period. Move something out of it, or just email me at rafaelkoo.uk@gmail.com.','bad');return;}
+    var prev=snap(),from=hb.getBoundingClientRect();
+    S.slots[free]='hire';save();render('hire');flip(prev,{hire:{left:from.left,top:from.top}});
+    setTimeout(function(){confetti(isPhone()?document.getElementById('pill'):strip.querySelector('[data-id="hire"]'));},RM?0:380);
+    say('Booked: an interview with me in '+TIMES[free]+'. Your message is ready below.','good');
+    setTimeout(function(){go('hire');},RM?0:900);
+  });
+  document.getElementById('cancelHire').addEventListener('click',function(){
+    var i=idx('hire');if(i<0)return;var prev=snap();S.slots[i]=null;save();render();flip(prev);
+    say('Interview cancelled. The free period is free again.');hb.focus();
+  });
+  document.getElementById('copyHire').addEventListener('click',function(){
+    var b=this,ta=document.getElementById('hireMsg');
+    var done=function(){copied(b,'Copied: paste it into an email','Copy message');};
+    var sel=function(){ta.focus();ta.select();b.textContent='Selected: press Ctrl+C';};
+    try{navigator.clipboard.writeText(ta.value).then(done,sel);}catch(e){sel();}
+  });
+
+  /* ---------- Phone view: the same page at phone size, kept in step through shared storage ---------- */
+  var EMBED=/[?&]embed=1/.test(location.search);
+  if(EMBED)document.body.classList.add('embed');
+  var pb=document.getElementById('phoneBtn'),pw=document.getElementById('phoneWrap'),pf=document.getElementById('phoneFrame');
+  var wide=matchMedia('(min-width: 1120px)');
+  function phoneAvail(){pb.hidden=EMBED||!wide.matches||!/(^|\.)github\.io$|^localhost$/.test(location.hostname);if(pb.hidden&&document.body.classList.contains('phone-on'))setPhone(false);}
+  function setPhone(on){
+    document.body.classList.toggle('phone-on',on);pw.hidden=!on;pb.setAttribute('aria-pressed',on);pb.textContent=on?'Close phone':'Phone view';
+    if(on&&!pf.src){pf.src=location.pathname+'?embed=1';}
+    if(on&&!RM)pw.animate([{transform:'translateX(120%) rotate(6deg)',opacity:.3},{transform:'none',opacity:1}],{duration:520,easing:'cubic-bezier(.22,1,.36,1)'});
+    measure();updateNow(true);
+    say(on?'Phone view is on. It is the same page at phone size: move a block here or there and both update.':'Phone view closed.');
+  }
+  pb.addEventListener('click',function(){setPhone(!document.body.classList.contains('phone-on'));});
+  wide.addEventListener?wide.addEventListener('change',phoneAvail):wide.addListener(phoneAvail);
+  phoneAvail();
+  addEventListener('storage',function(e){
+    if(e.key!==KEY||!e.newValue)return;
+    try{var n=JSON.parse(e.newValue);}catch(err){return;}
+    if(!n||!Array.isArray(n.slots)||n.slots.length!==TIMES.length||!valid(n.slots))return;
+    var prev=snap();S.slots=n.slots;S.open=!!n.open;render();flip(prev);setOpen();
+    if(n.view!==S.view){S.view=n.view==='developer'?'developer':'recruiter';document.body.dataset.view=S.view;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===S.view);b.parentNode.dataset.on=S.view;});}
+    say('Updated from the other view.','good');
+  });
+
+  /* ---------- phone: the day as a list in a bottom sheet ---------- */
+  var sheet=document.getElementById('sheet'),scrim=document.getElementById('scrim'),pill=document.getElementById('pill'),dayEl=document.getElementById('day');
+  var mMove=document.getElementById('mMove');
+  function renderDay(){
+    dayEl.innerHTML='';
+    S.slots.forEach(function(id,i){
+      var li=document.createElement('li'),b=document.createElement('button');b.type='button';b.dataset.i=i;
+      if(id){var B=BLOCKS[id];b.className='drow2'+(B.lock?' locked':'')+(selected===id?' sel':'');b.dataset.k=id;b.style.setProperty('--c','var('+B.c+')');
+        b.innerHTML='<span class="tm2">'+TIMES[i]+'</span><span class="sw2"></span><span class="nm2">'+B.name+'<small>'+(id==='avail'?START:B.d)+'</small></span>'+(B.lock?'<span class="bd lk">Locked</span>':'');
+        b.setAttribute('aria-label',TIMES[i]+': '+B.name+(B.lock?', locked':''));}
+      else{b.className='drow2 free';b.dataset.k='free'+i;b.innerHTML='<span class="tm2">'+TIMES[i]+'</span><span class="sw2"></span><span class="nm2">Free period</span>';b.setAttribute('aria-label',TIMES[i]+': free period');}
+      li.appendChild(b);dayEl.appendChild(li);
+    });
+  }
+  var lastFocus=null;
+  function openSheet(){
+    lastFocus=document.activeElement;renderDay();updateNow(true);
+    sheet.hidden=false;scrim.hidden=false;document.documentElement.style.overflow='hidden';
+    if(!RM){sheet.animate([{transform:'translateY(100%)'},{transform:'none'}],{duration:340,easing:'cubic-bezier(.22,1,.36,1)'});scrim.animate([{opacity:0},{opacity:1}],{duration:240});}
+    document.getElementById('sheetClose').focus();
+  }
+  function closeSheet(then){
+    if(sheet.hidden){if(then)then();return;}
+    var fin=function(){sheet.hidden=true;scrim.hidden=true;document.documentElement.style.overflow='';if(then)then();else if(lastFocus)lastFocus.focus({preventScroll:true});};
+    if(RM)return fin();
+    sheet.animate([{transform:'none'},{transform:'translateY(100%)'}],{duration:240,easing:'ease-in'}).onfinish=fin;scrim.animate([{opacity:1},{opacity:0}],{duration:240});
+  }
+  pill.addEventListener('click',openSheet);
+  document.getElementById('dayBtn').addEventListener('click',openSheet);
+  document.getElementById('sheetClose').addEventListener('click',function(){closeSheet();});
+  scrim.addEventListener('click',function(){closeSheet();});
+  addEventListener('keydown',function(e){if(e.key==='Escape'&&!sheet.hidden)closeSheet();});
+  // swipe the sheet down to close
+  var sy=null;sheet.addEventListener('touchstart',function(e){if(sheet.scrollTop<=0)sy=e.touches[0].clientY;},{passive:true});
+  sheet.addEventListener('touchmove',function(e){if(sy==null)return;var d=e.touches[0].clientY-sy;if(d>0)sheet.style.transform='translateY('+d+'px)';},{passive:true});
+  sheet.addEventListener('touchend',function(e){if(sy==null)return;var d=e.changedTouches[0].clientY-sy;sy=null;sheet.style.transform='';if(d>90)closeSheet();});
+  dayEl.addEventListener('click',function(e){
+    var r=e.target.closest('.drow2');if(!r)return;var i=+r.dataset.i,id=S.slots[i];
+    if(moveMode){
+      if(!selected){if(!id){say('That period is free. Tap a block first, then this period.');return;}
+        if(BLOCKS[id].lock){say(lockMsg(id)+' Pick another one.','bad');if(!RM)r.animate([{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'none'}],{duration:260});return;}
+        selected=id;renderDay();updateNow(true);say('Now tap the period you want '+BLOCKS[id].name+' in.');return;}
+      var s=selected;selected=null;if(i===idx(s)){renderDay();updateNow(true);say('Cancelled.');return;}
+      var before=S.slots.join();tryMove(s,i);if(S.slots.join()===before){renderDay();updateNow(true);}return;
+    }
+    if(!id){closeSheet(function(){say('Free period: nothing here yet. Try Hire me to book it.');});return;}
+    closeSheet(function(){go(id);});
+  });
+  mMove.addEventListener('click',function(){moveMode=!moveMode;selected=null;mMove.setAttribute('aria-pressed',moveMode);mm.setAttribute('aria-pressed',moveMode);sheet.classList.toggle('moving',moveMode);tt.classList.toggle('moving',moveMode);render();
+    document.getElementById('sheetHint').textContent=moveMode?'Rearrange is on: tap a block, then the period to move it to. Lunch and my start date are locked.':'This page runs on my timetable. Tap a period to go there.';
+    say(moveMode?'Rearrange is on.':'Rearrange is off.');});
+  document.getElementById('mReset').addEventListener('click',function(){document.getElementById('reset').click();mMove.setAttribute('aria-pressed','false');sheet.classList.remove('moving');document.getElementById('sheetHint').textContent='This page runs on my timetable. Tap a period to go there.';});
+  PH.addEventListener?PH.addEventListener('change',function(){if(!isPhone())closeSheet();measure();updateNow(true);}):0;
+
+  /* ---------- Website watchdog: live results read from the watchdog's own repo ---------- */
+  (function(){
+    var BASE='https://raw.githubusercontent.com/rafaelkoo/site-watchdog/main/data/';
+    var list=document.getElementById('wdList'),when=document.getElementById('wdWhen');
+    function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+    function empty(t){list.innerHTML='<li class="wdempty" style="display:block">'+t+' <a href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener">See it on GitHub ↗</a></li>';}
+    function spark(scores){if(scores.length<2)return '';var w=84,h=24,mn=Math.min.apply(0,scores.concat([60])),mx=100;
+      var pts=scores.map(function(s,i){return (i/(scores.length-1)*(w-2)+1).toFixed(1)+','+(h-2-(s-mn)/(mx-mn||1)*(h-4)).toFixed(1);}).join(' ');
+      return '<svg class="spk" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Score over the last '+scores.length+' checks"><polyline points="'+pts+'"></polyline></svg>';}
+    list.innerHTML=[0,1,2,3,4].map(function(i){return '<li aria-hidden="true"><span class="skel" style="width:10px;height:10px;border-radius:50%"></span><span><span class="skel" style="width:'+(48+i*9%30)+'%"></span><span class="skel" style="width:30%;height:9px;margin-top:6px"></span></span><span class="skel"></span><span class="skel c"></span><span class="skel"></span></li>';}).join('');
+    Promise.all([fetch(BASE+'latest.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();}),
+                 fetch(BASE+'history.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():[];}).catch(function(){return [];})])
+    .then(function(res){
+      var latest=res[0],hist=res[1]||[];if(!latest||!latest.sites)throw 0;
+      var d=new Date(latest.checkedAt);when.textContent=d.toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      list.innerHTML=latest.sites.map(function(s){
+        var scores=hist.map(function(run){var x=run.sites.filter(function(y){return y.url===s.url;})[0];return x?x.score:null;}).filter(function(v){return v!=null;}).slice(-30);
+        var label=s.state==='ok'?'All good':s.state==='down'?'Down':s.problems.length+' to look at';
+        return '<li class="'+esc(s.state)+'"><span class="dot2" aria-hidden="true"></span><span class="nm3">'+esc(s.name)+'<small>'+esc(label)+'</small></span>'+spark(scores)+'<span class="ring" role="img" aria-label="Score '+s.score+' out of 100"><svg viewBox="0 0 38 38" aria-hidden="true"><circle class="bg" cx="19" cy="19" r="16"/><circle class="fg" cx="19" cy="19" r="16" stroke-dasharray="100.5" stroke-dashoffset="100.5" data-to="'+(100.5*(1-s.score/100)).toFixed(1)+'"/></svg><b aria-hidden="true">'+s.score+'</b></span><span class="ld">'+(s.desktop&&s.desktop.loadMs?s.desktop.loadMs+' ms':'–')+'</span></li>';
+      }).join('');
+      var fill=function(){list.querySelectorAll('.fg').forEach(function(c){c.style.strokeDashoffset=c.dataset.to;});};
+      if(RM||!('IntersectionObserver' in window))fill();
+      else{var io=new IntersectionObserver(function(es){if(es.some(function(e){return e.isIntersecting;})){requestAnimationFrame(fill);io.disconnect();}},{threshold:.4});io.observe(list);}
+    }).catch(function(){when.textContent='Not available here';empty('The live results show once the first daily check has run.');});
+  })();
+
+  /* ---------- copy email ---------- */
+  var ch=document.getElementById('copyHero');
+  ch.addEventListener('click',function(){var ok=function(){copied(ch,'Copied rafaelkoo.uk@gmail.com','Copy email');},no=function(){ch.textContent='rafaelkoo.uk@gmail.com';};try{navigator.clipboard.writeText('rafaelkoo.uk@gmail.com').then(ok,no);}catch(e){no();}});
+  var cb=document.getElementById('copyMail');
+  cb.addEventListener('click',function(){
+    var done=function(){copied(cb,'Copied','Copy email');};
+    var sel=function(){var r=document.createRange();r.selectNodeContents(document.getElementById('mail'));var s=getSelection();s.removeAllRanges();s.addRange(r);cb.textContent='Selected: press Ctrl+C';};
+    try{navigator.clipboard.writeText('rafaelkoo.uk@gmail.com').then(done,sel);}catch(e){sel();}
+  });
+
+  /* ---------- start: blocks drop into their slots, the red line sweeps to where you are ---------- */
+  var d=new Date();document.getElementById('today').textContent=d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  setView(S.view);setOpen();render();measure();
+  if(!RM){
+    strip.querySelectorAll('.slot').forEach(function(s,i){
+      var b=s.querySelector('.blk');
+      if(b)b.animate([{transform:'translateY(-26px) rotate('+((i%2?1:-1)*7)+'deg)',opacity:.15},{transform:'translateY(3px)',opacity:1,offset:.7},{transform:'none',opacity:1}],{duration:620,delay:150+i*70,easing:EASE,fill:'backwards'});
+    });
+    var now=document.getElementById('now');now.style.transition='none';now.style.left='0px';void now.offsetWidth;
+    setTimeout(function(){now.style.transition='left 1.1s cubic-bezier(.2,.8,.2,1)';updateNow();setTimeout(function(){now.style.transition='';},1200);},900);
+  }else updateNow(true);
+
+  /* sections below the fold rise in as they reach you (everything is readable without this) */
+  if(!RM&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.remove('wait');io.unobserve(e.target);}});},{rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.sec-body > *, .lunch').forEach(function(el){
+      if(el.getBoundingClientRect().top>innerHeight){el.classList.add('wait');io.observe(el);}
+    });
+  }
+})();
+</script>
+<script type="module" src="../js/gorb-live.js"></script>
+
+</body>
+</html>
