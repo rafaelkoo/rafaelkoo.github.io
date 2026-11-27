@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rafael Ngai — Software Developer (v2)</title>
+  <script>
+    document.documentElement.classList.add('js');
+    try { var t = localStorage.getItem('rafael-theme'); if (t) document.documentElement.setAttribute('data-theme', t); } catch (e) {}
+  </script>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" id="top">
+    <span class="scroll-progress" id="scroll-progress" aria-hidden="true"></span>
+    <div class="container header-inner">
+      <a href="#top" class="brand">
+        <span class="brand-name">Rafael Ngai</span>
+        <span class="brand-role">Software developer &middot; builds the systems a two-site school runs on</span>
+      </a>
+
+      <nav class="header-nav" aria-label="Primary">
+        <a href="#work">Work</a>
+        <a href="#process">Process</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="segmented-control" role="group" aria-label="Reading mode">
+          <div class="segmented-indicator" aria-hidden="true"></div>
+          <button type="button" class="seg-btn is-active" data-mode="recruiter" aria-pressed="true">Recruiter</button>
+          <button type="button" class="seg-btn" data-mode="technical" aria-pressed="false">Developer</button>
+        </div>
+        <button type="button" class="theme-btn" id="theme-toggle" aria-label="Switch between light and dark theme" aria-pressed="false" title="Light / dark">
+          <span class="theme-sun" aria-hidden="true"></span>
+          <span class="theme-moon" aria-hidden="true"></span>
+        </button>
+        <a href="#contact" class="btn btn-primary btn-sm">Contact</a>
+      </div>
+
+      <button type="button" class="mobile-menu-btn" aria-expanded="false" aria-controls="mobile-drawer" aria-label="Open navigation menu">
+        <span></span><span></span>
+      </button>
+    </div>
+
+    <div class="day-bar" aria-label="Portfolio sections">
+      <div class="container day-bar-inner">
+        <span class="day-bar-label">School day</span>
+        <div class="day-pills" role="tablist">
+          <a href="#timetable" class="day-pill is-active" data-section="timetable"><span class="pill-time">Reg</span> Timetable</a>
+          <a href="#tracker" class="day-pill" data-section="tracker"><span class="pill-time">P1</span> Student Tracker</a>
+          <a href="#watchdog" class="day-pill" data-section="watchdog"><span class="pill-time">P2</span> Watchdog</a>
+          <a href="#gorb" class="day-pill" data-section="gorb"><span class="pill-time">P3</span> GorB</a>
+          <a href="#side-projects" class="day-pill" data-section="side-projects"><span class="pill-time">P4</span> FitTrack + Game</a>
+          <a href="#process" class="day-pill" data-section="process"><span class="pill-time">P5</span> How I build</a>
+          <a href="#experience" class="day-pill" data-section="experience"><span class="pill-time">P6</span> Experience</a>
+          <a href="#contact" class="day-pill" data-section="contact"><span class="pill-time">P7</span> Contact</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-drawer" id="mobile-drawer" hidden>
+    <div class="mobile-drawer-backdrop" data-close-drawer></div>
+    <div class="mobile-drawer-panel" role="dialog" aria-modal="true" aria-label="Navigation">
+      <div class="drawer-header">
+        <span class="brand-name">Rafael Ngai</span>
+        <div class="drawer-header-actions">
+          <button type="button" class="theme-btn" aria-label="Switch between light and dark theme" aria-pressed="false" title="Light / dark">
+            <span class="theme-sun" aria-hidden="true"></span>
+            <span class="theme-moon" aria-hidden="true"></span>
+          </button>
+          <button type="button" class="icon-btn" id="drawer-close-btn" data-close-drawer aria-label="Close menu">&times;</button>
+        </div>
+      </div>
+      <div class="drawer-mode">
+        <span class="drawer-label">View mode</span>
+        <div class="segmented-control segmented-control--full" role="group" aria-label="Mobile reading mode">
+          <div class="segmented-indicator" aria-hidden="true"></div>
+          <button type="button" class="seg-btn is-active" data-mode="recruiter" aria-pressed="true">Recruiter</button>
+          <button type="button" class="seg-btn" data-mode="technical" aria-pressed="false">Developer</button>
+        </div>
+      </div>
+      <nav class="drawer-links">
+        <a href="#timetable" data-close-drawer><span>Reg</span> Timetable platform</a>
+        <a href="#tracker" data-close-drawer><span>P1</span> Student Tracker</a>
+        <a href="#watchdog" data-close-drawer><span>P2</span> Website watchdog</a>
+        <a href="#gorb" data-close-drawer><span>P3</span> GorB</a>
+        <a href="#side-projects" data-close-drawer><span>P4</span> FitTrack + Game</a>
+        <a href="#process" data-close-drawer><span>P5</span> How I build</a>
+        <a href="#experience" data-close-drawer><span>P6</span> Experience</a>
+        <a href="#contact" data-close-drawer><span>P7</span> Contact</a>
+      </nav>
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="hero container">
+      <div class="hero-content">
+        <p class="hero-location hero-stagger">Software developer &middot; Berkshire, UK</p>
+        <h1 class="hero-title hero-stagger">I build the tools that replace the mess.</h1>
+        <p class="hero-subtitle hero-stagger">
+          A timetable trapped in a spreadsheet. Student work scattered across folders. Progress nobody could see. I find what slows people down and build the software that fixes it.
+        </p>
+        <div class="hero-cta-row hero-stagger">
+          <a href="../timetable-demo/" class="btn btn-primary">Try the real timetable <span class="arrow-nowrap">&nearr;</span></a>
+          <button type="button" class="btn btn-secondary copy-email-btn" data-email="rafaelkoo.uk@gmail.com">Copy email</button>
+          <a href="#contact" class="btn btn-ghost">Contact</a>
+        </div>
+      </div>
+
+      <div class="metrics-strip hero-stagger" aria-label="Key impact metrics">
+        <div class="metric-card">
+          <span class="metric-value">~100 people</span>
+          <span class="metric-label">use the timetable platform across two school sites</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-value">31,000+ changes</span>
+          <span class="metric-label">made in it by 10 staff in October (~570 sessions/week)</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-value">718 course units</span>
+          <span class="metric-label">3,068 criteria across 21 qualifications, 129 passing tests</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-value">5 sites</span>
+          <span class="metric-label">checked every morning by Playwright + axe-core watchdog</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="work">
+      <div class="section-intro reveal">
+        <h2>Selected systems</h2>
+      </div>
+
+      <!-- Flagship 1: Timetable -->
+      <article class="case-card reveal" id="timetable">
+        <div class="case-header">
+          <div class="case-meta">
+            <span class="period-badge period-badge--green">Registration &middot; Live &middot; 2 sites &middot; ~100 people</span>
+            <span class="meta-muted">~570 sessions a week</span>
+          </div>
+          <h3>Timetable platform for a two-site school</h3>
+          <p class="case-lead">
+            Replaced a shared Excel sheet with a live editor, a published read-only rota, and a front-desk arrival/pick-up board. 10 staff made 31,000+ changes in October.
+          </p>
+        </div>
+
+        <figure class="media-slot">
+          <img class="media-img" src="../img/timetable.jpg" alt="Week timetable editor alongside live phone view" loading="lazy" />
+          <figcaption>Desktop week timetable editor alongside live phone view.</figcaption>
+        </figure>
+
+        <div class="flat-viz" aria-label="Interactive before and after timetable comparison">
+          <div class="flat-viz-head">
+            <h4>Drag to compare: Old Excel sheet vs Web timetable</h4>
+            <span class="meta-muted">Arrow keys or drag divider &middot; Addresses stay server-side via <code>lib/homeaddr.js</code></span>
+          </div>
+
+          <div class="split-stage" id="split-stage" style="--split: 50%">
+            <div class="split-pane split-pane--after" aria-label="After: Web timetable platform">
+              <div class="pane-head pane-head--after">
+                <strong>After &middot; Web Timetable Platform</strong>
+                <span>2 sites &middot; ~100 people &middot; ~570 sessions/week</span>
+              </div>
+              <div class="mock-grid">
+                <div class="mock-cell mock-cell--ok"><strong>Live Editor &amp; Rota</strong><span>10 staff &middot; 31,000+ Oct edits</span></div>
+                <div class="mock-cell mock-cell--ok"><strong>Reports &amp; Desk Board</strong><span>Pull reports, no manual admin</span></div>
+                <div class="mock-cell mock-cell--ok"><strong><code>lib/homeaddr.js</code></strong><span>Home addresses kept server-side</span></div>
+              </div>
+            </div>
+
+            <div class="split-pane split-pane--before" aria-label="Before: Old Excel spreadsheet">
+              <div class="pane-head pane-head--before">
+                <strong>Before &middot; Old Excel Sheet</strong>
+                <span>Manual admin</span>
+              </div>
+              <div class="mock-grid">
+                <div class="mock-cell mock-cell--warn"><strong>Spreadsheets by Hand</strong><span>Editing spreadsheets and numbers</span></div>
+                <div class="mock-cell mock-cell--warn"><strong>Manual Admin</strong><span>No automated reports</span></div>
+                <div class="mock-cell mock-cell--warn"><strong>No Server Separation</strong><span>Static file shared across staff</span></div>
+              </div>
+            </div>
+
+            <button type="button" class="split-handle" id="split-handle" role="slider" aria-label="Compare before and after" aria-valuemin="8" aria-valuemax="92" aria-valuenow="50">
+              <span class="split-grip" aria-hidden="true">&harr;</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="testimonials-grid">
+          <blockquote class="testimonial">
+            &ldquo;Raf&rsquo;s rota system has saved us twice over. It saved the company a large bill for a ready-made system, in a crowded market where none of them fitted all our needs. And it removed the manual admin: instead of editing spreadsheets and numbers, we now pull reports and use them to improve how staff work.&rdquo;
+            <footer>&mdash; Jacob</footer>
+          </blockquote>
+          <blockquote class="testimonial">
+            &ldquo;Working alongside Raf while he built the rota system was a joy. He was open to all feedback and requests, and his communication was excellent throughout. He built it with its users in mind, and it has improved my own productivity.&rdquo;
+            <footer>&mdash; Andrew &middot; Supervisor Subject Lead</footer>
+          </blockquote>
+        </div>
+
+        <div class="accordion">
+          <button type="button" class="accordion-trigger" aria-expanded="false">
+            <span>On the phone, and how pupils&rsquo; addresses stay private</span>
+            <span class="accordion-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="accordion-panel" aria-hidden="true" inert>
+            <div class="accordion-inner">
+              <p>Built with Vanilla JS and Node.js. <code>lib/homeaddr.js</code> keeps pupil home addresses server-side rather than sending them to general rota views.</p>
+              <figure class="media-slot">
+                <img class="media-img" src="../img/phone-map.jpg" alt="Phone view of a minibus run from home to school" loading="lazy" />
+                <figcaption>Phone view of a minibus run listing pupils with a Map button.</figcaption>
+              </figure>
+              <div class="tech-tags">
+                <span>Vanilla JS</span><span>Node.js</span><span>lib/homeaddr.js</span><span>Test suites</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="case-footer">
+          <a href="../timetable-demo/" class="btn btn-secondary btn-sm">Open the live demo <span class="arrow-nowrap">&nearr;</span></a>
+          <span class="stack-inline">Vanilla JS &middot; Node.js</span>
+        </div>
+      </article>
+
+      <!-- Flagship 2: Student Tracker -->
+      <article class="case-card reveal" id="tracker">
+        <div class="case-header">
+          <div class="case-meta">
+            <span class="period-badge period-badge--blue">Period 1 &middot; In progress &middot; demo live</span>
+            <span class="meta-muted">718 real AIM units &middot; 3,068 criteria &middot; 21 qualifications</span>
+          </div>
+          <h3>Student Tracker</h3>
+          <p class="case-lead">
+            Links 718 real AIM course units criterion-by-criterion so work carries across overlapping units and students only resubmit missed criteria. Backed by 129 passing tests.
+          </p>
+        </div>
+
+        <figure class="media-slot">
+          <img class="media-img" src="../img/tracker-path.jpg" alt="Student Tracker path view showing shared-criteria links across AIM units" loading="lazy" />
+          <figcaption>Path view showing shared-criteria links and sign-off status across AIM units.</figcaption>
+        </figure>
+
+        <div class="accordion">
+          <button type="button" class="accordion-trigger" aria-expanded="false">
+            <span>Test coverage &amp; scope</span>
+            <span class="accordion-icon" aria-hidden="true">+</span>
+          </button>
+          <div class="accordion-panel" aria-hidden="true" inert>
+            <div class="accordion-inner">
+              <p>Covers 718 real AIM course units and 3,068 criteria across 21 qualifications, guarded by 129 passing automated tests.</p>
+              <div class="tech-tags">
+                <span>718 AIM Units</span><span>3,068 Criteria</span><span>21 Qualifications</span><span>129 Passing Tests</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="case-footer">
+          <a href="../tracker-demo/" class="btn btn-secondary btn-sm">Try the tracker demo <span class="arrow-nowrap">&nearr;</span></a>
+          <span class="stack-inline">Made-up people, real AIM course content</span>
+        </div>
+      </article>
+
+      <!-- Secondary Grid: Watchdog + GorB -->
+      <div class="two-col-grid">
+        <article class="case-card case-card--compact reveal" id="watchdog">
+          <div class="case-meta">
+            <span class="period-badge period-badge--purple">Period 2 &middot; Runs every morning</span>
+          </div>
+          <h3>Website watchdog</h3>
+          <p>Checks 5 sites every morning with Playwright, <code>axe-core</code>, and GitHub Actions.</p>
+
+          <ul class="status-list" id="watchdog-list" aria-label="Monitored sites">
+            <li class="status-loading">Loading live check from <code>site-watchdog/data/latest.json</code>&hellip;</li>
+          </ul>
+
+          <div class="case-footer">
+            <a href="https://github.com/rafaelkoo/site-watchdog" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Code on GitHub &nearr;</a>
+            <a href="https://github.com/rafaelkoo/site-watchdog/issues" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Alerts &nearr;</a>
+          </div>
+        </article>
+
+        <article class="case-card case-card--compact reveal" id="gorb">
+          <div class="case-meta">
+            <span class="period-badge period-badge--red">Period 3 &middot; v0.76 &middot; 114 commits</span>
+          </div>
+          <h3>GorB: co-op gym app</h3>
+          <p>Group workout PWA turning check-ins and logged workouts into a shared pixel gym and co-op battles.</p>
+
+          <figure class="media-slot" id="gorb-gym-fig">
+            <img class="media-img" src="../img/gorb-gym.png" alt="GorB shared pixel gym with friends at workout stations" loading="lazy" />
+            <figcaption>The pixel gym, live: drawn by GorB&rsquo;s own code. Tap someone to move them.</figcaption>
+          </figure>
+
+          <div class="accordion">
+            <button type="button" class="accordion-trigger" aria-expanded="false">
+              <span>Excuse monsters, backend &amp; database stats</span>
+              <span class="accordion-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="accordion-panel" aria-hidden="true" inert>
+              <div class="accordion-inner">
+                <p>v0.76, 114 commits, 60 migrations, 37 tables with row-level security, 129 server functions, and 5 Edge Functions on Supabase.</p>
+                <figure class="media-slot">
+                  <img class="media-img" src="../img/gorb-monsters.png" alt="GorB excuse monsters and their evolved good-habit forms" loading="lazy" />
+                  <figcaption>Excuse monsters and their good-habit forms, drawn in code.</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
+          <div class="case-footer">
+            <a href="https://github.com/rafaelkoo/GorB" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm">Code on GitHub &nearr;</a>
+            <span class="stack-inline">Supabase &middot; Canvas &middot; PWA</span>
+          </div>
+        </article>
+      </div>
+
+      <!-- Side Projects -->
+      <div class="side-projects reveal" id="side-projects">
+        <div class="side-projects-head">
+          <span class="period-badge period-badge--amber">Period 4 &middot; FitTrack + Just a Dungeon</span>
+          <p>Open-source side projects and classroom utilities.</p>
+        </div>
+        <div class="three-col-grid">
+          <div class="mini-card">
+            <figure class="media-slot">
+              <img class="media-img" src="../img/gym.jpg" alt="FitTrack 3D animated barbell squat model and lift chart" loading="lazy" />
+              <figcaption>3D animated exercise demo and lift chart.</figcaption>
+            </figure>
+            <h4>FitTrack</h4>
+            <p>Offline workout PWA with lift charts and Three.js animated exercise demos.</p>
+            <div class="mini-links">
+              <a href="https://rafaelkoo.github.io/GymTrackingApp/" target="_blank" rel="noopener noreferrer">Open app &nearr;</a>
+              <a href="https://github.com/rafaelkoo/GymTrackingApp" target="_blank" rel="noopener noreferrer">Code &nearr;</a>
+            </div>
+          </div>
+          <div class="mini-card">
+            <figure class="media-slot">
+              <img class="media-img" src="../img/dungeon.jpg" alt="Just a Dungeon gameplay screenshot" loading="lazy" />
+              <figcaption>Just a Dungeon gameplay screenshot.</figcaption>
+            </figure>
+            <h4>Just a Dungeon</h4>
+            <p>TypeScript + Three.js idle mobile dungeon game with cloud saves and 2-player co-op.</p>
+            <div class="mini-links">
+              <a href="https://rafaelkoo.github.io/Just-a-Dungeon/" target="_blank" rel="noopener noreferrer">Play &nearr;</a>
+              <a href="https://github.com/rafaelkoo/Just-a-Dungeon" target="_blank" rel="noopener noreferrer">Code &nearr;</a>
+            </div>
+          </div>
+          <div class="mini-card">
+            <h4>Smaller Classroom Tools</h4>
+            <p>Unity Error Explainer, student portfolio engine, lesson deck tools (<code>pptxgenjs</code>), and Living Building.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container reveal" id="process">
+      <div class="section-intro">
+        <h2>How I build</h2>
+        <p class="section-sub">AI writes code fast. Process makes it trustworthy.</p>
+      </div>
+      <div class="process-grid">
+        <div class="process-step"><span class="step-num">01</span><h4>Plan the whole project</h4><p>Map the real workflow before writing code.</p></div>
+        <div class="process-step"><span class="step-num">02</span><h4>Write the document first</h4><p>Record data boundaries and trade-offs up front.</p></div>
+        <div class="process-step"><span class="step-num">03</span><h4>Build in a prototype</h4><p>Iterate with AI in tight slices while owning every rule.</p></div>
+        <div class="process-step"><span class="step-num">04</span><h4>Check it, then ship</h4><p>129 passing tests in Tracker + daily Playwright &amp; <code>axe-core</code> checks.</p></div>
+      </div>
+    </section>
+
+    <section class="section container reveal" id="experience">
+      <div class="section-intro">
+        <h2>Experience</h2>
+      </div>
+      <div class="exp-layout">
+        <div class="timeline">
+          <div class="timeline-item">
+            <span class="timeline-date">Sept 2026 &ndash; Present</span>
+            <h4>Building the school&rsquo;s systems</h4>
+            <p class="timeline-org">Protected development time alongside teaching</p>
+            <p>Shipping and maintaining the Timetable platform and Student Tracker used across two school sites.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-date">May 2025 &ndash; Present</span>
+            <h4>Support Worker (Game Design)</h4>
+            <p class="timeline-org">A creative-skills school in Berkshire</p>
+            <p>Unity, C#, web design, Node.js, music theory.</p>
+          </div>
+          <div class="timeline-item">
+            <span class="timeline-date">2023</span>
+            <h4>BSc Virtual and Augmented Reality, Merit</h4>
+            <p class="timeline-org">University of Portsmouth</p>
+            <p>Unity, C#, 3D.</p>
+          </div>
+        </div>
+        <aside class="skills-panel">
+          <h3>Skills &amp; Languages</h3>
+          <div class="skill-group"><h5>Web &amp; Data</h5><p>Vanilla JS, TypeScript, Node.js, Three.js, Supabase, PWAs</p></div>
+          <div class="skill-group"><h5>Testing &amp; Automation</h5><p>Playwright, axe-core, GitHub Actions, Google Apps Script, pptxgenjs</p></div>
+          <div class="skill-group"><h5>Languages</h5><p>English, Cantonese, Mandarin</p></div>
+          <a href="../cv/Rafael_Ngai_CV.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">Full CV (PDF, 2 pages) &nearr;</a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section container reveal" id="contact">
+      <div class="contact-box">
+        <h2>Contact</h2>
+        <p>Based in Berkshire, UK. Open to full-time software developer roles.</p>
+        <div class="contact-actions">
+          <a href="mailto:rafaelkoo.uk@gmail.com" class="btn btn-primary">rafaelkoo.uk@gmail.com</a>
+          <button type="button" class="btn btn-secondary copy-email-btn" data-email="rafaelkoo.uk@gmail.com">Copy email</button>
+          <a href="https://www.linkedin.com/in/rafael-ngai" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">LinkedIn &nearr;</a>
+          <a href="https://github.com/rafaelkoo" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">GitHub &nearr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer container">
+    <p>&copy; 2026 Rafael Ngai &middot; <code>Atkinson Hyperlegible</code> &middot; <a href="../">View original layout</a></p>
+  </footer>
+
+  <div class="mode-pill" id="tech-banner" hidden aria-live="polite">
+    Developer view active: technical panels expanded
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
