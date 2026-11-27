@@ -197,6 +197,14 @@ body[data-view="developer"] .rec{display:none}
 .shots img{border-radius:22px;box-shadow:0 0 0 6px #151821,0 14px 30px rgba(0,0,0,.22)}
 .shots figcaption{font-size:14px;color:var(--ink-3);text-align:center}
 .shotnote{font-size:13px;color:var(--ink-3)}
+.art{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:4px 0}
+.art figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.art figure.wide{grid-column:span 2}.art figure.full{grid-column:1/-1}
+.art img{width:100%;height:auto;border-radius:8px;background:#1b1712}
+.art figure:not(.wide):not(.full) img{aspect-ratio:auto}
+.art figcaption{font-size:14px;color:var(--ink-3)}
+@media (max-width:860px){.art{grid-template-columns:1fr}.art figure.wide,.art figure.full{grid-column:auto}}
+
 .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:14px}
 .quote{margin:0;border-left:4px solid var(--c);background:var(--sheet-2);border-radius:0 6px 6px 0;padding:18px 22px;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
 .quote p{font-size:18px;line-height:1.5;color:var(--ink)}
@@ -606,37 +614,36 @@ s -= Math.min(20, 5 * brokenLinks.length);
 
       <!-- GORB -->
       <section class="sec" id="s-gb" style="--c:var(--b-gb)" aria-labelledby="h-gb">
-        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Built in 2 days</span></div>
+        <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">111 updates in 17 days</span></div>
         <div class="sec-body">
-          <h2 id="h-gb">GorB: FitTrack grew into a group app</h2>
+          <h2 id="h-gb">GorB: a gym app that turns training into a co-op game</h2>
           <div class="facts">
             <div><h3>The problem</h3><p>FitTrack, my earlier gym app, lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
-            <div><h3>What I built</h3><p>A group app. You check in with a live camera photo, your group sees it, and a monthly table shows who has been. It has workouts, personal bests, rankings for each exercise, a group chat and push notifications, in English and 繁中.</p></div>
-            <div><h3>What changed</h3><p>FitTrack's features came across in six stages, with an import for my old data, so nothing I had logged was lost. FitTrack itself stays as the one-person version.</p></div>
+            <div><h3>What I built</h3><p>A group app where real training powers a game. You check in with a photo and log workouts with weight suggestions that follow your goal. Your training sets your pixel character's stats. Your group trains in a shared pixel gym, battles "excuse monsters" like the Couch Monster, and takes on a weekly co-op boss.</p></div>
+            <div><h3>What changed</h3><p>It grew from a check-in app into a game in 17 days: 111 updates, now version 0.76. FitTrack's features came across with an import for my old data, and FitTrack itself stays as the one-person version.</p></div>
           </div>
-          <div class="shots">
-            <figure><img src="img/gorb-feed.jpg" alt="Group feed: a check-in photo of a dumbbell rack with the note Push day" width="780" height="1688" loading="lazy"><figcaption>Check-ins</figcaption></figure>
-            <figure><img src="img/gorb-ranks.jpg" alt="Rankings: gym days this month for five friends, with medals for the top three" width="780" height="1688" loading="lazy"><figcaption>Rankings</figcaption></figure>
-            <figure><img src="img/gorb-chat.jpg" alt="Group chat planning a 7am session, with a rename shown as a grey line" width="780" height="1688" loading="lazy"><figcaption>Group chat</figcaption></figure>
-            <figure><img src="img/gorb-progress.jpg" alt="Progress: level and points this week, muscle groups trained and personal bests" width="780" height="1688" loading="lazy"><figcaption>Progress</figcaption></figure>
+          <div class="art">
+            <figure class="wide"><img src="img/gorb-gym.png" alt="Pixel gym: five friends' avatars at the squat rack, bench, deadlift platform and treadmill, with one dozing on the rest bench" width="2048" height="1408" loading="lazy"><figcaption>The group's pixel gym: everyone stands at the station for what they trained today</figcaption></figure>
+            <figure><img src="img/gorb-battle.png" alt="Battle: a pixel character, seen from behind, facing the Couch Monster, a grinning brown sofa" width="1600" height="1120" loading="lazy"><figcaption>Battling the Couch Monster</figcaption></figure>
+            <figure class="full"><img src="img/gorb-monsters.png" alt="Ten excuse monsters and their evolved forms, such as the Couch Monster becoming the Yoga Mat Guardian and the Snooze Clock becoming the Early-Bird Clock" width="2200" height="540" loading="lazy"><figcaption>Excuse monsters and their good-habit forms: 18 species, all drawn in code</figcaption></figure>
           </div>
-          <p class="shotnote">Screenshots use made-up people and photos. The real app is for my friends, so it needs a sign-in.</p>
-          <div class="rec"><ul class="recl"><li>The privacy rules live in the database, not the app: groupmates only, on all 17 tables.</li><li>Photos lose their GPS data before upload and are deleted after 7 days.</li><li>Database changes deploy themselves from GitHub.</li></ul></div>
+          <p class="shotnote">Pictures drawn by the app's own code with made-up people. The real app is for my friends, so it needs a sign-in.</p>
+          <div class="rec"><ul class="recl"><li>Every battle, catch and coin is decided by the database (129 server functions), so nobody can cheat by editing the app.</li><li>Privacy rules on all 37 tables: you only see your groupmates.</li><li>Weight suggestions follow your goal's rep range, step back when you plateau, and suggest a swap if you stay stuck.</li><li>Database changes deploy themselves from GitHub.</li></ul></div>
           <div class="dev">
-            <h3>Privacy is enforced by the database</h3>
-<pre class="code"><span class="c">-- abridged from supabase/migrations: every table has row-level security on</span>
-<span class="k">create policy</span> <span class="s">"see groupmates checkins"</span> <span class="k">on</span> checkins <span class="k">for select</span>
-  <span class="k">using</span> (shares_group(user_id));
-
-<span class="c">-- the server stamps who and when, so a phone can't backdate or post as someone else</span>
-new.user_id    := auth.uid();
-new.created_at := now();
-<span class="k">if</span> split_part(new.photo_path, <span class="s">'/'</span>, 1) &lt;&gt; auth.uid()::text <span class="k">then</span>
-  <span class="k">raise exception</span> <span class="s">'photo must be in your own folder'</span>;
-<span class="k">end if</span>;</pre>
-            <ul><li>Photos are drawn onto a canvas and re-encoded on the phone, which drops all EXIF data (GPS, phone model).</li><li>A daily job deletes photos after 7 days but keeps the check-in, so rankings don't change.</li><li>Every push that touches the database runs GitHub Actions, which applies new migrations and deploys the notification functions. Migrations are written to be safe to run twice.</li></ul>
+            <h3>The server decides, not the phone</h3>
+<pre class="code"><span class="c">-- abridged from supabase/migrations: the app can only ASK to buy something</span>
+<span class="k">create function</span> shop_buy(p_item text, p_qty int) <span class="k">returns</span> jsonb
+<span class="k">language</span> plpgsql <span class="k">security definer</span> <span class="k">as</span> $$
+<span class="k">begin</span>
+  <span class="k">if</span> auth.uid() <span class="k">is null then raise exception</span> <span class="s">'Not signed in'</span>; <span class="k">end if</span>;
+  <span class="k">if</span> p_qty &lt; 1 <span class="k">or</span> p_qty &gt; 20 <span class="k">then raise exception</span> <span class="s">'Can’t buy that'</span>; <span class="k">end if</span>;
+  <span class="c">-- coins are checked and taken in the same step, so a double tap can't spend twice</span>
+  <span class="k">if not</span> spend_coins(auth.uid(), price * p_qty) <span class="k">then raise exception</span> <span class="s">'Not enough coins'</span>; <span class="k">end if</span>;
+  <span class="k">insert into</span> user_items ... <span class="k">on conflict do update set</span> qty = qty + p_qty;
+<span class="k">end</span> $$;</pre>
+            <ul><li>59 database migrations, each applied automatically by GitHub Actions and safe to run twice.</li><li>Photos are re-encoded on the phone, which drops GPS data, and are deleted after 7 days (chat photos after 5).</li><li>Five Edge Functions send push notifications and the weekly summaries, in each person's own language (English or 繁中).</li><li>The pixel gym, avatars, 18 monsters and their evolved forms are all drawn on a canvas in code, not from image files.</li></ul>
           </div>
-          <div class="links"><a class="more" href="https://github.com/rafaelkoo/GorB" target="_blank" rel="noopener">Code on GitHub ↗</a><span class="stack">Supabase (Postgres, Auth, Storage, Edge Functions) · Web Push · Three.js · PWA</span></div>
+          <div class="links"><a class="more" href="https://github.com/rafaelkoo/GorB" target="_blank" rel="noopener">Code on GitHub ↗</a><span class="stack">Supabase (Postgres, Auth, Storage, Edge Functions) · Web Push · Canvas pixel art · Three.js · PWA</span></div>
         </div>
       </section>
 
