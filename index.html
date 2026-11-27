@@ -197,6 +197,16 @@ body[data-view="developer"] .rec{display:none}
 .shots img{border-radius:22px;box-shadow:0 0 0 6px #151821,0 14px 30px rgba(0,0,0,.22)}
 .shots figcaption{font-size:14px;color:var(--ink-3);text-align:center}
 .shotnote{font-size:13px;color:var(--ink-3)}
+.fold{border:1px solid var(--rule);border-radius:10px;background:var(--sheet)}
+.fold>summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;font-weight:700;font-size:16px;color:var(--ink)}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary::before{content:"+";display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--sheet-2);font-weight:800;transition:transform .25s}
+.fold[open]>summary::before{content:"\2013"}
+.fold>summary:hover{color:var(--act)}
+.fold>summary:focus-visible{outline:3px solid var(--act);outline-offset:2px;border-radius:10px}
+.fold>*:not(summary){margin:0 16px 16px}
+.duo .card .phone{width:min(45%,160px)}
+
 .art{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:4px 0}
 .art figure{margin:0;display:flex;flex-direction:column;gap:8px}
 .art figure.wide{grid-column:span 2}.art figure.full{grid-column:1/-1}
@@ -424,7 +434,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
 <section class="tt" id="tt" aria-label="Page timetable">
   <div class="wrap">
     <div class="tt-top">
-      <p id="ttHint">This page is a school day on my timetable. Click a block to go there, or move one to change the page order.</p>
+      <p id="ttHint">This page is my school day. Tap a period to jump there, or drag one to reorder the page.</p>
       <div class="acts">
         <button type="button" class="lbtn" id="moveMode" aria-pressed="false">Rearrange</button>
         <button type="button" class="lbtn" id="openTT" aria-expanded="false">Expand</button>
@@ -467,7 +477,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
         <a class="btn btn-act" href="timetable-demo/">Try the real timetable ↗</a>
         <a class="btn btn-line" href="#contact">Contact</a>
       </div>
-      <p class="try"><i aria-hidden="true"></i><span>This page runs on a small version of my timetable engine. <b class="tip-desk">The red line follows your scroll. Drag a block and the page reorders. Lunch is locked, so try dropping something on it. The last block is when I can start.</b><b class="tip-phone">The timetable at the bottom is the menu: the red line follows your scroll and tapping a block jumps there. Tap My day to rearrange the page. Lunch is locked.</b></span></p>
+      <p class="try"><i aria-hidden="true"></i><span><b>Try it:</b> drag a block in the timetable above. Lunch is locked.</span></p>
       <div class="summary rec" aria-label="30-second summary">
         <div><b>Role</b><span>Support Worker (Game Design), building the school's systems in protected time</span></div>
         <div><b>Shipped</b><span>A timetable platform two school sites run their day on, used by about 100 people</span></div>
@@ -499,6 +509,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
             <footer><b>Andrew</b> · Supervisor Subject Lead</footer>
           </blockquote>
           </div>
+          <details class="fold"><summary>On the phone, and how pupils&#39; addresses stay private</summary>
           <div class="row">
             <div style="flex:1 1 360px;display:flex;flex-direction:column;gap:14px">
               <h3 style="font-size:22px">On the phone, and on the way to every pick-up</h3>
@@ -507,6 +518,7 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
             </div>
             <div class="phone"><img src="img/phone-map.jpg" alt="Phone view of a minibus run from home to school, listing each pupil with a Map button" width="780" height="1688" loading="lazy"></div>
           </div>
+          </details>
           <div class="dev">
             <h3>How the address rule works</h3>
             <p>The server, not the page, decides who gets addresses. A run's addresses go only to the people on that run or an editor allowed to edit it, and the read is logged without the address itself.</p>
@@ -625,10 +637,12 @@ s -= Math.min(20, 5 * brokenLinks.length);
           <div class="art">
             <figure class="wide"><img src="img/gorb-gym.png" alt="Pixel gym: five friends' avatars at the squat rack, bench, deadlift platform and treadmill, with one dozing on the rest bench" width="2048" height="1408" loading="lazy"><figcaption>The group's pixel gym: everyone stands at the station for what they trained today</figcaption></figure>
             <figure><img src="img/gorb-battle.png" alt="Battle: a pixel character, seen from behind, facing the Couch Monster, a grinning brown sofa" width="1600" height="1120" loading="lazy"><figcaption>Battling the Couch Monster</figcaption></figure>
-            <figure class="full"><img src="img/gorb-monsters.png" alt="Ten excuse monsters and their evolved forms, such as the Couch Monster becoming the Yoga Mat Guardian and the Snooze Clock becoming the Early-Bird Clock" width="2200" height="540" loading="lazy"><figcaption>Excuse monsters and their good-habit forms: 18 species, all drawn in code</figcaption></figure>
           </div>
-          <p class="shotnote">Pictures drawn by the app's own code with made-up people. The real app is for my friends, so it needs a sign-in.</p>
+          <p class="shotnote">Drawn by the app's own code with made-up people. The real app is for my friends, so it needs a sign-in.</p>
+          <details class="fold"><summary>The excuse monsters, and how the game stays fair</summary>
+          <div class="art"><figure class="full"><img src="img/gorb-monsters.png" alt="Ten excuse monsters and their evolved forms, such as the Couch Monster becoming the Yoga Mat Guardian and the Snooze Clock becoming the Early-Bird Clock" width="2200" height="540" loading="lazy"><figcaption>Excuse monsters and their good-habit forms: 18 species, all drawn in code</figcaption></figure></div>
           <div class="rec"><ul class="recl"><li>Every battle, catch and coin is decided by the database (129 server functions), so nobody can cheat by editing the app.</li><li>Privacy rules on all 37 tables: you only see your groupmates.</li><li>Weight suggestions follow your goal's rep range, step back when you plateau, and suggest a swap if you stay stuck.</li><li>Database changes deploy themselves from GitHub.</li></ul></div>
+          </details>
           <div class="dev">
             <h3>The server decides, not the phone</h3>
 <pre class="code"><span class="c">-- abridged from supabase/migrations: the app can only ASK to buy something</span>
@@ -709,8 +723,9 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
             <li><b>5 · Build with AI, in a prototype</b><span>New work lands in a prototype copy and only reaches the live system after it passes testing.</span></li>
             <li><b>6 · Check it, then ship</b><span>Automated tests (129 in the tracker) and a "do this, should see that" checklist run before every release. Docs and handover notes are updated in the same session.</span></li>
           </ol>
+          <details class="fold"><summary>Smaller things I built along the way</summary>
           <div>
-            <h3 style="font-size:18px;margin-bottom:8px">Smaller things I built along the way</h3>
+            
             <ul class="small">
               <li><b>Unity Error Explainer</b><span>Paste a red console error and it explains the cause and the fix in plain words, using an AI model.</span></li>
               <li><b>Student portfolio engine</b><span>A script generates each student's portfolio site, with their own palette and opening.</span></li>
@@ -718,6 +733,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
               <li><b>Living Building</b><span>A timetable shown as a 3D building you can scrub through time.</span></li>
             </ul>
           </div>
+          </details>
         </div>
       </section>
 
@@ -730,6 +746,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
             <h2 id="h-ab">I like dealing with problems.</h2>
             <p>I'm a Support Worker (Game Design) at a creative-skills school in Berkshire. Alongside supporting students and teaching Game Design, Coding in Unity, Website Design and Music Theory, I design and build the school's systems: the timetable platform both sites run on, and the learning tracker I'm building now. The school gives me protected time each week for that development work. I hold a BSc in Virtual and Augmented Reality (Merit, 2023).</p>
             <p>This site is set in Atkinson Hyperlegible, a typeface designed for low-vision readers. I use it in the school's own tools too, so they stay easy to read for every student.</p>
+            <details class="fold"><summary>Skills and tools</summary>
             <dl class="skills">
               <div><dt>Web</dt><dd>HTML, CSS, vanilla JavaScript, TypeScript, Node.js, Three.js</dd></div>
               <div><dt>Apps and data</dt><dd>Python, C#, Unity, progressive web apps, JSON and document stores</dd></div>
@@ -737,6 +754,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
               <div><dt>Automation</dt><dd>Google Apps Script, pptxgenjs, Telegram bots, scheduled jobs</dd></div>
               <div><dt>Languages</dt><dd>English, Cantonese, Mandarin</dd></div>
             </dl>
+            </details>
           </div>
         </div>
       </section>
@@ -980,6 +998,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   var segBtns=document.querySelectorAll('.seg button,.seg2 button');
   function setView(v,announce){
     var was=document.body.dataset.view;S.view=v;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===v);b.parentNode.dataset.on=v;});save();
+    document.querySelectorAll('details.fold').forEach(function(d){d.open=(v==='developer');});
     var devs=[].slice.call(document.querySelectorAll('.dev')),recs=[].slice.call(document.querySelectorAll('.rec'));
     if(!announce||RM||was===v){document.body.dataset.view=v;}
     else if(v==='developer'){
@@ -1177,6 +1196,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   }
 })();
 </script>
+<script type="module" src="js/gorb-live.js"></script>
 
 </body>
 </html>
