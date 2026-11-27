@@ -197,6 +197,20 @@ body[data-view="developer"] .rec{display:none}
 .shots img{border-radius:22px;box-shadow:0 0 0 6px #151821,0 14px 30px rgba(0,0,0,.22)}
 .shots figcaption{font-size:14px;color:var(--ink-3);text-align:center}
 .shotnote{font-size:13px;color:var(--ink-3)}
+.gone{display:none!important}
+.summary.metrics b{font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.summary.metrics span{font-size:15px;color:var(--ink-2)}
+#flow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+#flow>*{grid-column:1/-1;min-width:0}
+#flow>.sec.half.paired{grid-column:auto}
+.sec.half .sec-body h2{font-size:clamp(24px,2.4vw,30px)}
+.sec.half .facts{grid-template-columns:1fr}
+.sec.half .art{grid-template-columns:1fr}
+.sec.half .art figure.wide{grid-column:auto}
+.lead{font-size:18px;line-height:1.5;color:var(--ink-2);margin:0}
+.duo .card .phone{width:min(36%,120px)}
+@media (max-width:900px){#flow>.sec.half.paired{grid-column:1/-1}}
+
 .fold{border:1px solid var(--rule);border-radius:10px;background:var(--sheet)}
 .fold>summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:10px;padding:0 16px;font-weight:700;font-size:16px;color:var(--ink)}
 .fold>summary::-webkit-details-marker{display:none}
@@ -417,16 +431,16 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
 <a class="skip" href="#main">Skip to content</a>
 <header class="app" id="app">
   <div class="wrap">
-    <a class="brand" href="#top">Rafael Ngai<small>Support Worker (Game Design) · builds the school's systems</small></a>
+    <a class="brand" href="#top">Rafael Ngai<small>Software developer · builds the systems a two-site school runs on</small></a>
     <span class="chip" id="today">Today</span>
     <span class="grow"></span>
     <div class="seg" role="group" aria-label="Who is reading"><span class="ind" aria-hidden="true"></span>
       <button type="button" data-view="recruiter" aria-pressed="true">Recruiter</button>
       <button type="button" data-view="developer" aria-pressed="false">Developer</button>
     </div>
-    <button type="button" class="tbtn" id="phoneBtn" aria-pressed="false" hidden>Phone view</button>
+    <button type="button" class="tbtn gone" id="phoneBtn" aria-pressed="false" hidden>Phone view</button>
     <button type="button" class="hirebtn" id="hireBtn">Hire me</button>
-    <button type="button" class="tbtn" id="reset">Reset</button>
+    <button type="button" class="tbtn gone" id="reset">Reset</button>
   </div>
 </header>
 
@@ -437,8 +451,8 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
       <p id="ttHint">This page is my school day. Tap a period to jump there, or drag one to reorder the page.</p>
       <div class="acts">
         <button type="button" class="lbtn" id="moveMode" aria-pressed="false">Rearrange</button>
-        <button type="button" class="lbtn" id="openTT" aria-expanded="false">Expand</button>
-        <button type="button" class="lbtn reset2" id="reset2">Reset</button>
+        <button type="button" class="lbtn gone" id="openTT" aria-expanded="false">Expand</button>
+        <button type="button" class="lbtn reset2 gone" id="reset2">Reset</button>
       </div>
     </div>
     <div class="strip-row">
@@ -470,19 +484,20 @@ body.embed .phonewrap,body.embed #phoneBtn{display:none!important}
 <main id="top"><span id="main" tabindex="-1"></span>
   <div class="wrap">
     <section class="hero">
-      <p class="k">Berkshire, UK</p>
+      <p class="k">Software developer · Berkshire, UK</p>
       <h1>I build the tools that replace <span class="sr">the mess.</span><span class="mess" aria-hidden="true"><i style="--k:0;--x:1px;--y:-41px;--r:10deg">t</i><i style="--k:1;--x:-34px;--y:-51px;--r:28deg">h</i><i style="--k:2;--x:-28px;--y:-14px;--r:34deg">e</i> <i style="--k:4;--x:-33px;--y:4px;--r:-13deg">m</i><i style="--k:5;--x:-36px;--y:-49px;--r:15deg">e</i><i style="--k:6;--x:13px;--y:-52px;--r:-10deg">s</i><i style="--k:7;--x:-29px;--y:10px;--r:14deg">s</i><i style="--k:8;--x:-33px;--y:12px;--r:-25deg">.</i></span></h1>
       <p class="lede">A timetable trapped in a spreadsheet. Student work scattered across folders. Progress nobody could see. I find what slows people down and build the software that fixes it, with AI writing much of the code and me deciding what it does and testing it before anyone relies on it.</p>
       <div class="ctas">
         <a class="btn btn-act" href="timetable-demo/">Try the real timetable ↗</a>
+        <button type="button" class="btn btn-line" id="copyHero">Copy email</button>
         <a class="btn btn-line" href="#contact">Contact</a>
       </div>
       <p class="try"><i aria-hidden="true"></i><span><b>Try it:</b> drag a block in the timetable above. Lunch is locked.</span></p>
-      <div class="summary rec" aria-label="30-second summary">
-        <div><b>Role</b><span>Support Worker (Game Design), building the school's systems in protected time</span></div>
-        <div><b>Shipped</b><span>A timetable platform two school sites run their day on, used by about 100 people</span></div>
-        <div><b>Building</b><span>A learning tracker for 718 real course units</span></div>
-        <div><b>Contact</b><span>rafaelkoo.uk@gmail.com</span></div>
+      <div class="summary metrics" aria-label="In numbers">
+        <div><b>~100 people</b><span>use my timetable platform across two school sites</span></div>
+        <div><b>31,000+ changes</b><span>made in it by 10 staff in October</span></div>
+        <div><b>718 course units</b><span>linked in the Student Tracker, backed by 129 tests</span></div>
+        <div><b>5 sites</b><span>checked every morning by my watchdog</span></div>
       </div>
     </section>
 
@@ -595,15 +610,18 @@ writeMany(ops) {
       </section>
 
       <!-- WEBSITE WATCHDOG -->
-      <section class="sec" id="s-wd" style="--c:var(--b-pt)" aria-labelledby="h-wd">
+      <section class="sec half" id="s-wd" style="--c:var(--b-pt)" aria-labelledby="h-wd">
         <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">Runs every morning</span></div>
         <div class="sec-body">
           <h2 id="h-wd">Website watchdog</h2>
+          <p class="lead">Every morning it checks my five sites on desktop and phone, scores them, and raises its own alerts when something breaks.</p>
+          <details class="fold"><summary>The problem, what I built, what changed</summary>
           <div class="facts">
             <div><h3>The problem</h3><p>I run several sites on my own, and nobody tells me when one breaks. A broken link or a layout that scrolls sideways on phones could sit there for weeks.</p></div>
             <div><h3>What I built</h3><p>Every morning it opens each site in a real browser at desktop and phone size, checks speed, errors, links and accessibility, keeps a history, and opens a GitHub issue when something gets worse.</p></div>
             <div><h3>What changed</h3><p>On its first run it found three real problems: low-contrast labels on this page and the tracker demo, which I fixed, and zoom turned off in my game, which is deliberate.</p></div>
           </div>
+          </details>
           <div class="wdlive" id="wdLive" aria-live="polite">
             <div class="wdtop"><b>Latest check</b><span id="wdWhen">Loading the live results…</span></div>
             <ul class="wdlist" id="wdList"></ul>
@@ -625,22 +643,24 @@ s -= Math.min(20, 5 * brokenLinks.length);
       </section>
 
       <!-- GORB -->
-      <section class="sec" id="s-gb" style="--c:var(--b-gb)" aria-labelledby="h-gb">
+      <section class="sec half" id="s-gb" style="--c:var(--b-gb)" aria-labelledby="h-gb">
         <div class="sec-head"><span class="sw"></span><span class="t" data-time></span><span class="st">111 updates in 17 days</span></div>
         <div class="sec-body">
           <h2 id="h-gb">GorB: a gym app that turns training into a co-op game</h2>
+          <p class="lead">A group gym app where real training powers a co-op pixel game, with every battle and coin decided by the server.</p>
+          <details class="fold"><summary>The problem, what I built, what changed</summary>
           <div class="facts">
             <div><h3>The problem</h3><p>FitTrack, my earlier gym app, lived on one phone, so only I could see it. My friends and I kept our personal bests in a shared Excel sheet, and nobody could see who had actually been to the gym.</p></div>
             <div><h3>What I built</h3><p>A group app where real training powers a game. You check in with a photo and log workouts with weight suggestions that follow your goal. Your training sets your pixel character's stats. Your group trains in a shared pixel gym, battles "excuse monsters" like the Couch Monster, and takes on a weekly co-op boss.</p></div>
             <div><h3>What changed</h3><p>It grew from a check-in app into a game in 17 days: 111 updates, now version 0.76. FitTrack's features came across with an import for my old data, and FitTrack itself stays as the one-person version.</p></div>
           </div>
+          </details>
           <div class="art">
             <figure class="wide"><img src="img/gorb-gym.png" alt="Pixel gym: five friends' avatars at the squat rack, bench, deadlift platform and treadmill, with one dozing on the rest bench" width="2048" height="1408" loading="lazy"><figcaption>The group's pixel gym: everyone stands at the station for what they trained today</figcaption></figure>
-            <figure><img src="img/gorb-battle.png" alt="Battle: a pixel character, seen from behind, facing the Couch Monster, a grinning brown sofa" width="1600" height="1120" loading="lazy"><figcaption>Battling the Couch Monster</figcaption></figure>
           </div>
           <p class="shotnote">Drawn by the app's own code with made-up people. The real app is for my friends, so it needs a sign-in.</p>
           <details class="fold"><summary>The excuse monsters, and how the game stays fair</summary>
-          <div class="art"><figure class="full"><img src="img/gorb-monsters.png" alt="Ten excuse monsters and their evolved forms, such as the Couch Monster becoming the Yoga Mat Guardian and the Snooze Clock becoming the Early-Bird Clock" width="2200" height="540" loading="lazy"><figcaption>Excuse monsters and their good-habit forms: 18 species, all drawn in code</figcaption></figure></div>
+          <div class="art"><figure><img src="img/gorb-battle.png" alt="Battle: a pixel character, seen from behind, facing the Couch Monster, a grinning brown sofa" width="1600" height="1120" loading="lazy"><figcaption>Battling the Couch Monster</figcaption></figure><figure class="full"><img src="img/gorb-monsters.png" alt="Ten excuse monsters and their evolved forms, such as the Couch Monster becoming the Yoga Mat Guardian and the Snooze Clock becoming the Early-Bird Clock" width="2200" height="540" loading="lazy"><figcaption>Excuse monsters and their good-habit forms: 18 species, all drawn in code</figcaption></figure></div>
           <div class="rec"><ul class="recl"><li>Every battle, catch and coin is decided by the database (129 server functions), so nobody can cheat by editing the app.</li><li>Privacy rules on all 37 tables: you only see your groupmates.</li><li>Weight suggestions follow your goal's rep range, step back when you plateau, and suggest a swap if you stay stuck.</li><li>Database changes deploy themselves from GitHub.</li></ul></div>
           </details>
           <div class="dev">
@@ -869,6 +889,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
     });
     var now=document.createElement('div');now.className='now';now.id='now';now.setAttribute('aria-hidden','true');strip.appendChild(now);
     S.slots.forEach(function(id,i){if(!id)return;var sec=document.getElementById(BLOCKS[id].sec);flow.appendChild(sec);var t=sec.querySelector('[data-time]');if(t)t.textContent=TIMES[i];});
+    pairHalves();
     var hs=document.getElementById('s-hire'),hi=idx('hire');hs.hidden=hi<0;var hbx=document.getElementById('hireBtn');if(hbx&&hbx.classList.contains('booked')!==(hi>=0)){hbx.classList.toggle('booked',hi>=0);hbx.innerHTML=hi>=0?'<svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Booked':'Hire me';}if(hi>=0)hs.querySelector('[data-hire-time]').textContent=TIMES[hi];
     renderDay();
     if(focusId){var f=isPhone()?document.querySelector('#day [data-k="'+focusId+'"]'):strip.querySelector('[data-id="'+focusId+'"]');if(f&&(!isPhone()||!document.getElementById('sheet').hidden))f.focus({preventScroll:true});}
@@ -996,6 +1017,7 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
 
   /* ---------- Recruiter / Developer view: the extra boxes unfold ---------- */
   var segBtns=document.querySelectorAll('.seg button,.seg2 button');
+  function pairHalves(){var kids=[].slice.call(flow.children).filter(function(e){return !e.hidden;});kids.forEach(function(e){e.classList.remove('paired');});for(var i=0;i<kids.length-1;i++){if(kids[i].classList.contains('half')&&kids[i+1].classList.contains('half')&&!kids[i].hidden&&!kids[i+1].hidden){kids[i].classList.add('paired');kids[i+1].classList.add('paired');i++;}}}
   function setView(v,announce){
     var was=document.body.dataset.view;S.view=v;segBtns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.view===v);b.parentNode.dataset.on=v;});save();
     document.querySelectorAll('details.fold').forEach(function(d){d.open=(v==='developer');});
@@ -1168,6 +1190,8 @@ I saw your portfolio and I'd like to talk to you about a developer role at [your
   })();
 
   /* ---------- copy email ---------- */
+  var ch=document.getElementById('copyHero');
+  ch.addEventListener('click',function(){var ok=function(){copied(ch,'Copied rafaelkoo.uk@gmail.com','Copy email');},no=function(){ch.textContent='rafaelkoo.uk@gmail.com';};try{navigator.clipboard.writeText('rafaelkoo.uk@gmail.com').then(ok,no);}catch(e){no();}});
   var cb=document.getElementById('copyMail');
   cb.addEventListener('click',function(){
     var done=function(){copied(cb,'Copied','Copy email');};
